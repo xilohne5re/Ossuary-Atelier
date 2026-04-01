@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Ossuary Atelier</title>
+  <meta name="description" content="The philosophy behind Ossuary Atelier — provenance, memory, and the second life of objects.">
+  <link rel="preload" href="js/nav.js" as="script">
+  <link rel="preload" href="js/background.js" as="script">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <style>
+
+    /* ── MANUSCRIPT OPENER ── */
+    #manuscript-hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: calc(var(--nav-height) + 6vh) 8vw 8vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Vertical line — left margin rule */
+    #manuscript-hero::before {
+      content: '';
+      position: absolute;
+      left: 5vw; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom,
+        transparent,
+        var(--faint) 20%,
+        var(--faint) 80%,
+        transparent);
+    }
+
+    .ms-label {
+      font-family: var(--font-display);
+      font-size: 0.58rem;
+      letter-spacing: 0.5em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: translateX(-16px);
+      animation: slide-in 0.8s var(--ease-out) 0.4s forwards;
+    }
+
+    @keyframes slide-in {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .ms-heading {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(2.5rem, 8vw, 7rem);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--violet);
+      overflow: hidden;
+    }
+
+    .ms-heading .reveal-line {
+      display: block;
+      transform: translateY(100%);
+      opacity: 0;
+      animation: line-up 0.9s var(--ease-out) forwards;
+    }
+
+    .ms-heading .reveal-line:nth-child(1) { animation-delay: 0.5s; }
+    .ms-heading .reveal-line:nth-child(2) { animation-delay: 0.65s; }
+    .ms-heading .reveal-line:nth-child(3) { animation-delay: 0.80s; }
+
+    @keyframes line-up {
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .ms-sub {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+      color: var(--violet-dim);
+      max-width: 540px;
+      line-height: 1.75;
+      margin-top: 2.5rem;
+      opacity: 0;
+      animation: slide-in 0.9s var(--ease-out) 1s forwards;
+    }
+
+    /* ── MISSION STATEMENT — typed feel ── */
+    #mission {
+      padding: 10vh 8vw;
+      position: relative;
+    }
+
+    .mission-text {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(1.4rem, 3vw, 2.4rem);
+      color: var(--violet);
+      line-height: 1.65;
+      max-width: 860px;
+    }
+
+    /* Word-by-word reveal */
+    .mission-text .w {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+    }
+
+    .mission-text .w.vis { opacity: 1; transform: translateY(0); }
+
+    .mission-accent {
+      color: var(--bruise-mid);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* ── GIANT EYE PARALLAX ── */
+    #eye-parallax {
+      position: relative;
+      height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #eye-parallax-inner {
+      position: absolute;
+      width: clamp(400px, 70vw, 900px);
+      opacity: 0.18;
+      will-change: transform;
+    }
+
+    #eye-parallax-inner svg {
+      width: 100%;
+      height: auto;
+    }
+
+    .eye-parallax-text {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .eye-parallax-word {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 3.5vw, 2.5rem);
+      letter-spacing: 0.8em;
+      text-transform: uppercase;
+      color: var(--violet);
+      font-weight: 600;
+      animation: float-pulse 4s ease-in-out infinite;
+      opacity: 0.85;
+    }
+
+    @keyframes float-pulse {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.85;
+      }
+      50% {
+        transform: translateY(-8px) scale(1.02);
+        opacity: 1;
+      }
+    }
+
+    /* ── TWO COLUMN: STORY + TIMELINE ── */
+    #story-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      padding: 0 0 10vh;
+    }
+
+    .story-prose {
+      padding: 6vh 6vw 6vh 8vw;
+      border-right: 1px solid var(--violet-faint);
+    }
+
+    .story-prose h3 {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 0.7rem;
+      letter-spacing: 0.5em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .story-prose p {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--violet-dim);
+      line-height: 1.85;
+      margin-bottom: 1.5rem;
+    }
+
+    .story-prose p strong {
+      color: var(--violet);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      padding: 6vh 6vw 6vh 5vw;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 1.5rem;
+      padding-bottom: 3rem;
+      position: relative;
+      opacity: 0;
+      transform: translateX(24px);
+      transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+    }
+
+    .timeline-item.vis {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Vertical connector */
+    .timeline-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 38px; top: 24px; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--faint), transparent);
+    }
+
+    .timeline-date {
+      font-family: var(--font-display);
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      padding-top: 2px;
+      margin-top: 16px;
+      display: block;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 33px; top: 6px;
+      width: 10px; height: 10px;
+      border: 1px solid var(--bruise-mid);
+      border-radius: 50%;
+      background: var(--void);
+    }
+
+    .timeline-content h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      color: var(--violet);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-content p {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--violet-dim);
+      line-height: 1.65;
+    }
+
+    /* ── VISION STATEMENT ── */
+    #vision {
+      padding: 10vh 8vw;
+      border-top: 1px solid var(--violet-faint);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .vision-quote {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.2rem, 2.5vw, 2rem);
+      color: var(--violet);
+      max-width: 700px;
+      line-height: 1.65;
+    }
+
+    .vision-quote::before { content: '\201C'; }
+    .vision-quote::after  { content: '\201D'; }
+
+    /* ── FOOTER ── */
+    #footer {
+      border-top: 1px solid var(--violet-faint);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-copy {
+      font-family: var(--font-display);
+      font-size: 0.58rem;
+      letter-spacing: 0.35em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+    }
+    .footer-ig {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-family: var(--font-display);
+      font-size: 0.58rem; letter-spacing: 0.3em;
+      color: var(--violet-dim); text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .footer-ig:hover { color: var(--violet); }
+
+    @media (max-width: 768px) {
+      #story-body { grid-template-columns: 1fr; }
+      .story-prose { border-right: none; border-bottom: 1px solid var(--violet-faint); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── INTERACTIVE BACKGROUND ── -->
+  <canvas id="background-canvas"></canvas>
+
+  <div id="page-transition"></div>
+  <div id="cursor"></div>
+  <div id="cursor-trail"></div>
+
+  <nav id="nav">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-eye"></div>
+      <div class="nav-logo-text">OSSUARY<span>ATELIER</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="drops.html">Drops</a></li>
+      <li><a href="story.html">The Story</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <button class="nav-burger"><span></span><span></span><span></span></button>
+  </nav>
+  <div id="nav-overlay">
+    <a href="index.html">Home</a><a href="about.html">About</a>
+    <a href="drops.html">Drops</a><a href="story.html">The Story</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <!-- ── HERO ── -->
+  <section id="manuscript-hero">
+    <span class="ms-label">About the brand</span>
+    <h1 class="ms-heading">
+      <span class="reveal-line">We don't</span>
+      <span class="reveal-line">sell clothes.</span>
+      <span class="reveal-line">We sell proof.</span>
+    </h1>
+    <p class="ms-sub">
+      Ossuary Atelier exists at the intersection of fashion and memory —
+      building a culture where a piece's history is its greatest asset.
+    </p>
+  </section>
+
+  <!-- ── MISSION ── -->
+  <section id="mission">
+    <p class="mission-text">
+      <span class="w">We</span> <span class="w">recover</span> <span class="w">discarded</span>
+      <span class="w">garments</span> <span class="w">and</span>
+      <span class="w"><span class="mission-accent">return them to relevance</span></span>
+      <span class="w">—</span> <span class="w">because</span> <span class="w">wearing</span>
+      <span class="w">something</span> <span class="w">secondhand</span> <span class="w">isn't</span>
+      <span class="w">a</span> <span class="w">compromise.</span>
+      <span class="w">It's</span> <span class="w"><span class="mission-accent">the statement.</span></span>
+      <span class="w">Every</span> <span class="w">piece</span> <span class="w">we</span>
+      <span class="w">carry</span> <span class="w">has</span> <span class="w">been</span>
+      <span class="w">deliberately</span> <span class="w">chosen,</span>
+      <span class="w">its</span> <span class="w">history</span>
+      <span class="w"><span class="mission-accent">preserved and verified</span></span>
+      <span class="w">through</span> <span class="w">the</span>
+      <span class="w">QR</span> <span class="w">tag</span> <span class="w">it</span> <span class="w">wears,</span>
+      <span class="w">because</span> <span class="w">a</span>
+      <span class="w">garment's</span> <span class="w">past</span>
+      <span class="w">is</span> <span class="w">its</span>
+      <span class="w"><span class="mission-accent">greatest asset.</span></span>
+    </p>
+  </section>
+
+  <!-- ── EYE PARALLAX ── -->
+  <div id="eye-parallax">
+    <div id="eye-parallax-inner">
+      <svg viewBox="-90 -58 180 116" xmlns="http://www.w3.org/2000/svg">
+        <path d="M -72 0 C -52 -48, 52 -48, 72 0 C 52 48, -52 48, -72 0 Z" fill="#C9B8E8"/>
+        <ellipse cx="0" cy="0" rx="46" ry="36" fill="#080810"/>
+        <circle cx="0" cy="0" r="36" fill="none" stroke="#C9B8E8" stroke-width="2.2" stroke-dasharray="8 4"/>
+        <circle cx="0" cy="0" r="28" fill="none" stroke="#C9B8E8" stroke-width="0.8" opacity="0.4" stroke-dasharray="3 6"/>
+        <circle cx="0" cy="0" r="18" fill="#C9B8E8"/>
+        <circle cx="0" cy="0" r="10" fill="#080810"/>
+        <circle cx="0" cy="0" r="5.5" fill="none" stroke="#C9B8E8" stroke-width="1.6"/>
+        <g stroke="#C9B8E8" stroke-linecap="round">
+          <line x1="-38" y1="-32" x2="-46" y2="-54" stroke-width="2.2"/>
+          <line x1="-18" y1="-42" x2="-21" y2="-64" stroke-width="2"/>
+          <line x1="0"   y1="-44" x2="0"   y2="-68" stroke-width="2.4"/>
+          <line x1="18"  y1="-42" x2="21"  y2="-64" stroke-width="2"/>
+          <line x1="38"  y1="-32" x2="46"  y2="-54" stroke-width="2.2"/>
+        </g>
+        <g stroke="#C9B8E8" stroke-linecap="round" opacity="0.55">
+          <line x1="-28" y1="32" x2="-34" y2="50" stroke-width="1.8"/>
+          <line x1="-10" y1="40" x2="-12" y2="58" stroke-width="1.6"/>
+          <line x1="10"  y1="40" x2="12"  y2="58" stroke-width="1.6"/>
+          <line x1="28"  y1="32" x2="34"  y2="50" stroke-width="1.8"/>
+        </g>
+        <line x1="-72" y1="0"  x2="-86" y2="0"  stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="-86" y1="-7" x2="-86" y2="7"  stroke="#C9B8E8" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="72"  y1="0"  x2="86"  y2="0"  stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="86"  y1="-7" x2="86"  y2="7"  stroke="#C9B8E8" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="eye-parallax-text">
+      <p class="eye-parallax-word">Provenance · Memory · Renewal</p>
+    </div>
+  </div>
+
+  <!-- ── STORY + TIMELINE ── -->
+  <section id="story-body">
+    <div class="story-prose">
+      <h3>The Philosophy</h3>
+      <p>
+        <strong>An ossuary is a vessel built to preserve what others discarded.</strong>
+        It doesn't hide the past — it displays it with intention.
+        That's exactly what we do with clothing.
+      </p>
+      <p>
+        We believe the fashion industry has trained people to see secondhand as
+        lesser. We think that's wrong. A garment that has lived through someone
+        else's life carries something no new production run ever could — evidence
+        of actual use, of choices made, of time passed.
+      </p>
+      <p>
+        The QR tag on every Ossuary piece isn't a gimmick.
+        <strong>It's the proof.</strong> Scan it and you read exactly where
+        that jacket was found, how it was dated, what makes it worth wearing.
+        That transparency is the product.
+      </p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="timeline-date">Mar 2026</span>
+        <div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h4>Brand Founded</h4>
+            <p>Ossuary Atelier begins as a digital business student project in Bangkok — built around the idea that provenance is the only luxury that can't be manufactured.</p>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-date">Apr 2026</span>
+        <div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h4>First 10 Items</h4>
+            <p>First sourcing trip. Ten pieces recovered, researched, and tagged. First QR story pages go live. The system works.</p>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-date">May 2026</span>
+        <div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h4>Full Launch</h4>
+            <p>Public launch. Every piece carried by Ossuary Atelier will have a QR-verified story from this day forward.</p>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-date">Ongoing</span>
+        <div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h4>The Archive Grows</h4>
+            <p>Each drop adds to a permanent digital archive of recovered garments. Sold items stay documented — their stories don't disappear when they find a new owner.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── VISION ── -->
+  <section id="vision">
+    <span class="section-label">Vision</span>
+    <p class="vision-quote">
+      To redefine how a generation values clothing — where the story behind
+      a garment carries more weight than the brand on its label,
+      and secondhand becomes the first choice.
+    </p>
+    <a href="drops.html" class="btn-seal">See the current drop</a>
+  </section>
+
+  <footer id="footer">
+    <span class="footer-copy">Ossuary Atelier © 2026</span>
+    <a href="https://instagram.com/ossuaryatelier" target="_blank" rel="noopener" class="footer-ig">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      @ossuaryatelier
+    </a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    if (typeof gsap !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+  </script>
+  <script src="js/nav.js"></script>
+  <script src="js/background.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mission word reveal
+      if (typeof ScrollTrigger !== 'undefined') {
+        const words = document.querySelectorAll('.mission-text .w');
+        words.forEach((w, i) => {
+          ScrollTrigger.create({
+            trigger: w,
+            start: 'top 85%',
+            onEnter: () => {
+              setTimeout(() => w.classList.add('vis'), i * 35);
+            }
+          });
+        });
+
+        // Timeline items
+        document.querySelectorAll('.timeline-item').forEach((item, i) => {
+          ScrollTrigger.create({
+            trigger: item,
+            start: 'top 80%',
+            onEnter: () => {
+              setTimeout(() => item.classList.add('vis'), i * 120);
+            }
+          });
+        });
+
+        // Eye parallax
+        const eyeParallax = document.getElementById('eye-parallax-inner');
+        if (eyeParallax) {
+          gsap.to(eyeParallax, {
+            y: -80,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: '#eye-parallax',
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true
+            }
+          });
+        }
+      }
+    });
+  </script>
+</body>
+</html>
