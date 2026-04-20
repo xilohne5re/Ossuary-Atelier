@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ossuary Atelier — Secondhand Stories</title>
+  <meta name="description" content="Curated secondhand fashion. Every piece carries proof of where it's been.">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/target-cursor.css">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="preload" href="js/nav.js" as="script">
+  <link rel="preload" href="js/background.js" as="script">
+  <link rel="preload" href="js/index.js" as="script">
+</head>
+<body>
+
+  <!-- ── INTERACTIVE BACKGROUND ── -->
+  <canvas id="background-canvas"></canvas>
+
+  <!-- ── OVERLAYS ── -->
+  <div id="page-transition"></div>
+  <div id="scanner-device"></div>
+  <div id="cursor"></div>
+  <div id="cursor-trail"></div>
+
+  <!-- ── SPLASH INTRO ── -->
+  <div id="splash-intro" aria-label="Intro">
+    <div id="splash-shatter" aria-hidden="true"></div>
+    <div id="splash-eye" aria-hidden="true"></div>
+    <div id="splash-prompt" class="splash-prompt">
+      <p>click to enter</p>
+      <div class="splash-indicator" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- ── NAV ── -->
+  <nav id="nav" role="navigation" aria-label="Main navigation">
+    <a href="index.html" class="nav-logo" aria-label="Ossuary Atelier — Home">
+      <div class="nav-logo-eye" aria-hidden="true"></div>
+      <div class="nav-logo-text">
+        OSSUARY
+        <span>ATELIER</span>
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="drops.html">Drops</a></li>
+      <li><a href="story.html">The Story</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="blog/index.html">Journal</a></li>
+    </ul>
+
+    <button class="nav-burger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile overlay -->
+  <div id="nav-overlay" role="dialog" aria-modal="true" aria-label="Navigation">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="drops.html">Drops</a>
+    <a href="story.html">The Story</a>
+    <a href="contact.html">Contact</a>
+    <a href="blog/index.html">Journal</a>
+  </div>
+
+  <!-- ═══════════════════════════════
+       HERO
+  ═══════════════════════════════ -->
+<section id="hero" aria-label="Hero">
+
+    <!-- Shatter canvas -->
+    <div id="hero-shatter" aria-hidden="true"></div>
+
+    <!-- Eye mark — JS populates this -->
+    <div id="hero-eye" aria-hidden="true"></div>
+
+    <!-- Headline — appears after shatter -->
+    <div id="hero-headline" style="display:none">
+      <h1 class="hero-line-1" aria-label="The dead don't throw things away.">
+        <span class="word-wrap"><span class="word-inner">THE</span></span>
+        <span class="word-wrap"><span class="word-inner">DEAD</span></span>
+        <span class="word-wrap"><span class="word-inner">DON'T</span></span>
+        <span class="word-wrap"><span class="word-inner">THROW</span></span>
+        <span class="word-wrap"><span class="word-inner">THINGS</span></span>
+        <span class="word-wrap"><span class="word-inner">AWAY.</span></span>
+      </h1>
+      <p class="hero-line-2">
+        <span class="word-wrap"><span class="word-inner" style="transition-delay:0.42s">They</span></span>
+        <span class="word-wrap"><span class="word-inner" style="transition-delay:0.48s">just</span></span>
+        <span class="word-wrap"><span class="word-inner" style="transition-delay:0.54s">stop</span></span>
+        <span class="word-wrap"><span class="word-inner" style="transition-delay:0.60s">holding</span></span>
+        <span class="word-wrap"><span class="word-inner" style="transition-delay:0.66s">them.</span></span>
+      </p>
+    </div>
+
+    <!-- Sub + CTA -->
+    <div id="hero-sub">
+      <p class="hero-tagline">
+        Curated secondhand fashion. Every piece carries proof of where it's been.
+      </p>
+      <a href="drops.html" class="btn-seal">View Current Drop</a>
+    </div>
+
+</section>
+
+  <!-- ═══════════════════════════════
+       MARQUEE STRIP
+  ═══════════════════════════════ -->
+  <div id="marquee-strip" aria-hidden="true">
+    <div class="marquee-inner">
+      <span>Ossuary Atelier</span>
+      <span class="sep">·</span>
+      <span>Secondhand Stories</span>
+      <span class="sep">·</span>
+      <span>Scan Proof</span>
+      <span class="sep">·</span>
+      <span>Every Piece Has a Past</span>
+      <span class="sep">·</span>
+      <span>Curated Thrift</span>
+      <span class="sep">·</span>
+      <span>Phuket</span>
+      <span class="sep">·</span>
+      <span>Ossuary Atelier</span>
+      <span class="sep">·</span>
+      <span>Secondhand Stories</span>
+      <span class="sep">·</span>
+      <span>Scan Proof</span>
+      <span class="sep">·</span>
+      <span>Every Piece Has a Past</span>
+      <span class="sep">·</span>
+      <span>Curated Thrift</span>
+      <span class="sep">·</span>
+      <span>Phuket</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       REVEAL SECTION
+  ═══════════════════════════════ -->
+  <section id="reveal-section">
+    <h2 class="reveal-huge" aria-label="Wear the history">
+      <span class="line-a">WEAR THE</span>
+      <span class="line-b">HISTORY.</span>
+    </h2>
+    <p class="reveal-body">
+      Every garment in our archive was found, chosen, researched, and returned to the world
+      with its story intact — verified and carried on a QR tag it wears.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════
+       INTRO PANELS
+  ═══════════════════════════════ -->
+<section id="intro-panels" aria-label="What we do">
+
+    <article class="intro-panel">
+      <span class="panel-number">01 / Find</span>
+      <div id="hunt-wrap" class="hunt-wrap" aria-label="The Hunt"></div>
+      <p class="panel-body">
+        We source in thrift stores, market stalls, and estate sales.
+        Only pieces with a story worth telling make it through.
+      </p>
+      <a href="about.html" class="panel-link">Our process</a>
+    </article>
+
+    <article class="intro-panel">
+      <span class="panel-number">02 / Prove</span>
+      <div id="story-wrap" class="hunt-wrap" aria-label="The Story"></div>
+      <p class="panel-body">
+        Every item gets a dedicated story page — origin, era, provenance.
+        A QR code on the tag is your key to reading it.
+      </p>
+      <a href="story.html" class="panel-link">How it works</a>
+    </article>
+
+    <article class="intro-panel">
+      <span class="panel-number">03 / Own</span>
+      <div id="claim-wrap" class="hunt-wrap" aria-label="The Claim"></div>
+      <p class="panel-body">
+        See something? DM us on Instagram. Every transaction is personal.
+        No cart, no algorithm — just you, us, and the piece.
+      </p>
+      <a href="drops.html" class="panel-link">Current drop</a>
+    </article>
+
+  </section>
+
+  <!-- ═══════════════════════════════
+       FOOTER
+  ═══════════════════════════════ -->
+  <footer id="footer">
+    <span class="footer-copy">Ossuary Atelier © 2026</span>
+    <div class="footer-links">
+      <a href="tos.html">TOS</a>
+    </div>
+    <a href="https://www.instagram.com/ossuary.atelier/"
+       target="_blank" rel="noopener"
+       class="footer-ig" aria-label="Instagram">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      @ossuaryatelier
+    </a>
+  </footer>
+
+  <!-- ── SCRIPTS ── -->
+  <!-- Lenis smooth scroll -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+    }
+  </script>
+  <script src="js/nav.js"></script>
+  <script src="js/target-cursor.js"></script>
+  <script src="js/background.js"></script>
+  <script src="js/index.js"></script>
+
+</body>
+</html>

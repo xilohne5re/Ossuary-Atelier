@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service — Ossuary Atelier</title>
+  <meta name="description" content="Ossuary Atelier purchase terms — payment, shipping, returns policy, and condition disclosure for all orders.">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void:       #080810;
+      --void-deep:  #04040a;
+      --violet:     #C9B8E8;
+      --violet-dim: #A898C8;
+      --bruise:     #4B2D7A;
+      --bruise-mid: #6B3DAA;
+      --mid:        #1C1828;
+      --faint:      #2A2440;
+      --font-d: 'Cinzel', serif;
+      --font-b: 'Cormorant Garamond', serif;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; }
+
+    body {
+      background: var(--void);
+      color: var(--violet);
+      font-family: var(--font-b);
+      font-weight: 300;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--violet); text-decoration: none; transition: opacity 0.2s; }
+    a:hover { opacity: 0.7; }
+
+    ::selection { background: var(--bruise); color: var(--violet); }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--void); }
+    ::-webkit-scrollbar-thumb { background: var(--bruise); }
+
+    /* Grain */
+    body::after {
+      content: '';
+      position: fixed; inset: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 9000;
+    }
+
+    /* ── TOP BAR ── */
+    #topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      background: rgba(8,8,16,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(201,184,232,0.06);
+      z-index: 100;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .topbar-eye { width: 30px; height: 19px; }
+
+    .topbar-name {
+      font-family: var(--font-d);
+      font-weight: 900;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      color: var(--violet);
+      line-height: 1;
+    }
+    .topbar-name span {
+      display: block;
+      font-weight: 400;
+      font-size: 0.48rem;
+      letter-spacing: 0.45em;
+      color: var(--violet-dim);
+      margin-top: 2px;
+    }
+
+    .topbar-back {
+      font-family: var(--font-d);
+      font-size: 0.52rem;
+      letter-spacing: 0.35em;
+      color: var(--violet-dim);
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .topbar-back:hover { color: var(--violet); opacity: 1; }
+
+    /* ── PAGE WRAPPER ── */
+    #page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: calc(52px + 5rem) 2rem 6rem;
+    }
+
+    /* ── HEADER ── */
+    .page-label {
+      font-family: var(--font-d);
+      font-size: 0.55rem;
+      letter-spacing: 0.55em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .page-label::before {
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--bruise-mid);
+    }
+
+    .page-title {
+      font-family: var(--font-d);
+      font-weight: 900;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      color: var(--violet);
+      margin-bottom: 0.6rem;
+    }
+
+    .page-updated {
+      font-family: var(--font-b);
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--violet-dim);
+      margin-bottom: 3rem;
+    }
+
+    /* ── RULE ── */
+    .rule {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, var(--faint), transparent);
+      margin-bottom: 3rem;
+    }
+
+    /* ── INTRO ── */
+    .intro {
+      font-family: var(--font-b);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--violet);
+      line-height: 1.8;
+      margin-bottom: 3.5rem;
+      padding-left: 1.25rem;
+      border-left: 2px solid var(--bruise);
+    }
+
+    /* ── SECTION ── */
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section-num {
+      font-family: var(--font-d);
+      font-size: 0.52rem;
+      letter-spacing: 0.5em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-family: var(--font-d);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--violet);
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--faint);
+    }
+
+    .section-body {
+      font-family: var(--font-b);
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      line-height: 1.8;
+    }
+
+    .section-body p { margin-bottom: 0.75rem; }
+    .section-body p:last-child { margin-bottom: 0; }
+
+    .section-body strong {
+      color: var(--violet);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* Highlighted policy note */
+    .policy-note {
+      background: var(--mid);
+      border: 1px solid var(--faint);
+      border-left: 3px solid var(--bruise-mid);
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-family: var(--font-b);
+      font-size: 1rem;
+      color: var(--violet);
+      line-height: 1.7;
+    }
+
+    .policy-note.final-sale {
+      border-left-color: #E05555;
+      background: #100808;
+    }
+
+    /* ── CONTACT BLOCK ── */
+    .contact-block {
+      background: var(--mid);
+      border: 1px solid var(--faint);
+      padding: 1.5rem 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .contact-icon {
+      flex-shrink: 0;
+      width: 36px; height: 22px;
+      opacity: 0.7;
+    }
+
+    .contact-text {
+      font-family: var(--font-b);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--violet-dim);
+      line-height: 1.65;
+    }
+
+    .contact-text a {
+      color: var(--violet);
+      font-style: normal;
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-color: var(--bruise-mid);
+      text-underline-offset: 3px;
+    }
+
+    /* ── FOOTER RULE + NOTE ── */
+    .page-footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--faint);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-family: var(--font-d);
+      font-size: 0.52rem;
+      letter-spacing: 0.4em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-family: var(--font-d);
+      font-size: 0.52rem;
+      letter-spacing: 0.35em;
+      color: var(--violet-dim);
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--violet); opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <a href="index.html" class="topbar-brand" aria-label="Ossuary Atelier">
+      <div class="topbar-eye">
+        <svg viewBox="-90 -58 180 116" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%" aria-hidden="true">
+          <path d="M -72 0 C -52 -48, 52 -48, 72 0 C 52 48, -52 48, -72 0 Z" fill="#C9B8E8"/>
+          <ellipse cx="0" cy="0" rx="46" ry="36" fill="#080810"/>
+          <circle cx="0" cy="0" r="36" fill="none" stroke="#C9B8E8" stroke-width="2.2"/>
+          <circle cx="0" cy="0" r="18" fill="#C9B8E8"/>
+          <circle cx="0" cy="0" r="10" fill="#080810"/>
+          <circle cx="0" cy="0" r="5.5" fill="none" stroke="#C9B8E8" stroke-width="1.6"/>
+          <g stroke="#C9B8E8" stroke-linecap="round">
+            <line x1="-36" y1="-30" x2="-44" y2="-50" stroke-width="2"/>
+            <line x1="0"   y1="-44" x2="0"   y2="-64" stroke-width="2.2"/>
+            <line x1="36"  y1="-30" x2="44"  y2="-50" stroke-width="2"/>
+          </g>
+          <line x1="-72" y1="0" x2="-84" y2="0" stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+          <line x1="-84" y1="-6" x2="-84" y2="6" stroke="#C9B8E8" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="72"  y1="0" x2="84"  y2="0" stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+          <line x1="84"  y1="-6" x2="84"  y2="6" stroke="#C9B8E8" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="topbar-name">
+        OSSUARY
+        <span>ATELIER</span>
+      </div>
+    </a>
+    <a href="contact.html" class="topbar-back">← Back</a>
+  </div>
+
+  <!-- PAGE CONTENT -->
+  <div id="page">
+
+    <div class="page-label">Legal</div>
+    <h1 class="page-title">Terms of<br>Service</h1>
+    <p class="page-updated">Last updated: May 2026 · Applies to all purchases made through Ossuary Atelier</p>
+
+    <div class="rule"></div>
+
+    <p class="intro">
+      If you are interested in collaborating or partnering with us — for
+      wholesale, content partnerships, or archive collaborations —
+      please read our partnership agreement first.
+      <strong>You can find it here: <a href="partnership.html">partnership terms</a>.</strong>
+      We work with people who care about the story as much as we do.
+    </p>
+
+    <!-- 01 COMMUNICATION -->
+    <div class="section">
+      <div class="section-num">01</div>
+      <div class="section-title">Official Communication Channel</div>
+      <div class="section-body">
+        <p>
+          All purchases, enquiries, and order communications take place exclusively
+          via <strong>Instagram Direct Message</strong> at
+          <strong><a href="https://www.instagram.com/ossuary.atelier/" target="_blank" rel="noopener">@ossuary.atelier</a></strong>.
+          This is the only official channel. No transaction is confirmed until
+          you have received a written confirmation from us over DM.
+        </p>
+        <div class="policy-note">
+          If you have a question about an item, a complaint, or a concern after
+          purchase — DM us. We respond within 24 hours. Do not attempt to resolve
+          issues through Instagram comments or third-party platforms.
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 PAYMENT -->
+    <div class="section">
+      <div class="section-num">02</div>
+      <div class="section-title">Payment</div>
+      <div class="section-body">
+        <p>
+          Payment is required in full before the item is packaged or dispatched.
+          Accepted payment methods will be confirmed over DM at the time of purchase
+          — currently we accept <strong>bank transfer (Thailand)</strong> and
+          <strong>PromptPay</strong>. Payment details are shared privately via DM only.
+        </p>
+        <p>
+          An item is <strong>not reserved</strong> until payment is received and confirmed.
+          If payment is not received within <strong>48 hours</strong> of a purchase
+          being agreed over DM, the item returns to available stock without notice.
+        </p>
+        <p>
+          All prices are listed in <strong>Thai Baht (฿)</strong>. Shipping cost,
+          if applicable, is confirmed before payment is requested.
+        </p>
+      </div>
+    </div>
+
+    <!-- 03 SHIPPING -->
+    <div class="section">
+      <div class="section-num">03</div>
+      <div class="section-title">Shipping & Delivery</div>
+      <div class="section-body">
+        <p>
+          Orders are packaged and dispatched within <strong>3–5 business days</strong>
+          of confirmed payment. You will receive a tracking number via DM once your
+          order has been handed to the carrier.
+        </p>
+        <p>
+          We currently ship within <strong>Thailand</strong>. International shipping
+          may be available on request — ask over DM before purchasing. Any additional
+          costs for international delivery will be disclosed and agreed before payment.
+        </p>
+        <p>
+          Delivery timelines after dispatch depend on the carrier and destination.
+          Ossuary Atelier is not responsible for delays caused by the postal service,
+          customs processing, or incorrect addresses provided by the buyer.
+          <strong>Please confirm your shipping address carefully before purchase is finalised.</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- 04 CONDITION -->
+    <div class="section">
+      <div class="section-num">04</div>
+      <div class="section-title">Item Condition & Disclosure</div>
+      <div class="section-body">
+        <p>
+          Every item sold by Ossuary Atelier is <strong>pre-owned vintage or secondhand clothing</strong>.
+          All items are inspected, cleaned, and photographed before listing.
+          Condition is disclosed honestly on each item's listing and story page —
+          including any flaws, repairs, or signs of age.
+        </p>
+        <p>
+          By purchasing, you acknowledge that you have read the item description
+          and accept that vintage and secondhand garments carry the natural
+          characteristics of age and prior use. Minor inconsistencies in colour,
+          texture, and construction are inherent to the nature of the pieces we sell —
+          they are not defects.
+        </p>
+        <div class="policy-note">
+          Measurements are provided for every item. It is the buyer's responsibility
+          to check measurements against their own body before purchasing.
+          We are happy to answer any questions about fit, fabric, or condition over DM
+          before you commit.
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 RETURNS -->
+    <div class="section">
+      <div class="section-num">05</div>
+      <div class="section-title">Returns & Exchanges</div>
+      <div class="section-body">
+        <div class="policy-note final-sale">
+          <strong>All sales are final.</strong> We do not accept returns or offer
+          exchanges on vintage or secondhand items. Once payment is confirmed
+          and the item is dispatched, the sale is complete.
+        </div>
+        <p>
+          We take condition disclosure seriously and describe every item
+          accurately and in detail. If you have any doubts about a piece —
+          its condition, measurements, or suitability — please ask us over DM
+          <em>before</em> purchasing. We would rather answer twenty questions
+          than have a buyer receive something that doesn't work for them.
+        </p>
+        <p>
+          The only exception to the no-returns policy is if an item arrives
+          in a condition that is <strong>materially and significantly different</strong>
+          from how it was described in the listing — for example, undisclosed
+          damage that was present before dispatch. In that case, contact us
+          via DM within <strong>48 hours of delivery</strong> with photographs,
+          and we will assess the situation and respond within 24 hours.
+          Resolution may include a partial refund or store credit at our discretion.
+        </p>
+      </div>
+    </div>
+
+    <!-- 06 ARCHIVE ITEMS -->
+    <div class="section">
+      <div class="section-num">06</div>
+      <div class="section-title">Archive Items & QR Story Tags</div>
+      <div class="section-body">
+        <p>
+          Certain items are designated as <strong>Archive</strong> pieces — items
+          with verified provenance, unusual labels, or significant story value.
+          These items include a QR hangtag linking to a dedicated story page
+          documenting the item's origin, era, and history.
+        </p>
+        <p>
+          The story page is a permanent record of what we know about the piece
+          up to the point of sale. It will remain live after purchase.
+          Buyers are welcome to share their own chapter of the item's life
+          with us — we may feature it on the story page or our blog
+          with permission — but there is no obligation to do so.
+        </p>
+        <p>
+          Please preserve the QR hangtag when possible. It is part of what
+          makes the piece an Archive item.
+        </p>
+      </div>
+    </div>
+
+    <!-- 07 CONTACT -->
+    <div class="section">
+      <div class="section-num">07</div>
+      <div class="section-title">Questions & Contact</div>
+      <div class="section-body">
+        <p>
+          If anything in these terms is unclear, or if you have a question
+          about an order, item, or policy — reach out. We are a small brand
+          and we handle everything personally.
+        </p>
+        <div class="contact-block">
+          <div class="contact-icon" aria-hidden="true">
+            <svg viewBox="-90 -58 180 116" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+              <path d="M -72 0 C -52 -48, 52 -48, 72 0 C 52 48, -52 48, -72 0 Z" fill="#C9B8E8"/>
+              <ellipse cx="0" cy="0" rx="46" ry="36" fill="#1C1828"/>
+              <circle cx="0" cy="0" r="18" fill="#C9B8E8"/>
+              <circle cx="0" cy="0" r="10" fill="#1C1828"/>
+            </svg>
+          </div>
+          <div class="contact-text">
+            DM us on Instagram at
+            <a href="https://www.instagram.com/ossuary.atelier/" target="_blank" rel="noopener">@ossuary.atelier</a>.
+            We respond within 24 hours. For order-specific issues, please have
+            your item ID and order date ready when you message.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE FOOTER -->
+    <div class="page-footer">
+      <span class="footer-copy">Ossuary Atelier © 2026 · Thailand</span>
+      <a href="tos.html">TOS</a>
+        <a href="drops.html">Shop</a>
+        <a href="contact.html">Contact</a>
+        <a href="about.html">About</a>
+      </div>
+    </div>
+
+  </div><!-- /page -->
+
+</body>
+</html>
