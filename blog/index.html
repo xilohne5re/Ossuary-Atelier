@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Osteology — Ossuary Atelier</title>
+  <meta name="description" content="Ossuary Atelier's field journal — thrift guides, sourcing notes, and the study of found things.">
+  <meta property="og:title" content="The Osteology — Ossuary Atelier">
+  <meta property="og:description" content="Ossuary Atelier's field journal — thrift guides, sourcing notes, and the study of found things.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://ossuaryatelier.github.io/blog/index.html">
+  <link rel="preload" href="../js/nav.js" as="script">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/nav.css">
+  <style>
+    /* — Blog Index Hero — */
+    #blog-hero {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: calc(var(--nav-height) + 8vh) 8vw 6vh;
+      position: relative;
+    }
+
+    #blog-hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      height: 12vh;
+      background: linear-gradient(to bottom, var(--faint), transparent);
+    }
+
+    .blog-heading {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(3rem, 10vw, 7rem);
+      letter-spacing: 0.15em;
+      color: var(--violet);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .blog-subtitle {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      color: var(--violet-dim);
+      max-width: 520px;
+      margin-top: 1.5rem;
+      line-height: 1.7;
+    }
+
+    /* — Filter Pills — */
+    #filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 3rem 8vw;
+      flex-wrap: wrap;
+    }
+
+    .filter-pill {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--violet-dim);
+      background: transparent;
+      border: 1px solid var(--faint);
+      padding: 0.75rem 1.75rem;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .filter-pill:hover {
+      border-color: var(--bruise-mid);
+      color: var(--violet);
+    }
+
+    .filter-pill.active {
+      background: var(--bruise);
+      border-color: var(--bruise);
+      color: var(--void);
+    }
+
+    /* — Post Grid — */
+    #post-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      padding: 0 8vw 8vh;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .post-card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--faint);
+      padding: 2rem;
+      transition: all 0.4s var(--ease-out);
+      text-decoration: none;
+      position: relative;
+      min-height: 280px;
+    }
+
+    .post-card:hover {
+      border-color: var(--bruise-mid);
+      transform: translateY(-4px);
+    }
+
+    .post-card.hidden {
+      display: none;
+    }
+
+    .post-card.coming-soon {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .post-card.coming-soon::after {
+      content: 'COMING SOON';
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      font-family: var(--font-display);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--faint);
+    }
+
+    .post-category {
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .post-category.guide { color: #56CCF2; }
+    .post-category.field-notes { color: #E8A020; }
+    .post-category.archive { color: var(--violet); }
+
+    .post-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      color: var(--violet);
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+
+    .post-desc {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--violet);
+      font-weight: 400;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .post-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--violet-dim);
+      text-transform: uppercase;
+      border-top: 1px solid var(--faint);
+      padding-top: 1rem;
+    }
+
+    .post-read {
+      color: var(--violet);
+      font-weight: 700;
+    }
+
+    /* — Footer — */
+    #footer {
+      border-top: 1px solid var(--violet-faint);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+    }
+
+    .footer-ig {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      color: var(--violet-dim);
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .footer-ig:hover { color: var(--violet); }
+
+    @media (max-width: 768px) {
+      #post-grid { grid-template-columns: 1fr; }
+      #footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="page-transition"></div>
+  <div id="cursor"></div>
+  <div id="cursor-trail"></div>
+
+  <nav id="nav">
+    <a href="../index.html" class="nav-logo">
+      <div class="nav-logo-eye"></div>
+      <div class="nav-logo-text">OSSUARY<span>ATELIER</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../drops.html">Drops</a></li>
+      <li><a href="../story.html">The Story</a></li>
+      <li><a href="../contact.html">Contact</a></li>
+      <li><a href="index.html" class="active">Journal</a></li>
+    </ul>
+    <button class="nav-burger"><span></span><span></span><span></span></button>
+  </nav>
+  <div id="nav-overlay">
+    <a href="../index.html">Home</a>
+    <a href="../about.html">About</a>
+    <a href="../drops.html">Drops</a>
+    <a href="../story.html">The Story</a>
+    <a href="../contact.html">Contact</a>
+    <a href="index.html">Journal</a>
+  </div>
+
+  <section id="blog-hero">
+    <h1 class="blog-heading">The Osteology</h1>
+    <p class="blog-subtitle">Ossuary Atelier's field journal — thrift guides, sourcing notes, and the study of found things.</p>
+  </section>
+
+  <div id="filter-bar">
+    <button class="filter-pill active" data-filter="all">All</button>
+    <button class="filter-pill" data-filter="guide">Guide</button>
+    <button class="filter-pill" data-filter="field-notes">Field Notes</button>
+    <button class="filter-pill" data-filter="archive">Archive</button>
+  </div>
+
+  <div id="post-grid">
+    <a href="guide/index.html" class="post-card" data-category="guide">
+      <span class="post-category guide">Guide</span>
+      <h2 class="post-title">The Thrift Guide: Phuket</h2>
+      <p class="post-desc">An ongoing guide to the secondhand shops where Ossuary Atelier sources its pieces.</p>
+      <div class="post-meta">
+        <span>Dec 2025</span>
+        <span class="post-read">3 min read</span>
+      </div>
+    </a>
+
+    <a href="guide/waanwaal-phuket.html" class="post-card" data-category="guide">
+      <span class="post-category guide">Guide</span>
+      <h2 class="post-title">Waanwaal, Phuket</h2>
+      <p class="post-desc">The shop where ITEM-005 was found. A reliable Phuket find with Japanese imports surfacing regularly.</p>
+      <div class="post-meta">
+        <span>Dec 2025</span>
+        <span class="post-read">5 min read</span>
+      </div>
+    </a>
+
+    <a href="#" class="post-card coming-soon" data-category="guide">
+      <span class="post-category guide">Guide</span>
+      <h2 class="post-title">O-WA Second Hand, Phuket</h2>
+      <p class="post-desc">Where the Michiko Koshino dress came from. A dense, well-stocked shop worth visiting on weekday mornings.</p>
+      <div class="post-meta">
+        <span>Coming</span>
+        <span class="post-read">—</span>
+      </div>
+    </a>
+
+    <a href="field-notes/chatuchak-nov-24.html" class="post-card" data-category="field-notes">
+      <span class="post-category field-notes">Field Notes</span>
+      <h2 class="post-title">Chatuchak, November 2024</h2>
+      <p class="post-desc">Four hours in and nothing. Then a face-down Glad News hoodie on a folding table between sections 5 and 6.</p>
+      <div class="post-meta">
+        <span>Nov 2024</span>
+        <span class="post-read">6 min read</span>
+      </div>
+    </a>
+
+    <a href="#" class="post-card coming-soon" data-category="archive">
+      <span class="post-category archive">Archive</span>
+      <h2 class="post-title">Coming Soon</h2>
+      <p class="post-desc">Deep dives, brand histories, and the study of found things.</p>
+      <div class="post-meta">
+        <span>—</span>
+        <span class="post-read">—</span>
+      </div>
+    </a>
+  </div>
+
+  <footer id="footer">
+    <span class="footer-copy">Ossuary Atelier © 2026</span>
+    <div class="footer-links">
+      <a href="../tos.html">TOS</a>
+    </div>
+    <a href="https://www.instagram.com/ossuary.atelier/" target="_blank" rel="noopener" class="footer-ig">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      @ossuaryatelier
+    </a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    if (typeof gsap !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+  </script>
+  <script src="../js/nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const pills = document.querySelectorAll('.filter-pill');
+      const cards = document.querySelectorAll('.post-card');
+
+      const animateCards = (cardsToShow, cardsToHide) => {
+        cardsToHide.forEach(card => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(10px)';
+          setTimeout(() => card.classList.add('hidden'), 300);
+        });
+
+        setTimeout(() => {
+          cardsToShow.forEach((card, index) => {
+            card.classList.remove('hidden');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+              card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, index * 80);
+          });
+        }, 300);
+      };
+
+      pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          const filter = pill.dataset.filter;
+          if (pill.classList.contains('active')) return;
+
+          pills.forEach(p => {
+            p.classList.remove('active');
+            p.style.transition = 'all 0.3s ease';
+          });
+          pill.classList.add('active');
+
+          const cardsToShow = [];
+          const cardsToHide = [];
+
+          cards.forEach(card => {
+            const category = card.dataset.category;
+            if (filter === 'all' || category === filter) {
+              if (card.classList.contains('hidden')) cardsToShow.push(card);
+            } else {
+              cardsToHide.push(card);
+            }
+          });
+
+          animateCards(cardsToShow, cardsToHide);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
