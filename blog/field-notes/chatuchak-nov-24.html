@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatuchak, November 2024 — Field Notes</title>
+  <meta name="description" content="Four hours in and nothing. Then a face-down Glad News hoodie on a folding table between sections 5 and 6.">
+  <meta property="og:title" content="Chatuchak, November 2024 — Field Notes">
+  <meta property="og:description" content="Four hours in and nothing. Then a face-down Glad News hoodie on a folding table between sections 5 and 6.">
+  <meta property="og:type" content="article">
+  <link rel="canonical" href="https://ossuaryatelier.github.io/blog/field-notes/chatuchak-nov-24.html">
+  <link rel="preload" href="../../js/nav.js" as="script">
+  <link rel="stylesheet" href="../../css/base.css">
+  <link rel="stylesheet" href="../../css/nav.css">
+  <style>
+    /* — Field Note Header — */
+    #note-header {
+      padding: calc(var(--nav-height) + 10vh) 8vw 4vh;
+      text-align: center;
+      position: relative;
+    }
+
+    #note-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      height: 8vh;
+      background: linear-gradient(to bottom, var(--faint), transparent);
+    }
+
+    .note-category {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: #E8A020;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .note-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      letter-spacing: 0.08em;
+      color: var(--violet);
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .note-meta {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .note-date,
+    .note-location {
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--faint);
+      text-transform: uppercase;
+    }
+
+    /* — Content Column — */
+    #note-body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 4rem 8vw 6rem;
+    }
+
+    .note-prose {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--violet);
+      line-height: 1.9;
+      margin-bottom: 3rem;
+    }
+
+    .note-prose p {
+      margin-bottom: 1.5rem;
+    }
+
+    .note-section {
+      margin-bottom: 2.5rem;
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      line-height: 1.8;
+    }
+
+    .found-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--violet);
+      text-transform: uppercase;
+      text-decoration: none;
+      border-bottom: 1px solid var(--bruise-mid);
+      padding-bottom: 2px;
+      transition: all 0.3s;
+    }
+
+    .found-link:hover {
+      color: var(--bruise-mid);
+      border-color: var(--violet);
+    }
+
+    /* — Comment Prompt — */
+    .comment-prompt {
+      margin-top: 5rem;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      border-left: 2px solid var(--bruise);
+    }
+
+    .comment-prompt-label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .comment-prompt p {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      margin: 0;
+    }
+
+    /* — Footer — */
+    #footer {
+      border-top: 1px solid var(--violet-faint);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+    }
+
+    .footer-ig {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      color: var(--violet-dim);
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .footer-ig:hover { color: var(--violet); }
+
+    /* — Comment Form — */
+    .comment-form input[name="_gotcha"] {
+      display: none;
+    }
+
+    .comment-form {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 500px;
+    }
+
+    .comment-form input,
+    .comment-form textarea {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--violet);
+      background: var(--mid);
+      border: 1px solid var(--faint);
+      padding: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .comment-form input::placeholder,
+    .comment-form textarea::placeholder {
+      color: var(--faint);
+    }
+
+    .comment-form input:focus,
+    .comment-form textarea:focus {
+      border-color: var(--bruise-mid);
+    }
+
+    .comment-form textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-submit {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--void);
+      background: var(--violet);
+      border: none;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      align-self: flex-start;
+    }
+
+    .form-submit:hover {
+      background: var(--bruise-mid);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      #footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Chatuchak, November 2024",
+      "description": "Four hours in and nothing. Then a face-down Glad News hoodie on a folding table between sections 5 and 6.",
+      "datePublished": "2024-11-10",
+      "author": {
+        "@type": "Organization",
+        "name": "Ossuary Atelier"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Ossuary Atelier",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://ossuaryatelier.github.io/assets/logo.png"
+        }
+      },
+      "image": "https://ossuaryatelier.github.io/assets/blog/placeholder.jpg"
+    }
+  </script>
+
+  
+</head>
+<body>
+  <div id="page-transition"></div>
+  <div id="cursor"></div>
+  <div id="cursor-trail"></div>
+
+  <nav id="nav">
+    <a href="../../index.html" class="nav-logo">
+      <div class="nav-logo-eye"></div>
+      <div class="nav-logo-text">OSSUARY<span>ATELIER</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../../about.html">About</a></li>
+      <li><a href="../../drops.html">Drops</a></li>
+      <li><a href="../../story.html">The Story</a></li>
+      <li><a href="../../contact.html">Contact</a></li>
+      <li><a href="../index.html">Journal</a></li>
+    </ul>
+    <button class="nav-burger"><span></span><span></span><span></span></button>
+  </nav>
+  <div id="nav-overlay">
+    <a href="../../index.html">Home</a>
+    <a href="../../about.html">About</a>
+    <a href="../../drops.html">Drops</a>
+    <a href="../../story.html">The Story</a>
+    <a href="../../contact.html">Contact</a>
+    <a href="../index.html">Journal</a>
+  </div>
+
+  <header id="note-header">
+    <span class="note-category">Field Notes</span>
+    <h1 class="note-title">Chatuchak, November 2024</h1>
+    <div class="note-meta">
+      <span class="note-date">November 10, 2024</span>
+      <span class="note-location">Chatuchak Weekend Market · Bangkok</span>
+    </div>
+  </header>
+
+  <article id="note-body">
+    <div class="note-prose">
+      <p>I was done. Four hours into Chatuchak on a Sunday in November, the kind of heat that makes the air taste like dust and fried garlic, and I had nothing.</p>
+
+      <p>To be fair, nothing good — just the usual: faded band tees from bands that broke up a decade ago, tourist rayon in colors no one has worn since 1997, a scattering of 200-baht牛仔裤 that smelled like they'd been stored in a flooded basement. I'd started at section 6, worked my way through 7, 8, 26, zigzagged up toward 34, and by noon I was carrying a plastic bag with exactly one item: an unremarkable navy button-down, 150 baht, from a stack where the owner was napping in a lawn chair.</p>
+
+      <p>Then, between sections 5 and 6, there's this narrow corridor of folding tables that nobody seems to own. Just tables shoved together with stuff piled on them — damaged stock, overstock, returns from some warehouse somewhere. Most of it is junk. But I stopped because I saw a skull.</p>
+
+      <p>Not a real skull. A print. A Glad News hoodie, navy blue, screen-printed in white on the chest. Face-down on the table, half-covered under a pile of knockoff Nike socks. I picked it up and almost put it back, because I thought it was another of those ironic graphic hoodies that tourists buy and abandon. But the weight was wrong. Too heavy. This wasn't 200-baht garbage.</p>
+
+      <p>It was 100% cotton, thick, ring-spun. The kind of heavy cotton that doesn't exist anymore, the kind that feels like it was made in a different era. And the print — the skull was detailed, not some mass-produced vector. It had texture. I turned it over and saw the neck label: Glad News, est. 1988, Osaka, Japan. A Japanese streetwear brand from the late 90s, the real deal, the kind that barely exists anymore outside of depachika and a few select shops in Harajuku.</p>
+
+      <p>I didn't haggle. I paid the 300 baht the old woman behind the table asked for and left. By that point the heat had gotten to where I couldn't think straight, so I stopped at a stall selling coconut juice and sat in the shade for twenty minutes, just holding the bag, trying to process what had just happened.</p>
+
+      <p>That's the thing about Chatuchak. You can go eight hours with nothing, and then one item, one single piece on one table in one corridor, makes the whole day worth it.</p>
+    </div>
+
+    <a href="../../ITEM-006.html" class="found-link">The piece I found that day →</a>
+
+    <div class="comment-prompt">
+      <span class="comment-prompt-label">Leave a note</span>
+      <p>Been here? Found something? Have something to say about this piece or this place — write it below. We read everything.</p>
+    </div>
+
+    <form class="comment-form" id="comment-form" action="https://formspree.io/f/xdayzjqv" method="POST">
+      <input type="text" name="_gotcha" style="display:none">
+      <input type="hidden" name="page" value="Chatuchak, November 2024">
+      <div class="form-group">
+        <input type="text" name="name" placeholder="Your name" required>
+      </div>
+      <div class="form-group">
+        <input type="email" name="email" placeholder="Your email (won't be published)" required>
+      </div>
+      <div class="form-group">
+        <textarea name="message" placeholder="Write your note..." rows="4" required></textarea>
+      </div>
+      <button type="submit" class="form-submit">Submit Note</button>
+    </form>
+
+  </article>
+
+  <footer id="footer">
+    <span class="footer-copy">Ossuary Atelier © 2026</span>
+    <div class="footer-links">
+      <a href="../../tos.html">TOS</a>
+    </div>
+    <a href="https://www.instagram.com/ossuary.atelier/" target="_blank" rel="noopener" class="footer-ig">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      @ossuaryatelier
+    </a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    if (typeof gsap !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+  </script>
+  <script src="../../js/nav.js"></script>
+</body>
+</html>
