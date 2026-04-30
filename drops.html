@@ -7,11 +7,12 @@
   <meta name="description" content="Current and archived pieces from Ossuary Atelier. Each item carries a QR-verified story.">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/index.css">
   <link rel="stylesheet" href="css/target-cursor.css">
+  <link rel="stylesheet" href="css/mobile.css" media="screen and (max-width: 768px)">
   <link rel="preload" href="js/nav.js" as="script">
   <link rel="preload" href="js/background.js" as="script">
   <style>
-
     /* ── DROPS HEADER ── */
     #drops-header {
       padding: calc(var(--nav-height) + 8vh) 6vw 6vh;
@@ -33,13 +34,6 @@
       line-height: 1;
     }
 
-    .drops-meta {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.5rem;
-    }
-
     .drops-count {
       font-family: var(--font-display);
       font-size: 3rem;
@@ -54,6 +48,35 @@
       font-size: 1.05rem;
       color: var(--violet-dim);
     }
+
+    /* Responsive Header */
+    @media (max-width: 768px) {
+      #drops-header {
+        padding: calc(var(--nav-height) + 5vh) 5vw 4vh;
+        gap: 1rem;
+      }
+      .drops-title { font-size: clamp(1.75rem, 12vw, 3rem); }
+      .drops-count { font-size: 2rem; }
+      .drops-date { font-size: 0.9rem; }
+    }
+
+    /* ── FILTER BAR ── */
+    #filter-bar {
+      padding: 1.5rem 6vw;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--violet-faint);
+      position: sticky;
+      top: var(--nav-height);
+      background: rgba(8,8,16,0.92);
+      backdrop-filter: blur(16px);
+      z-index: 10;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #filter-bar::-webkit-scrollbar { display: none; }
+    .filter-pill { flex-shrink: 0; }
 
     /* ── FILTER BAR ── */
     #filter-bar {
@@ -81,6 +104,7 @@
       background: transparent;
       cursor: pointer;
       transition: color 0.3s, border-color 0.3s, background 0.3s;
+      position: relative;
     }
 
     .filter-pill.active,
@@ -90,11 +114,81 @@
       background: rgba(75,45,122,0.15);
     }
 
+    .filter-pill[data-filter="relics"]::after {
+      content: "Documented, verified and story-rich pieces";
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-display);
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--violet);
+      background: rgba(28,24,40,0.95);
+      border: 1px solid rgba(201,184,232,0.25);
+      padding: 0.5rem 0.75rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .filter-pill[data-filter="relics"]:hover::after {
+      opacity: 1;
+    }
+
+/* ── ITEM CARD RELIC STAR ── */
+    .item-relic-star {
+      position: absolute;
+      top: 37px;
+      right: 48px;
+      font-size: 42px;
+      color: #4B2D7A;
+      z-index: 5;
+      cursor: help;
+      line-height: 1;
+      -webkit-text-stroke: 2px #C9B8E8;
+      transition: color 0.3s, transform 0.3s;
+    }
+
+    .item-relic-star::after {
+      content: "Story-rich Relic Item";
+      position: absolute;
+      top: calc(100% + 10px);
+      right: -10px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: #1C1828;
+      border: 1px solid #4B2D7A;
+      padding: 8px 14px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s, visibility 0.25s;
+      z-index: 99;
+      color: #C9B8E8;
+    }
+
+    .item-relic-star:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .item-card.relic:hover .item-relic-star {
+      color: #fff;
+      transform: scale(1.15);
+    }
+
     /* ── DROPS GRID ── */
     #drops-grid {
       padding: 5vh 5vw;
-      columns: 3 280px;
-      column-gap: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
     }
 
     /* ── ITEM CARD ── */
@@ -111,6 +205,29 @@
       opacity: 0;
       transform: translateY(30px);
       animation: card-in 0.6s var(--ease-out) forwards;
+    }
+
+    /* Relic card ornamental frame */
+    .item-card.relic {
+      border-color: rgba(201,184,232,0.35);
+      box-shadow: 
+        0 0 0 1px rgba(201,184,232,0.15),
+        inset 0 0 30px rgba(75,45,122,0.08);
+    }
+    .item-card.relic::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background-image: url('assets/images/border_overlay.png');
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      z-index: 3;
+    }
+    .item-card.relic:hover::before {
+      opacity: 0;
     }
 
     .item-card:nth-child(2) { animation-delay: 0.07s; }
@@ -134,12 +251,13 @@
 
     /* ── PHOTO ── */
     .item-photo-wrap {
+      position: relative;
+      z-index: 2;
       width: 100%;
       aspect-ratio: 3/4;
       overflow: hidden;
       transition: transform 0.5s var(--ease-out);
       background: var(--void);
-      position: relative;
     }
 
     .item-photo-wrap img {
@@ -167,6 +285,7 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
+      z-index: 5;
     }
 
     .item-card.sold .sold-label {
@@ -186,6 +305,8 @@
 
     /* ── CARD BODY ── */
     .item-body {
+      position: relative;
+      z-index: 4;
       padding: 1.25rem 1.25rem 1rem;
     }
 
@@ -196,6 +317,9 @@
       color: var(--bruise-mid);
       text-transform: uppercase;
       margin-bottom: 0.5rem;
+      background: var(--midnight);
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
     }
 
     .item-name {
@@ -207,6 +331,9 @@
       text-transform: uppercase;
       line-height: 1.3;
       margin-bottom: 0.3rem;
+      background: var(--midnight);
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
     }
 
     .item-era {
@@ -215,6 +342,9 @@
       font-size: 1rem;
       color: var(--violet-dim);
       margin-bottom: 1rem;
+      background: var(--midnight);
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
     }
 
     .item-footer {
@@ -231,9 +361,14 @@
       font-size: 1rem;
       letter-spacing: 0.05em;
       color: var(--violet);
+      background: var(--midnight);
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
     }
 
     .item-eye-btn {
+      position: relative;
+      z-index: 2;
       width: 32px; height: 20px;
       opacity: 0.4;
       transition: opacity 0.3s, transform 0.3s var(--ease-out);
@@ -404,10 +539,36 @@
     }
     .footer-ig:hover { color: var(--violet); }
 
-    @media (max-width: 600px) {
-      #claim-modal-box { grid-template-columns: 1fr; }
-      .modal-photo { aspect-ratio: 4/3; }
+    @media (max-width: 768px) {
+      #drops-grid { grid-template-columns: repeat(2, 1fr); }
+      .item-name { font-size: 1.5rem; }
+      .drops-count { font-size: 2rem; }
+      /* Disable tilt on mobile - hover doesn't exist */
+      .item-card:nth-child(odd)  .item-photo-wrap,
+      .item-card:nth-child(even) .item-photo-wrap { transform: none; }
     }
+    @media (max-width: 600px) {
+      #drops-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .item-name { font-size: 1.35rem; }
+      .item-body { padding: 0.9rem 1rem 0.75rem; }
+      .item-price { font-size: 0.9rem; }
+      /* Modal */
+      #claim-modal { padding: 1rem; }
+      #claim-modal-box { grid-template-columns: 1fr; max-width: 100%; }
+      .modal-photo { aspect-ratio: 4/3; }
+      .modal-content { padding: 1.5rem 1.25rem; }
+      .modal-name { font-size: 1.1rem; }
+      .modal-price { font-size: 1.2rem; }
+      /* Filter Bar */
+      #filter-bar { padding: 1rem 5vw; gap: 0.5rem; }
+      .filter-pill { font-size: 0.65rem; padding: 0.5rem 1rem; }
+      /* Mobile touch fixes */
+      .item-card:active { transform: scale(0.985); }
+      .item-relic-star { opacity: 0.8; }
+      /* Keep relic overlay visible on tap (hover triggers on touch) */
+      .item-card.relic:hover::before { opacity: 1; }
+    }
+    
   </style>
 </head>
 <body>
@@ -426,18 +587,19 @@
     </a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
+      <li><a href="craft.html">Our Craft</a></li>
       <li><a href="drops.html">Drops</a></li>
-      <li><a href="story.html">The Story</a></li>
       <li><a href="contact.html">Contact</a></li>
       <li><a href="blog/index.html">Journal</a></li>
     </ul>
     <button class="nav-burger"><span></span><span></span><span></span></button>
   </nav>
   <div id="nav-overlay">
-    <a href="index.html">Home</a><a href="about.html">About</a>
-    <a href="drops.html">Drops</a><a href="story.html">The Story</a>
-    <a href="contact.html">Contact</a><a href="blog/index.html">Journal</a>
+    <a href="index.html">Home</a>
+    <a href="craft.html">Our Craft</a>
+    <a href="drops.html">Drops</a>
+    <a href="contact.html">Contact</a>
+    <a href="blog/index.html">Journal</a>
   </div>
 
   <!-- ── HEADER ── -->
@@ -453,6 +615,7 @@
   <div id="filter-bar" role="group" aria-label="Filter items">
     <button class="filter-pill active" data-filter="all">All</button>
     <button class="filter-pill" data-filter="available">Available</button>
+    <button class="filter-pill" data-filter="relics">Relics</button>
     <button class="filter-pill" data-filter="sold">Claimed</button>
   </div>
 
@@ -546,6 +709,39 @@
         storyUrl: 'ITEM-006.html',
         photo: 'assets/images/ITEM-006.png'
       },
+      {
+        id: 'ITEM-002',
+        name: 'Pronti Checkered Fringe',
+        era: 'Early 2000s · Italy · Black/Golden Jacquard',
+        desc: 'A jeweled fringe long-sleeve with gold thread woven through black check. Heavy drape, structured shoulder.',
+        size: 'L / Chest 54cm / Length 78cm',
+        price: '฿850',
+        status: 'available',
+        storyUrl: '',
+        photo: 'assets/images/ITEM-002.png'
+      },
+      {
+        id: 'ITEM-003',
+        name: 'Gusendi Denim',
+        era: 'Mid 1990s · Japan · Dark-Medium Wash',
+        desc: 'Classic five-pocket jeans with a clean wash. Minimal fading, original buttons intact.',
+        size: 'W34 / L32',
+        price: '฿550',
+        status: 'available',
+        storyUrl: '',
+        photo: 'assets/images/ITEM-003.png'
+      },
+      {
+        id: 'ITEM-004',
+        name: 'Neon Lime Text Shirt',
+        era: 'Late 1980s · USA · Self-Referential Print',
+        desc: 'Bright neon lime oversized shirt with ironic self-referential text across the back. Bold statement piece.',
+        size: 'XL / Chest 60cm / Length 76cm',
+        price: '฿450',
+        status: 'available',
+        storyUrl: '',
+        photo: 'assets/images/ITEM-004.png'
+      },
     ];
 
     let currentFilter = 'all';
@@ -571,7 +767,9 @@
       const grid = document.getElementById('drops-grid');
       grid.innerHTML = '';
       const filtered = filter === 'all' ? ITEMS :
-                       ITEMS.filter(i => filter === 'sold' ? i.status === 'sold' : i.status === 'available');
+                       filter === 'relics' ? ITEMS.filter(i => !!i.storyUrl) :
+                       filter === 'sold' ? ITEMS.filter(i => i.status === 'sold') :
+                       ITEMS.filter(i => i.status === 'available');
 
       if (filtered.length === 0) {
         grid.innerHTML = '<p class="no-items">No items in this category yet.</p>';
@@ -580,10 +778,14 @@
 
       filtered.forEach((item, idx) => {
         const card = document.createElement('article');
-        card.className = `item-card ${item.status === 'sold' ? 'sold' : ''}`;
+        const isRelic = !!item.storyUrl;
+        card.className = `item-card ${item.status === 'sold' ? 'sold' : ''}${isRelic ? ' relic' : ''}`;
         card.style.animationDelay = `${idx * 0.07}s`;
         card.setAttribute('data-id', item.id);
         card.innerHTML = `
+          ${isRelic ? `
+            <div class="item-relic-star">★</div>
+          ` : ''}
           <div class="item-photo-wrap">
             <img src="${item.photo}" alt="${item.name}"
                  loading="lazy"
@@ -633,7 +835,8 @@
       document.getElementById('modal-desc-el').textContent = item.desc;
       document.getElementById('modal-meas-el').textContent = item.size;
       document.getElementById('modal-price-el').textContent = item.price;
-      document.getElementById('modal-story-btn').href = item.storyUrl;
+      document.getElementById('modal-story-btn').href = item.storyUrl || '#';
+      document.getElementById('modal-story-btn').style.display = item.storyUrl ? 'flex' : 'none';
       document.getElementById('claim-modal').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
