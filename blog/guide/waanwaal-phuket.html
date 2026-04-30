@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waanwaal, Phuket — The Thrift Guide</title>
+  <meta name="description" content="317 Saensook Soi 2, Phuket Town. Curated vintage and thrifted clothing with a strong women's selection.">
+  <meta property="og:title" content="Waanwaal, Phuket — The Thrift Guide">
+  <meta property="og:description" content="A reliable Phuket find with Japanese imports surfacing regularly.">
+  <meta property="og:type" content="article">
+  <link rel="canonical" href="https://ossuaryatelier.github.io/blog/guide/waanwaal-phuket.html">
+  <link rel="preload" href="../../js/nav.js" as="script">
+  <link rel="stylesheet" href="../../css/base.css">
+  <link rel="stylesheet" href="../../css/nav.css">
+  <style>
+    /* — Shop Header — */
+    #shop-header {
+      padding: calc(var(--nav-height) + 10vh) 8vw 4vh;
+      text-align: center;
+      position: relative;
+    }
+
+    .shop-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(2.5rem, 7vw, 4.5rem);
+      letter-spacing: 0.1em;
+      color: var(--violet);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .shop-meta {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .shop-tag {
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--faint);
+    }
+
+    /* — Content Column — */
+    #shop-body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 4rem 8vw 6rem;
+    }
+
+    .shop-prose {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--violet);
+      line-height: 1.85;
+      margin-bottom: 3rem;
+    }
+
+    .shop-section {
+      margin-bottom: 3rem;
+      border-left: 2px solid var(--bruise);
+      padding-left: 1.5rem;
+    }
+
+    .shop-section h3 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .shop-section p {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--violet-dim);
+      line-height: 1.7;
+    }
+
+    .shop-section ul {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .shop-section li {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--violet-dim);
+      line-height: 1.7;
+      margin-bottom: 0.5rem;
+    }
+
+    .found-here {
+      display: inline-block;
+      margin-top: 1rem;
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--violet);
+      text-transform: uppercase;
+      text-decoration: none;
+      border-bottom: 1px solid var(--bruise-mid);
+      padding-bottom: 2px;
+      transition: all 0.3s;
+    }
+
+    .found-here:hover {
+      color: var(--bruise-mid);
+      border-color: var(--violet);
+    }
+
+    .found-here-block {
+      background: var(--mid);
+      border: 1px solid var(--faint);
+      padding: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .found-here-block p {
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--violet-dim);
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    /* — Comment Prompt — */
+    .comment-prompt {
+      margin-top: 5rem;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      border-left: 2px solid var(--bruise);
+    }
+
+    .comment-prompt-label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .comment-prompt p {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      margin: 0;
+    }
+
+    /* — Footer — */
+    #footer {
+      border-top: 1px solid var(--violet-faint);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+    }
+
+    .footer-ig {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      color: var(--violet-dim);
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .footer-ig:hover { color: var(--violet); }
+
+    /* — Comment Form — */
+    .comment-form input[name="_gotcha"] {
+      display: none;
+    }
+
+    .comment-form {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 500px;
+    }
+
+    .comment-form input,
+    .comment-form textarea {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--violet);
+      background: var(--mid);
+      border: 1px solid var(--faint);
+      padding: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .comment-form input::placeholder,
+    .comment-form textarea::placeholder {
+      color: var(--faint);
+    }
+
+    .comment-form input:focus,
+    .comment-form textarea:focus {
+      border-color: var(--bruise-mid);
+    }
+
+    .comment-form textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-submit {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--void);
+      background: var(--violet);
+      border: none;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      align-self: flex-start;
+    }
+
+    .form-submit:hover {
+      background: var(--bruise-mid);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      #footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Waanwaal, Phuket",
+      "description": "The shop where ITEM-005 Spinash polo was found. A reliable Phuket find with Japanese imports surfacing regularly.",
+      "datePublished": "2025-12-23",
+      "author": {
+        "@type": "Organization",
+        "name": "Ossuary Atelier"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Ossuary Atelier",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://ossuaryatelier.github.io/assets/logo.png"
+        }
+      },
+      "image": "https://ossuaryatelier.github.io/assets/blog/placeholder.jpg"
+    }
+</script>
+
+</head>
+<body>
+  <div id="page-transition"></div>
+  <div id="cursor"></div>
+  <div id="cursor-trail"></div>
+
+  <nav id="nav">
+    <a href="../../index.html" class="nav-logo">
+      <div class="nav-logo-eye"></div>
+      <div class="nav-logo-text">OSSUARY<span>ATELIER</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../../craft.html">Our Craft</a></li>
+      <li><a href="../../drops.html">Drops</a></li>
+      <li><a href="../../contact.html">Contact</a></li>
+      <li><a href="../index.html">Journal</a></li>
+    </ul>
+    <button class="nav-burger"><span></span><span></span><span></span></button>
+  </nav>
+  <div id="nav-overlay">
+    <a href="../../index.html">Home</a>
+    <a href="../../craft.html">Our Craft</a>
+    <a href="../../drops.html">Drops</a>
+    <a href="../../contact.html">Contact</a>
+    <a href="../index.html">Journal</a>
+  </div>
+
+  <header id="shop-header">
+    <h1 class="shop-title">Waanwaal</h1>
+    <div class="shop-meta">
+      <span class="shop-tag">Phuket</span>
+      <span class="shop-tag">Secondhand</span>
+      <span class="shop-tag">Clothing</span>
+    </div>
+  </header>
+
+  <article id="shop-body">
+    <p class="shop-prose">
+      We found ITEM-005 here on December 23rd, 2025. A Spinash polo in pristine condition, buried under a stack.
+      That's the thing about Waanwaal — you have to dig, but the good stuff is there. Located in a quiet soi off the main road, it's the kind of place you stumble into and leave with a bag.
+    </p>
+
+    <div class="shop-section">
+      <h3>Location</h3>
+      <p>317 Saensook Soi 2, Phuket Town, Phuket 83000</p>
+      <p style="margin-top: 0.75rem; font-size: 0.9rem;">
+        <a href="https://www.instagram.com/waanwaal/" target="_blank" rel="noopener" style="color: var(--violet); text-decoration: underline;">Instagram</a> · 
+        <a href="https://www.facebook.com/wanwan.sapanhin/" target="_blank" rel="noopener" style="color: var(--violet); text-decoration: underline;">Facebook</a>
+      </p>
+    </div>
+
+    <div class="shop-section">
+      <h3>What to Expect</h3>
+      <p>A carefully curated mixture of vintage and thrifted clothing and accessories. The women's section is particularly strong, with a rotation that leans into the local skate scene aesthetic.</p>
+      <p style="margin-top: 0.75rem;">Vintage items carry a premium, but the pieces here earn their price — unique, well-preserved finds with actual character.</p>
+    </div>
+
+    <div class="shop-section">
+      <h3>The Owners</h3>
+      <p>The duo behind Waanwaal are approachable, style-conscious, and happy to help you navigate the collection. Don't be afraid to ask — they're a great resource for discovering pieces you might have missed.</p>
+    </div>
+
+    <div class="shop-section">
+      <h3>Price Range</h3>
+      <p>฿100 – ฿1,000+</p>
+    </div>
+
+    <div class="shop-section found-here-block">
+      <h3>Found Here</h3>
+      <p>This piece is now part of the permanent Ossuary Atelier record.</p>
+      <a href="../../ITEM-005.html" class="found-here">View ITEM-005 Spinash Polo →</a>
+    </div>
+
+    <div class="comment-prompt">
+      <span class="comment-prompt-label">Leave a note</span>
+      <p>Been here? Found something? Leave a note below — we read everything.</p>
+    </div>
+
+    <form class="comment-form" id="comment-form" action="https://formspree.io/f/xdayzjqv" method="POST">
+      <input type="text" name="_gotcha" style="display:none">
+      <input type="hidden" name="page" value="Waanwaal, Phuket">
+      <div class="form-group">
+        <input type="text" name="name" placeholder="Your name" required>
+      </div>
+      <div class="form-group">
+        <input type="email" name="email" placeholder="Your email (won't be published)" required>
+      </div>
+      <div class="form-group">
+        <textarea name="message" placeholder="Write your note..." rows="4" required></textarea>
+      </div>
+      <button type="submit" class="form-submit">Submit Note</button>
+    </form>
+
+  </article>
+
+  <footer id="footer">
+    <span class="footer-copy">Ossuary Atelier © 2026</span>
+    <div class="footer-links">
+      <a href="../../tos.html">TOS</a>
+    </div>
+    <a href="https://www.instagram.com/ossuary.atelier/" target="_blank" rel="noopener" class="footer-ig">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      @ossuaryatelier
+    </a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    if (typeof gsap !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+  </script>
+  <script src="../../js/nav.js"></script>
+</body>
+</html>
