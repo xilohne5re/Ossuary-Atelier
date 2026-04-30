@@ -14,11 +14,86 @@ class InteractiveBackground {
     this.lastMouseMove = 0;
     this.devicePixelRatio = window.devicePixelRatio || 1;
     this.isLowPerformance = this.detectLowPerformance();
+    this.connectionsEnabled = true; // Toggle for connections
 
     this.setupCanvas();
     this.generateRandomDots();
     this.attachEventListeners();
+    this.createToggleButton(); // Add toggle button
     this.animate();
+  }
+
+  createToggleButton() {
+    const btn = document.createElement('button');
+    btn.className = 'connections-toggle';
+    btn.textContent = 'Lines: ON';
+    btn.setAttribute('title', 'Toggle connection lines');
+    btn.onclick = () => {
+      this.connectionsEnabled = !this.connectionsEnabled;
+      btn.textContent = this.connectionsEnabled ? 'Lines: ON' : 'Lines: OFF';
+    };
+    document.body.appendChild(btn);
+    this.toggleBtn = btn;
+    this.setupToggleVisibility();
+  }
+
+  setupToggleVisibility() {
+    let lastScrollY = 0;
+    let hideTimeout = null;
+    const showButton = () => {
+      if (!this.toggleBtn) return;
+      this.toggleBtn.style.transition = 'opacity 0.3s, transform 0.3s';
+      this.toggleBtn.style.opacity = '1';
+      this.toggleBtn.style.transform = 'translateY(0)';
+    };
+    const hideButton = () => {
+      if (!this.toggleBtn) return;
+      this.toggleBtn.style.transition = 'opacity 0.3s, transform 0.3s';
+      this.toggleBtn.style.opacity = '0';
+      this.toggleBtn.style.transform = 'translateY(-20px)';
+    };
+
+    // Scroll hide on mobile
+    let scrollCheckInterval = null;
+    const isMobile = () => window.innerWidth <= 768;
+    window.addEventListener('scroll', () => {
+      if (!isMobile()) {
+        showButton();
+        return;
+      }
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        hideButton();
+      } else {
+        showButton();
+      }
+      lastScrollY = currentScrollY;
+      if (hideTimeout) clearTimeout(hideTimeout);
+      hideTimeout = setTimeout(() => {
+        if (isMobile()) hideButton();
+      }, 2000);
+    }, { passive: true });
+
+    // Hide when modal opens
+    const modal = document.getElementById('claim-modal');
+    if (modal) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'class') {
+            if (modal.classList.contains('open') && isMobile()) {
+              hideButton();
+            } else if (isMobile()) {
+              showButton();
+            }
+          }
+        });
+      });
+      observer.observe(modal, { attributes: true });
+    }
+  }
+
+  toggleConnections() {
+    this.connectionsEnabled = !this.connectionsEnabled;
   }
 
   detectLowPerformance() {
@@ -79,6 +154,15 @@ class InteractiveBackground {
 
     document.addEventListener('mousemove', throttledMouseMove);
 
+    // Click/Tap explosion effect - desktop click or mobile touch end
+    document.addEventListener('click', (e) => this.triggerExplosion(e.clientX, e.clientY));
+    document.addEventListener('touchend', (e) => {
+      if (e.changedTouches.length === 1) {
+        const touch = e.changedTouches[0];
+        this.triggerExplosion(touch.clientX, touch.clientY);
+      }
+    }, { passive: true });
+
     document.addEventListener('mouseleave', () => {
       this.dots.forEach(dot => dot.connected = false);
     });
@@ -101,6 +185,74 @@ class InteractiveBackground {
       if (heroVisibility > 0) {
         this.targetGridOpacity = 0.08 * (1 - heroVisibility);
       }
+    }
+  }
+
+  triggerExplosion(x, y) {
+    // Progressive click system
+    this.clickCount = (this.clickCount || 0) + 1;
+    const timeSinceLastClick = Date.now() - (this.lastClickTime || 0);
+    this.lastClickTime = Date.now();
+    
+    // Reset progress if clicked too slowly (more than 1 second)
+    if (timeSinceLastClick > 1000) {
+      this.clickCount = 1;
+    }
+    
+    // Max progress cap - need 10 clicks for mega explosion
+    const progress = Math.min(this.clickCount, 10);
+    
+    // Calculate explosion size based on progress
+    const baseParticles = this.isLowPerformance ? 4 : 8;
+    const particleCount = baseParticles + (progress * 2);
+    const baseSpeed = 2 + (progress * 0.8);
+    
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (Math.PI * 2 * i) / particleCount + Math.random() * 0.5;
+      const speed = baseSpeed + Math.random() * 3;
+      const size = 0.5 + (progress * 0.15);
+      
+      this.dots.push({
+        x: x,
+        y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        opacity: 1,
+        decay: 0.015 + Math.random() * 0.015,
+        pulsePhase: Math.random() * Math.PI * 2,
+        flicker: Math.random(),
+        strength: size,
+        isExplosion: true,
+        isWave: progress >= 10 // Mega explosion flag
+      });
+    }
+    
+    // Trigger mega wave when reaching 10 clicks
+    if (progress >= 10) {
+      this.clickCount = 0;
+      this.triggerMegaWave(x, y);
+    }
+  }
+
+  triggerMegaWave(centerX, centerY) {
+    // Create expanding wave from click location
+    for (let i = 0; i < 60; i++) {
+      const angle = (Math.PI * 2 * i) / 60;
+      const speed = 8 + Math.random() * 4;
+      
+      this.dots.push({
+        x: centerX,
+        y: centerY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        opacity: 1,
+        decay: 0.008,
+        pulsePhase: Math.random() * Math.PI * 2,
+        flicker: Math.random(),
+        strength: 2.5,
+        isExplosion: true,
+        isWave: true
+      });
     }
   }
 
@@ -147,15 +299,35 @@ class InteractiveBackground {
   }
 
   drawConnections() {
+    // Skip if toggle is off
+    if (this.connectionsEnabled === false) return;
+    
+    // Skip when too many particles for performance
+    const explosionCount = this.dots.filter(d => d.isExplosion).length;
+    if (explosionCount > 150) return;
+    
+    const connectionDistFactor = 0.9; // Increased for more visible connections
+    
     this.dots.forEach(dot => dot.connected = false);
     const activeConnections = new Set();
 
     this.dots.forEach(dot => {
-      if (dot.opacity < 0.1) return; // Skip low opacity dots
+      if (dot.opacity < 0.1) return;
+      
+      // Mega wave - use lower distance (0.3x), skip 50%
+      let useWaveDistance = false;
+      if (dot.isExplosion && dot.isWave) {
+        if (Math.random() > 0.5) return;
+        useWaveDistance = true;
+      } else if (dot.isExplosion) {
+        if (Math.random() > 0.5) return;
+      }
 
+      const distFactor = useWaveDistance ? 0.3 : connectionDistFactor;
+      
       const flicker = Math.sin(this.time * 0.08 + dot.flicker * 10) * 0.3 + 0.7;
       const effectiveStrength = dot.strength * flicker * dot.opacity;
-      const connectionDistance = this.baseConnectionDistance * (0.6 + effectiveStrength * 0.8);
+      const connectionDistance = this.baseConnectionDistance * distFactor * (0.6 + effectiveStrength * 0.8);
 
       const distToMouse = Math.hypot(dot.x - this.mouseX, dot.y - this.mouseY);
       if (distToMouse < connectionDistance * 0.7) {
@@ -163,17 +335,19 @@ class InteractiveBackground {
 
         this.dots.forEach(otherDot => {
           if (dot === otherDot || otherDot.opacity < 0.1) return;
+          if (otherDot.isExplosion && !otherDot.isWave && Math.random() > 0.5) return;
+          
           const dist = Math.hypot(dot.x - otherDot.x, dot.y - otherDot.y);
 
           const flicker2 = Math.sin(this.time * 0.08 + otherDot.flicker * 10) * 0.3 + 0.7;
           const effectiveStr2 = otherDot.strength * flicker2 * otherDot.opacity;
           const avgStrength = (effectiveStrength + effectiveStr2) / 2;
-          const maxConnectDist = this.baseConnectionDistance * (0.6 + avgStrength * 0.8);
+          const maxConnectDist = this.baseConnectionDistance * distFactor * (0.6 + avgStrength * 0.8);
 
           if (dist < maxConnectDist && otherDot.connected) {
             const connectionKey = [this.dots.indexOf(dot), this.dots.indexOf(otherDot)].sort().join('-');
             if (!activeConnections.has(connectionKey)) {
-              this.drawLine(dot, otherDot, dist, avgStrength);
+              this.drawLine(dot, otherDot, dist, avgStrength, this.baseConnectionDistance * connectionDistFactor);
               activeConnections.add(connectionKey);
             }
           }
@@ -182,8 +356,8 @@ class InteractiveBackground {
     });
   }
 
-  drawLine(dot1, dot2, distance, avgStrength) {
-    const maxConnectDist = this.baseConnectionDistance * (0.6 + avgStrength * 0.8);
+  drawLine(dot1, dot2, distance, avgStrength, baseConnectDist) {
+    const maxConnectDist = baseConnectDist * (0.6 + avgStrength * 0.8);
     const alpha = (1 - (distance / maxConnectDist)) * (0.5 + avgStrength * 0.5);
 
     const violetIntensity = avgStrength;
@@ -246,6 +420,28 @@ class InteractiveBackground {
     this.drawConnections();
 
     this.dots = this.dots.filter(dot => {
+      // Update explosion particles
+      if (dot.isExplosion) {
+        dot.x += dot.vx;
+        dot.y += dot.vy;
+        
+        // Wave particles move faster and fade slower
+        if (dot.isWave) {
+          dot.vx *= 0.985;
+          dot.vy *= 0.985;
+          dot.opacity -= dot.decay * 0.5;
+        } else {
+          dot.vx *= 0.94;
+          dot.vy *= 0.94;
+          dot.opacity -= dot.decay;
+        }
+        
+        dot.pulsePhase += 0.04;
+        this.drawDot(dot);
+        return dot.opacity > 0;
+      }
+      
+      // Normal particle logic
       dot.currentLife++;
       const lifeProgress = dot.currentLife / dot.lifespan;
 
