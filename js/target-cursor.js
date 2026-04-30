@@ -122,16 +122,18 @@
     const isButton = target.tagName === 'BUTTON';
     const isBurger = target.classList.contains('nav-burger');
     const isItemCard = target.classList.contains('item-card');
+    const insideItemCard = target.closest('.item-card');
 
-    if (!isLink && !isButton && !isBurger && !isItemCard) return;
+    if (!isLink && !isButton && !isBurger && !isItemCard && !insideItemCard) return;
     if (!cursor || !corners.length) return;
-    if (activeTarget === target) return;
+    if (activeTarget === target && !insideItemCard) return;
 
     if (activeTarget && currentLeaveHandler) {
       activeTarget.removeEventListener('mouseleave', currentLeaveHandler);
     }
 
-    activeTarget = target;
+    const effectiveTarget = insideItemCard || target;
+    activeTarget = effectiveTarget;
     isTargeting = true;
 
     corners.forEach(c => gsap.killTweensOf(c));
