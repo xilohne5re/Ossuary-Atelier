@@ -229,9 +229,13 @@ document.addEventListener('DOMContentLoaded', () => {
       tl.kill();
       gsap.set(heroEye, { scale: 0.85, opacity: 0 });
       requestAnimationFrame(() => {
-        setTimeout(() => createHeroShatter(), 30);
+        if (instant) {
+          animateHeadline(true);
+        } else {
+          setTimeout(() => createHeroShatter(), 30);
+          animateHeadline();
+        }
       });
-      requestAnimationFrame(() => animateHeadline());
     };
     if (instant) {
       // Jump straight to the resolved hero state (no cinematic)
@@ -288,11 +292,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ── HEADLINE WORD-BY-WORD ── */
-  function animateHeadline() {
+  function animateHeadline(instant) {
     const headline = document.getElementById('hero-headline');
     headline.style.display = 'flex';
 
-    document.querySelectorAll('.word-inner').forEach((word, i) => {
+    const words = document.querySelectorAll('.word-inner');
+    const sub = document.getElementById('hero-sub');
+
+    if (instant) {
+      // Bots / reduced-motion: resolve to the final state synchronously
+      words.forEach(word => {
+        word.style.transform = 'none';
+        word.style.opacity = '1';
+      });
+      sub && sub.classList.add('visible');
+      return;
+    }
+
+    words.forEach((word, i) => {
       gsap.to(word, {
         y: 0,
         opacity: 1,
@@ -304,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // sub + CTA
     setTimeout(() => {
-      document.getElementById('hero-sub').classList.add('visible');
+      sub && sub.classList.add('visible');
     }, 900);
   }
 

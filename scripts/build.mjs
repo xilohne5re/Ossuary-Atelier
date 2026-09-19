@@ -546,6 +546,58 @@ function stripSeoTags(html) {
   return html;
 }
 
+/* ── inline CSS (in seo slot) ─────────────────────────────────
+   Every page's <link rel="stylesheet" href="css/x.css"> tags are
+   replaced by a <style> element inside the SEO slot (the region
+   runSeo rebuilds idempotently), so zero CSS sits in the critical
+   path. The needed file list is remembered in a marker comment so
+   rebuilds recompute the styles from current css/ files (always
+   fresh) without depending on the stripped link tags. */
+const CSS_CSS_LINK_RE = /[ \t]*\r?\n?[ \t]*<link[^>]*rel="stylesheet"[^>]*href="((?:\.\.\/)*css\/([A-Za-z0-9_-]+\.css))"[^>]*>\r?\n?[ \t]*/gi;
+const CSS_FILES_MARKER = /<!-- @@CSS_FILES:([^@]+)@@ -->/;
+
+const CSS_CACHE = new Map();
+function cssContent(file) {
+  if (!CSS_CACHE.has(file)) {
+    const abs = join(ROOT, 'css', file);
+    if (!existsSync(abs)) throw new Error(`[seo] referenced css file missing: ${file}`);
+    CSS_CACHE.set(file, readFileSync(abs, 'utf8'));
+  }
+  return CSS_CACHE.get(file);
+}
+
+// file:media pairs from the page's live <link> tags (first run only)
+function gatherPageCss(html) {
+  const out = [];
+  const re = /<link[^>]*rel="stylesheet"[^>]*href="((?:\.\.\/)*css\/([A-Za-z0-9_-]+\.css))"[^>]*>/gi;
+  let m;
+  while ((m = re.exec(html))) {
+    const media = /\bmedia="([^"]*)"/.exec(m[0]);
+    out.push({ file: m[2], media: media ? media[1] : '' });
+  }
+  return out;
+}
+
+function serializeCssFiles(pairs) {
+  return pairs.map(p => p.file + ':' + p.media).join(',');
+}
+
+function deserializeCssFiles(str) {
+  return str.split(',').filter(Boolean).map(s => {
+    const i = s.indexOf(':');
+    const file = i === -1 ? s : s.slice(0, i);
+    const media = i === -1 ? '' : s.slice(i + 1);
+    return { file, media };
+  });
+}
+
+function renderInlineCss(pairs) {
+  return pairs.map(p => {
+    const css = cssContent(p.file);
+    return p.media ? `@media ${p.media} {\n${css}\n}` : css;
+  }).join('\n');
+}
+
 function runSeo(report) {
   gate('seo');
   const files = walkHtml(ROOT);
@@ -587,6 +639,18 @@ function runSeo(report) {
     if (SEO_SKIP.has(rel)) continue;
     const original = readFileSync(abs, 'utf8');
     let html = original;
+
+    // Determine this page's stylesheets: persisted marker (later runs) or
+    // the live <link> tags (first run), then inline them and drop the links.
+    let cssPairs = null;
+    const cssMarker = CSS_FILES_MARKER.exec(html);
+    if (cssMarker) cssPairs = deserializeCssFiles(cssMarker[1]);
+    else cssPairs = gatherPageCss(html);
+    html = html.replace(CSS_FILES_MARKER, '');
+    html = html.replace(CSS_CSS_LINK_RE, '\n');
+    const cssInline = cssPairs.length
+      ? `  <!-- @@CSS_FILES:${serializeCssFiles(cssPairs)}@@ -->\n  <style>\n${renderInlineCss(cssPairs)}\n  </style>\n`
+      : '';
 
     const titleMatch = /<title>([\s\S]*?)<\/title>/i.exec(html);
     const title = titleMatch ? titleMatch[1].trim() : rel;
@@ -643,6 +707,7 @@ function runSeo(report) {
       `  <link rel="icon" type="image/svg+xml" href="${root}assets/favicon.svg">\n` +
       `  <link rel="apple-touch-icon" href="${root}assets/apple-touch-icon.png">\n` +
       `${preloads}` +
+      `${cssInline}` +
       `${noindex}\n` +
       `<!-- @@SEO_END@@ -->`;
 
@@ -698,6 +763,55 @@ function runFonts(report) {
     }
   }
   log(`[fonts] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 Google Fonts stripped`);
+}
+
+/* ── js step ──────────────────────────────────────────────────
+   Moves every script off the critical path:
+   • adds defer to each external <script src="...">
+   • wraps parse-time inline gsap.registerPlugin(ScrollTrigger) in
+     a DOMContentLoaded listener (deferred GSAP is not available at
+     parse time)
+   • drops redundant <link rel="preload" ... as="script"> hints
+   Idempotent: each transform self-terminates on repeat runs. */
+function runJs(report) {
+  gate('js');
+  const files = walkHtml(ROOT);
+  let changed = 0;
+
+  const scriptSrcRe = /<script\s+([^>]*\bsrc="[^"]+")>/g;
+  const scriptPreloadRe = /[ \t]*\r?\n?[ \t]*<link[^>]*rel="preload"[^>]*\bas="script"[^>]*>\r?\n?[ \t]*/gi;
+  const registerPluginRe = /<script>((?!(?:<\/script>))[\s\S])*?gsap\.registerPlugin\(ScrollTrigger\);((?!(?:<\/script>))[\s\S])*?<\/script>/g;
+
+  for (const abs of files) {
+    const rel = relOf(abs);
+    const original = readFileSync(abs, 'utf8');
+    let html = original;
+
+    // 1. defer every external script
+    html = html.replace(scriptSrcRe, (m, attrs) => {
+      if (/\bdefer\b/.test(attrs)) return m;
+      return `<script ${attrs} defer>`;
+    });
+
+    // 2. drop as="script" preload hints
+    html = html.replace(scriptPreloadRe, '\n');
+
+    // 3. wrap inline registerPlugin so it runs after deferred GSAP loads
+    html = html.replace(registerPluginRe, m => {
+      if (m.includes('document.addEventListener')) return m;
+      return `<script>document.addEventListener('DOMContentLoaded', () => { if (typeof gsap !== 'undefined') gsap.registerPlugin(ScrollTrigger); });\u003c/script>`;
+    });
+
+    if (html !== original) {
+      changed++;
+      if (report) {
+        log(`  [js] ${rel} \u2014 would rewrite`);
+      } else {
+        writeFileSync(abs, html, 'utf8');
+      }
+    }
+  }
+  log(`[js] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 scripts deferred, registerPlugin in DCL`);
 }
 
 function runSitemap() {
@@ -757,10 +871,11 @@ const STEPS = {
   posts: runPosts,
   seo: runSeo,
   fonts: runFonts,
+  js: runJs,
   sitemap: runSitemap,
 };
 
-const stepOrder = ['items', 'shops', 'posts', 'partials', 'seo', 'fonts', 'links', 'sitemap'];
+const stepOrder = ['items', 'shops', 'posts', 'partials', 'seo', 'fonts', 'js', 'links', 'sitemap'];
 const toRun = opts.steps
   ? opts.steps
   : (opts.enableContent ? stepOrder : ['partials', 'links']);
