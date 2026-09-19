@@ -4,15 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Osteology — Ossuary Atelier</title>
+
+  <!-- @@SEO_SLOT@@ -->
+  <link rel="canonical" href="https://ossuaryphuket.me/Ossuary-Atelier/blog">
   <meta name="description" content="Ossuary Atelier's field journal — thrift guides, sourcing notes, and the study of found things.">
+  <meta property="og:site_name" content="Ossuary Atelier">
+  <meta property="og:locale" content="en_US">
   <meta property="og:title" content="The Osteology — Ossuary Atelier">
   <meta property="og:description" content="Ossuary Atelier's field journal — thrift guides, sourcing notes, and the study of found things.">
-  <meta property="og:type" content="website">
-  <link rel="canonical" href="https://ossuaryatelier.github.io/blog/index.html">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://ossuaryphuket.me/Ossuary-Atelier/blog">
+  <meta property="og:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
+  <meta property="og:image:alt" content="Ossuary Atelier — secondhand fashion with verified stories.">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ossuaryatelier">
+  <meta name="twitter:title" content="The Osteology — Ossuary Atelier">
+  <meta name="twitter:description" content="Ossuary Atelier's field journal — thrift guides, sourcing notes, and the study of found things.">
+  <meta name="twitter:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
+  <meta name="theme-color" content="#080810">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<!-- @@SEO_END@@ -->
   <link rel="preload" href="../js/nav.js" as="script">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/nav.css">
-  <style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+
+    <style>
     /* — Blog Index Hero — */
     #blog-hero {
       min-height: 60vh;
@@ -225,33 +248,70 @@
       #footer { flex-direction: column; gap: 1rem; text-align: center; }
     }
   </style>
-</head>
+
+  <!-- @@SITE_JSONLD_BEGIN@@ -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#website",
+      "url": "https://ossuaryphuket.me/Ossuary-Atelier/",
+      "name": "Ossuary Atelier",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#organization",
+      "url": "https://ossuaryphuket.me/Ossuary-Atelier/",
+      "name": "Ossuary Atelier",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#logo",
+        "url": "https://ossuaryphuket.me/Ossuary-Atelier/assets/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://www.instagram.com/ossuary.atelier/"
+      ]
+    }
+  ]
+}
+  </script>
+<!-- @@SITE_JSONLD_END@@ -->
+  </head>
 <body>
   <div id="page-transition"></div>
   <div id="cursor"></div>
   <div id="cursor-trail"></div>
 
-  <nav id="nav">
-    <a href="../index.html" class="nav-logo">
-      <div class="nav-logo-eye"></div>
-      <div class="nav-logo-text">OSSUARY<span>ATELIER</span></div>
-    </a>
-    <ul class="nav-links">
-      <li><a href="../index.html">Home</a></li>
-      <li><a href="../craft.html">Our Craft</a></li>
-      <li><a href="../drops.html">Drops</a></li>
-      <li><a href="../contact.html">Contact</a></li>
-      <li><a href="index.html" class="active">Journal</a></li>
-    </ul>
-    <button class="nav-burger"><span></span><span></span><span></span></button>
-  </nav>
-  <div id="nav-overlay">
-    <a href="../index.html">Home</a>
-    <a href="../craft.html">Our Craft</a>
-    <a href="../drops.html">Drops</a>
-    <a href="../contact.html">Contact</a>
-    <a href="index.html">Journal</a>
-  </div>
+  <!-- @@NAV_SLOT@@ -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <a href="../index.html" class="nav-logo" aria-label="Ossuary Atelier — Home">
+    <div class="nav-logo-eye" aria-hidden="true"></div>
+    <div class="nav-logo-text">OSSUARY<span>ATELIER</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../about.html">About</a></li>
+    <li><a href="../shop.html">Shop</a></li>
+    <li><a href="../guide/index.html">Guide</a></li>
+    <li><a href="../contact.html">Contact</a></li>
+    <li><a href="index.html">Journal</a></li>
+  </ul>
+  <button class="nav-burger" aria-label="Open navigation"><span></span><span></span><span></span></button>
+</nav>
+<div id="nav-overlay" role="dialog" aria-modal="true" aria-label="Navigation">
+  <a href="../index.html">Home</a>
+  <a href="../about.html">About</a>
+  <a href="../shop.html">Shop</a>
+  <a href="../guide/index.html">Guide</a>
+  <a href="../contact.html">Contact</a>
+  <a href="index.html">Journal</a>
+</div>
+<!-- @@NAV_END@@ -->
 
   <section id="blog-hero">
     <h1 class="blog-heading">The Osteology</h1>
@@ -317,19 +377,25 @@
     </a>
   </div>
 
-  <footer id="footer">
-    <span class="footer-copy">Ossuary Atelier © 2026</span>
-    <div class="footer-links">
-      <a href="../tos.html">TOS</a>
-    </div>
-    <a href="https://www.instagram.com/ossuary.atelier/" target="_blank" rel="noopener" class="footer-ig">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/>
-        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-      </svg>
-      @ossuaryatelier
-    </a>
-  </footer>
+  <!-- @@FOOTER_SLOT@@ -->
+<footer id="footer">
+  <span class="footer-copy">Ossuary Atelier © 2026</span>
+  <div class="footer-links">
+    <a href="../tos.html">TOS</a>
+  </div>
+  <a href="https://www.instagram.com/ossuary.atelier/"
+     target="_blank" rel="noopener"
+     class="footer-ig" aria-label="Instagram">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+    @ossuaryatelier
+  </a>
+</footer>
+<!-- @@FOOTER_END@@ -->
 
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>

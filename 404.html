@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if (location.hostname === 'ossuaryphuket.me' && !location.pathname.startsWith('/Ossuary-Atelier/')) {
+      location.replace('/Ossuary-Atelier/');
+    }
+  </script>
+  <title>404 — Not Found · Ossuary Atelier</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/base.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/mobile.css" media="screen and (max-width: 768px)">
+  <style>
+
+    #topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      background: rgba(8,8,16,0.82);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--violet-faint);
+      z-index: 100;
+      opacity: 0;
+      transform: translateY(-8px);
+      animation: bar-in 0.7s var(--ease) 0.2s forwards;
+    }
+    @keyframes bar-in { to { opacity:1; transform:translateY(0); } }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .topbar-eye {
+      width: 32px; height: 20px;
+    }
+
+    .topbar-name {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      color: var(--violet);
+      line-height: 1;
+    }
+    .topbar-name span {
+      display: block;
+      font-weight: 400;
+      font-size: 0.48rem;
+      letter-spacing: 0.45em;
+      color: var(--violet-dim);
+      margin-top: 2px;
+    }
+
+    .topbar-item-id {
+      font-family: var(--font-display);
+      font-size: 0.52rem;
+      letter-spacing: 0.4em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+    }
+
+    #error-stage {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--nav-height) + 6vh) 6vw 8vh;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .error-code {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(4rem, 14vw, 8rem);
+      line-height: 1;
+      letter-spacing: 0.08em;
+      color: var(--violet);
+      opacity: 0;
+      transform: translateY(24px);
+      animation: error-in 0.9s var(--ease-out) 0.2s forwards;
+    }
+
+    .error-eye {
+      margin: 2.5rem auto 1.5rem;
+      width: clamp(80px, 12vw, 120px);
+      opacity: 0;
+      transform: scale(0.8);
+      animation: error-in 0.9s var(--ease-out) 0.5s forwards;
+    }
+
+    .error-heading {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.45em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      opacity: 0;
+      animation: error-in 0.9s var(--ease-out) 0.7s forwards;
+    }
+
+    .error-sub {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      color: var(--violet-dim);
+      max-width: 460px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: error-in 0.9s var(--ease-out) 0.85s forwards;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      animation: error-in 0.9s var(--ease-out) 1s forwards;
+    }
+
+    .error-actions a {
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 1rem 2.25rem;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .error-actions .ea-primary {
+      color: var(--void);
+      background: var(--violet);
+    }
+    .error-actions .ea-primary:hover {
+      background: var(--bruise-mid);
+      color: var(--violet);
+      transform: translateY(-2px);
+    }
+
+    .error-actions .ea-secondary {
+      color: var(--violet);
+      border: 1px solid rgba(201, 184, 232, 0.25);
+    }
+    .error-actions .ea-secondary:hover {
+      border-color: var(--violet);
+      background: rgba(201, 184, 232, 0.06);
+    }
+
+    @keyframes error-in {
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (max-width: 480px) {
+      .error-actions { flex-direction: column; }
+    }
+
+  </style>
+</head>
+<body>
+  <!-- @@TOPBAR_SLOT@@ -->
+<div id="topbar">
+  <a href="index.html" class="topbar-brand" aria-label="Ossuary Atelier">
+    <div class="topbar-eye">
+      <svg viewBox="-90 -58 180 116" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%" aria-hidden="true">
+        <path d="M -72 0 C -52 -48,52 -48,72 0 C 52 48,-52 48,-72 0 Z" fill="#C9B8E8"/>
+        <ellipse cx="0" cy="0" rx="46" ry="36" fill="#080810"/>
+        <circle cx="0" cy="0" r="36" fill="none" stroke="#C9B8E8" stroke-width="2.2"/>
+        <circle cx="0" cy="0" r="18" fill="#C9B8E8"/>
+        <circle cx="0" cy="0" r="10" fill="#080810"/>
+        <circle cx="0" cy="0" r="5.5" fill="none" stroke="#C9B8E8" stroke-width="1.6"/>
+        <g stroke="#C9B8E8" stroke-linecap="round">
+          <line x1="-36" y1="-30" x2="-44" y2="-50" stroke-width="2"/>
+          <line x1="0"   y1="-44" x2="0"   y2="-64" stroke-width="2.2"/>
+          <line x1="36"  y1="-30" x2="44"  y2="-50" stroke-width="2"/>
+        </g>
+        <line x1="-72" y1="0" x2="-84" y2="0" stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="-84" y1="-6" x2="-84" y2="6" stroke="#C9B8E8" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="72"  y1="0" x2="84"  y2="0" stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="84"  y1="-6" x2="84"  y2="6" stroke="#C9B8E8" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="topbar-name">OSSUARY<span>ATELIER</span></div>
+  </a>
+  
+</div>
+<!-- @@TOPBAR_END@@ -->
+
+  <!-- @@NAV_SLOT@@ -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-logo" aria-label="Ossuary Atelier — Home">
+    <div class="nav-logo-eye" aria-hidden="true"></div>
+    <div class="nav-logo-text">OSSUARY<span>ATELIER</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="guide/index.html">Guide</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="blog/index.html">Journal</a></li>
+  </ul>
+  <button class="nav-burger" aria-label="Open navigation"><span></span><span></span><span></span></button>
+</nav>
+<div id="nav-overlay" role="dialog" aria-modal="true" aria-label="Navigation">
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="shop.html">Shop</a>
+  <a href="guide/index.html">Guide</a>
+  <a href="contact.html">Contact</a>
+  <a href="blog/index.html">Journal</a>
+</div>
+<!-- @@NAV_END@@ -->
+
+  <main id="error-stage">
+    <div class="error-code">404</div>
+    <div class="error-eye" aria-hidden="true">
+      <svg viewBox="-90 -58 180 116" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+        <path d="M -72 0 C -52 -48,52 -48,72 0 C 52 48,-52 48,-72 0 Z" fill="#C9B8E8"/>
+        <ellipse cx="0" cy="0" rx="46" ry="36" fill="#1C1828"/>
+        <circle cx="0" cy="0" r="36" fill="none" stroke="#C9B8E8" stroke-width="2.2"/>
+        <circle cx="0" cy="0" r="18" fill="#C9B8E8"/>
+        <circle cx="0" cy="0" r="10" fill="#1C1828"/>
+        <circle cx="0" cy="0" r="5.5" fill="none" stroke="#C9B8E8" stroke-width="1.6"/>
+        <line x1="-72" y1="0" x2="-86" y2="0" stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="-86" y1="-7" x2="-86" y2="7" stroke="#C9B8E8" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="72"  y1="0" x2="86"  y2="0" stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="86"  y1="-7" x2="86"  y2="7" stroke="#C9B8E8" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="error-heading">This piece isn't here</h1>
+    <p class="error-sub">Sold, moved, or never existed — whatever the case, the page you're looking for is gone.</p>
+    <div class="error-actions">
+      <a href="index.html" class="ea-primary">Return Home</a>
+      <a href="shop.html" class="ea-secondary">Browse the Shop</a>
+    </div>
+  </main>
+
+  <!-- @@FOOTER_SLOT@@ -->
+<footer id="footer">
+  <span class="footer-copy">Ossuary Atelier © 2026</span>
+  <div class="footer-links">
+    <a href="tos.html">TOS</a>
+  </div>
+  <a href="https://www.instagram.com/ossuary.atelier/"
+     target="_blank" rel="noopener"
+     class="footer-ig" aria-label="Instagram">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+    @ossuaryatelier
+  </a>
+</footer>
+<!-- @@FOOTER_END@@ -->
+
+  <script src="js/nav.js" defer></script>
+</body>
+</html>

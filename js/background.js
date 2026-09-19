@@ -1,4 +1,4 @@
-// Interactive Geometric Background
+// Interactive Geometric Background — performance-capped
 class InteractiveBackground {
   constructor() {
     this.canvas = document.getElementById('background-canvas');
@@ -9,28 +9,57 @@ class InteractiveBackground {
     this.baseConnectionDistance = 150;
     this.animationId = null;
     this.time = 0;
-    this.gridOpacity = 0.08;
-    this.targetGridOpacity = 0.08;
+    this.gridOpacity = 0.03;
+    this.targetGridOpacity = 0.03;
     this.lastMouseMove = 0;
     this.devicePixelRatio = window.devicePixelRatio || 1;
     this.isLowPerformance = this.detectLowPerformance();
-    this.connectionsEnabled = true; // Toggle for connections
+    this.animationsEnabled = true; // Master toggle for all background animation
+    this.maxDots = this.isLowPerformance ? 40 : 70;
+    this.MAX_EXPLOSION_DOTS = this.isLowPerformance ? 40 : 120;
+    this.visible = true;
 
     this.setupCanvas();
     this.generateRandomDots();
+    this.buildGlowSprite();
     this.attachEventListeners();
     this.createToggleButton(); // Add toggle button
+    this.trackVisibility();
     this.animate();
+  }
+
+  buildGlowSprite() {
+    // Pre-render a single violet radial glow, reused via drawImage —
+    // avoids creating a new gradient per dot per frame.
+    const size = 64;
+    const sprite = document.createElement('canvas');
+    sprite.width = size;
+    sprite.height = size;
+    const sctx = sprite.getContext('2d');
+    const g = sctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    g.addColorStop(0, 'rgba(201, 184, 232, 0.42)');
+    g.addColorStop(1, 'rgba(201, 184, 232, 0)');
+    sctx.fillStyle = g;
+    sctx.fillRect(0, 0, size, size);
+    this.glowSprite = sprite;
+    this.glowPx = size;
+  }
+
+  trackVisibility() {
+    // Pause entirely while the tab is hidden.
+    document.addEventListener('visibilitychange', () => {
+      this.tabVisible = !document.hidden;
+    });
+    this.tabVisible = !document.hidden;
   }
 
   createToggleButton() {
     const btn = document.createElement('button');
-    btn.className = 'connections-toggle';
-    btn.textContent = 'Lines: ON';
-    btn.setAttribute('title', 'Toggle connection lines');
+    btn.className = 'background-toggle';
+    btn.textContent = 'Background: ON';
+    btn.setAttribute('title', 'Toggle background animations');
     btn.onclick = () => {
-      this.connectionsEnabled = !this.connectionsEnabled;
-      btn.textContent = this.connectionsEnabled ? 'Lines: ON' : 'Lines: OFF';
+      this.toggleAnimations();
     };
     document.body.appendChild(btn);
     this.toggleBtn = btn;
@@ -54,7 +83,6 @@ class InteractiveBackground {
     };
 
     // Scroll hide on mobile
-    let scrollCheckInterval = null;
     const isMobile = () => window.innerWidth <= 768;
     window.addEventListener('scroll', () => {
       if (!isMobile()) {
@@ -92,15 +120,28 @@ class InteractiveBackground {
     }
   }
 
-  toggleConnections() {
-    this.connectionsEnabled = !this.connectionsEnabled;
+  toggleAnimations() {
+    this.animationsEnabled = !this.animationsEnabled;
+    if (this.toggleBtn) {
+      this.toggleBtn.textContent = this.animationsEnabled ? 'Background: ON' : 'Background: OFF';
+    }
+    if (!this.animationsEnabled) {
+      this.clearCanvas();
+    }
+  }
+
+  clearCanvas() {
+    const w = this.canvas.width / this.devicePixelRatio;
+    const h = this.canvas.height / this.devicePixelRatio;
+    this.ctx.clearRect(0, 0, w, h);
   }
 
   detectLowPerformance() {
     // Simple heuristic: check for mobile or low-end devices
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const hasLowMemory = navigator.deviceMemory && navigator.deviceMemory < 4;
-    return isMobile || hasLowMemory || window.innerWidth < 768;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    return reducedMotion || isMobile || hasLowMemory || window.innerWidth < 768;
   }
 
   setupCanvas() {
@@ -120,26 +161,28 @@ class InteractiveBackground {
 
   generateRandomDots() {
     this.dots = [];
-    const area = this.canvas.width * this.canvas.height / (this.devicePixelRatio * this.devicePixelRatio);
-    const baseDotCount = Math.ceil(area / 4000);
-    const dotCount = this.isLowPerformance ? Math.max(50, baseDotCount * 0.5) : baseDotCount;
+    const areaW = this.canvas.width / this.devicePixelRatio;
+    const areaH = this.canvas.height / this.devicePixelRatio;
+    const baseDotCount = Math.ceil((areaW * areaH) / 16000);
+    const dotCount = Math.min(this.maxDots, Math.max(30, baseDotCount));
 
     for (let i = 0; i < dotCount; i++) {
-      const strength = Math.random();
-      const lifespan = 150 + Math.random() * 200;
-      this.dots.push({
-        x: Math.random() * (this.canvas.width / this.devicePixelRatio),
-        y: Math.random() * (this.canvas.height / this.devicePixelRatio),
-        strength: strength,
-        pulsePhase: Math.random() * Math.PI * 2,
-        connected: false,
-        baseStrength: strength,
-        lifespan: lifespan,
-        currentLife: 0,
-        opacity: 0,
-        flicker: Math.random()
-      });
+      this.dots.push(this.newBackgroundDot());
     }
+  }
+
+  newBackgroundDot() {
+    return {
+      x: Math.random() * (this.canvas.width / this.devicePixelRatio),
+      y: Math.random() * (this.canvas.height / this.devicePixelRatio),
+      strength: Math.random(),
+      pulsePhase: Math.random() * Math.PI * 2,
+      connected: false,
+      lifespan: 150 + Math.random() * 200,
+      currentLife: 0,
+      opacity: 0,
+      flicker: Math.random()
+    };
   }
 
   attachEventListeners() {
@@ -167,12 +210,12 @@ class InteractiveBackground {
       this.dots.forEach(dot => dot.connected = false);
     });
 
-    window.addEventListener('scroll', () => this.updateGridOpacity());
+    window.addEventListener('scroll', () => this.updateGridOpacity(), { passive: true });
   }
 
   updateGridOpacity() {
     const heroSection = document.getElementById('hero');
-    this.targetGridOpacity = 0.08;
+    this.targetGridOpacity = 0.03;
 
     if (heroSection) {
       const heroRect = heroSection.getBoundingClientRect();
@@ -183,50 +226,55 @@ class InteractiveBackground {
       const heroVisibility = Math.min(heroStart, heroEnd, 1);
 
       if (heroVisibility > 0) {
-        this.targetGridOpacity = 0.08 * (1 - heroVisibility);
+        this.targetGridOpacity = 0.03 * (1 - heroVisibility);
       }
     }
   }
 
   triggerExplosion(x, y) {
+    if (!this.animationsEnabled) return;
+    if (this.dots.length >= this.maxDots + this.MAX_EXPLOSION_DOTS) return;
+
     // Progressive click system
     this.clickCount = (this.clickCount || 0) + 1;
     const timeSinceLastClick = Date.now() - (this.lastClickTime || 0);
     this.lastClickTime = Date.now();
-    
+
     // Reset progress if clicked too slowly (more than 1 second)
     if (timeSinceLastClick > 1000) {
       this.clickCount = 1;
     }
-    
+
     // Max progress cap - need 10 clicks for mega explosion
     const progress = Math.min(this.clickCount, 10);
-    
+
     // Calculate explosion size based on progress
-    const baseParticles = this.isLowPerformance ? 4 : 8;
-    const particleCount = baseParticles + (progress * 2);
+    const baseParticles = this.isLowPerformance ? 3 : 6;
+    const particleCount = Math.min(18, baseParticles + (progress * 2));
     const baseSpeed = 2 + (progress * 0.8);
-    
-    for (let i = 0; i < particleCount; i++) {
+
+    const remaining = this.MAX_EXPLOSION_DOTS - this.explosionCount();
+    const toAdd = Math.min(particleCount, remaining);
+
+    for (let i = 0; i < toAdd; i++) {
       const angle = (Math.PI * 2 * i) / particleCount + Math.random() * 0.5;
       const speed = baseSpeed + Math.random() * 3;
       const size = 0.5 + (progress * 0.15);
-      
+
       this.dots.push({
-        x: x,
-        y: y,
+        x, y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        opacity: 1,
         decay: 0.015 + Math.random() * 0.015,
         pulsePhase: Math.random() * Math.PI * 2,
         flicker: Math.random(),
         strength: size,
+        opacity: 1,
         isExplosion: true,
         isWave: progress >= 10 // Mega explosion flag
       });
     }
-    
+
     // Trigger mega wave when reaching 10 clicks
     if (progress >= 10) {
       this.clickCount = 0;
@@ -234,22 +282,30 @@ class InteractiveBackground {
     }
   }
 
+  explosionCount() {
+    let n = 0;
+    for (const d of this.dots) if (d.isExplosion) n++;
+    return n;
+  }
+
   triggerMegaWave(centerX, centerY) {
-    // Create expanding wave from click location
-    for (let i = 0; i < 60; i++) {
-      const angle = (Math.PI * 2 * i) / 60;
+    const remaining = this.MAX_EXPLOSION_DOTS - this.explosionCount();
+    const count = Math.min(30, remaining);
+
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count;
       const speed = 8 + Math.random() * 4;
-      
+
       this.dots.push({
         x: centerX,
         y: centerY,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        opacity: 1,
         decay: 0.008,
         pulsePhase: Math.random() * Math.PI * 2,
         flicker: Math.random(),
         strength: 2.5,
+        opacity: 1,
         isExplosion: true,
         isWave: true
       });
@@ -263,122 +319,84 @@ class InteractiveBackground {
     const flicker = Math.sin(this.time * 0.08 + dot.flicker * 10) * 0.3 + 0.7;
     const effectiveStrength = dot.strength * flicker;
 
-    const baseRadius = 1.5 + effectiveStrength * 1.5;
-    const maxRadius = 3 + effectiveStrength * 2.5;
+    const baseRadius = 1.1 + effectiveStrength * 1.0;
+    const maxRadius = 2.2 + effectiveStrength * 1.8;
     const radius = baseRadius + pulse * (maxRadius - baseRadius);
 
-    const brightnessMult = (0.5 + effectiveStrength * 0.5) * dot.opacity;
+    const brightnessMult = (0.28 + effectiveStrength * 0.3) * dot.opacity;
+    const size = radius * 4;
 
-    // Cache gradient creation for performance
-    const cacheKey = `dot_${radius.toFixed(1)}_${brightnessMult.toFixed(2)}_${pulse.toFixed(2)}`;
-    if (!this.gradientCache) this.gradientCache = {};
-    if (!this.gradientCache[cacheKey]) {
-      const gradient = this.ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, radius * 3);
-      gradient.addColorStop(0, `rgba(201, 184, 232, ${0.4 * pulse * brightnessMult})`);
-      gradient.addColorStop(1, 'rgba(201, 184, 232, 0)');
-      this.gradientCache[cacheKey] = gradient;
-    }
+    // Glow via pre-rendered sprite (one gradient, shared across all dots).
+    this.ctx.drawImage(this.glowSprite, dot.x - size / 2, dot.y - size / 2, size, size);
 
-    this.ctx.fillStyle = this.gradientCache[cacheKey];
-    this.ctx.fillRect(dot.x - radius * 3, dot.y - radius * 3, radius * 6, radius * 6);
-
-    const brightness = dot.connected ? brightnessMult * 1.2 : brightnessMult * 0.7;
-    this.ctx.fillStyle = `rgba(201, 184, 232, ${brightness})`;
+    const brightness = dot.connected ? brightnessMult * 1.1 : brightnessMult * 0.45;
+    this.ctx.globalAlpha = Math.max(0, Math.min(1, brightness));
+    this.ctx.fillStyle = '#C9B8E8';
     this.ctx.beginPath();
     this.ctx.arc(dot.x, dot.y, radius, 0, Math.PI * 2);
     this.ctx.fill();
+    this.ctx.globalAlpha = 1;
 
     if (dot.connected) {
-      const accentStrength = effectiveStrength * 0.7 * dot.opacity;
-      this.ctx.strokeStyle = `rgba(107, 61, 170, ${accentStrength})`;
+      this.ctx.globalAlpha = Math.max(0, Math.min(1, effectiveStrength * 0.7 * dot.opacity));
+      this.ctx.strokeStyle = '#6B3DAA';
       this.ctx.lineWidth = 1 + effectiveStrength * 0.5;
       this.ctx.beginPath();
       this.ctx.arc(dot.x, dot.y, radius + 2, 0, Math.PI * 2);
       this.ctx.stroke();
+      this.ctx.globalAlpha = 1;
     }
   }
 
   drawConnections() {
-    // Skip if toggle is off
-    if (this.connectionsEnabled === false) return;
-    
-    // Skip when too many particles for performance
-    const explosionCount = this.dots.filter(d => d.isExplosion).length;
-    if (explosionCount > 150) return;
-    
-    const connectionDistFactor = 0.9; // Increased for more visible connections
-    
-    this.dots.forEach(dot => dot.connected = false);
-    const activeConnections = new Set();
+    // Skip if toggle is off, tab hidden, or particle budget exhausted.
+    if (this.animationsEnabled === false || this.tabVisible === false) return;
+    if (this.dots.length > 180) return;
 
-    this.dots.forEach(dot => {
-      if (dot.opacity < 0.1) return;
-      
-      // Mega wave - use lower distance (0.3x), skip 50%
-      let useWaveDistance = false;
-      if (dot.isExplosion && dot.isWave) {
-        if (Math.random() > 0.5) return;
-        useWaveDistance = true;
-      } else if (dot.isExplosion) {
-        if (Math.random() > 0.5) return;
+    const connectionDistFactor = 0.9;
+
+    for (let i = 0; i < this.dots.length; i++) {
+      const dot = this.dots[i];
+      dot.connected = false;
+    }
+
+    // Limit the mouse-relevant area so the pass stays O(n) near the cursor.
+    const radius = this.baseConnectionDistance * connectionDistFactor;
+    const candidates = [];
+    for (let i = 0; i < this.dots.length; i++) {
+      const d = this.dots[i];
+      if (d.opacity < 0.1) continue;
+      if (Math.hypot(d.x - this.mouseX, d.y - this.mouseY) < radius * 0.7) {
+        d.connected = true;
+        candidates.push(i);
       }
+    }
 
-      const distFactor = useWaveDistance ? 0.3 : connectionDistFactor;
-      
-      const flicker = Math.sin(this.time * 0.08 + dot.flicker * 10) * 0.3 + 0.7;
-      const effectiveStrength = dot.strength * flicker * dot.opacity;
-      const connectionDistance = this.baseConnectionDistance * distFactor * (0.6 + effectiveStrength * 0.8);
+    const limit = this.isLowPerformance ? 24 : 44;
+    if (candidates.length > limit) candidates.splice(limit - 1);
 
-      const distToMouse = Math.hypot(dot.x - this.mouseX, dot.y - this.mouseY);
-      if (distToMouse < connectionDistance * 0.7) {
-        dot.connected = true;
+    for (let ci = 0; ci < candidates.length; ci++) {
+      const i = candidates[ci];
+      const dot = this.dots[i];
 
-        this.dots.forEach(otherDot => {
-          if (dot === otherDot || otherDot.opacity < 0.1) return;
-          if (otherDot.isExplosion && !otherDot.isWave && Math.random() > 0.5) return;
-          
-          const dist = Math.hypot(dot.x - otherDot.x, dot.y - otherDot.y);
+      for (let j = ci + 1; j < candidates.length; j++) {
+        const other = this.dots[candidates[j]];
+        const dist = Math.hypot(dot.x - other.x, dot.y - other.y);
+        if (dist > radius * 0.8) continue;
 
-          const flicker2 = Math.sin(this.time * 0.08 + otherDot.flicker * 10) * 0.3 + 0.7;
-          const effectiveStr2 = otherDot.strength * flicker2 * otherDot.opacity;
-          const avgStrength = (effectiveStrength + effectiveStr2) / 2;
-          const maxConnectDist = this.baseConnectionDistance * distFactor * (0.6 + avgStrength * 0.8);
+        const avgStrength = (dot.strength + other.strength) / 2;
+        const alpha = (1 - (dist / (radius * 0.8))) * (0.15 + avgStrength * 0.25);
+        if (alpha <= 0) continue;
 
-          if (dist < maxConnectDist && otherDot.connected) {
-            const connectionKey = [this.dots.indexOf(dot), this.dots.indexOf(otherDot)].sort().join('-');
-            if (!activeConnections.has(connectionKey)) {
-              this.drawLine(dot, otherDot, dist, avgStrength, this.baseConnectionDistance * connectionDistFactor);
-              activeConnections.add(connectionKey);
-            }
-          }
-        });
+        this.ctx.strokeStyle = `rgba(201, 184, 232, ${alpha.toFixed(3)})`;
+        this.ctx.lineWidth = 0.8 + avgStrength * 0.5;
+        this.ctx.lineCap = 'round';
+        this.ctx.beginPath();
+        this.ctx.moveTo(dot.x, dot.y);
+        this.ctx.lineTo(other.x, other.y);
+        this.ctx.stroke();
       }
-    });
-  }
-
-  drawLine(dot1, dot2, distance, avgStrength, baseConnectDist) {
-    const maxConnectDist = baseConnectDist * (0.6 + avgStrength * 0.8);
-    const alpha = (1 - (distance / maxConnectDist)) * (0.5 + avgStrength * 0.5);
-
-    const violetIntensity = avgStrength;
-    const bruiseIntensity = 1 - avgStrength;
-
-    const gradient = this.ctx.createLinearGradient(dot1.x, dot1.y, dot2.x, dot2.y);
-    const startAlpha = alpha * (0.5 + violetIntensity * 0.3);
-    const midAlpha = alpha * (0.3 + (violetIntensity + bruiseIntensity) * 0.2);
-    const endAlpha = alpha * (0.5 + violetIntensity * 0.3);
-
-    gradient.addColorStop(0, `rgba(201, 184, 232, ${startAlpha})`);
-    gradient.addColorStop(0.5, `rgba(${107 + bruiseIntensity * 40}, ${61 + bruiseIntensity * 20}, ${170 - bruiseIntensity * 30}, ${midAlpha})`);
-    gradient.addColorStop(1, `rgba(201, 184, 232, ${endAlpha})`);
-
-    this.ctx.strokeStyle = gradient;
-    this.ctx.lineWidth = 0.8 + avgStrength * 0.6;
-    this.ctx.lineCap = 'round';
-    this.ctx.beginPath();
-    this.ctx.moveTo(dot1.x, dot1.y);
-    this.ctx.lineTo(dot2.x, dot2.y);
-    this.ctx.stroke();
+    }
   }
 
   drawGrid() {
@@ -410,74 +428,66 @@ class InteractiveBackground {
     }
   }
 
-  animate() {
-    this.ctx.fillStyle = '#080810';
-    this.ctx.fillRect(0, 0, this.canvas.width / this.devicePixelRatio, this.canvas.height / this.devicePixelRatio);
+  drawExplosion(dot) {
+    dot.x += dot.vx;
+    dot.y += dot.vy;
 
-    this.gridOpacity += (this.targetGridOpacity - this.gridOpacity) * 0.1;
-
-    this.drawGrid();
-    this.drawConnections();
-
-    this.dots = this.dots.filter(dot => {
-      // Update explosion particles
-      if (dot.isExplosion) {
-        dot.x += dot.vx;
-        dot.y += dot.vy;
-        
-        // Wave particles move faster and fade slower
-        if (dot.isWave) {
-          dot.vx *= 0.985;
-          dot.vy *= 0.985;
-          dot.opacity -= dot.decay * 0.5;
-        } else {
-          dot.vx *= 0.94;
-          dot.vy *= 0.94;
-          dot.opacity -= dot.decay;
-        }
-        
-        dot.pulsePhase += 0.04;
-        this.drawDot(dot);
-        return dot.opacity > 0;
-      }
-      
-      // Normal particle logic
-      dot.currentLife++;
-      const lifeProgress = dot.currentLife / dot.lifespan;
-
-      if (lifeProgress < 0.25) {
-        dot.opacity = lifeProgress / 0.25;
-      } else if (lifeProgress > 0.75) {
-        dot.opacity = 1 - ((lifeProgress - 0.75) / 0.25);
-      } else {
-        dot.opacity = 1;
-      }
-
-      dot.pulsePhase += 0.02;
-      this.drawDot(dot);
-
-      return dot.currentLife < dot.lifespan;
-    });
-
-    const targetCount = this.isLowPerformance ? Math.max(50, Math.ceil((this.canvas.width * this.canvas.height) / (this.devicePixelRatio * this.devicePixelRatio * 8000))) : Math.ceil((this.canvas.width * this.canvas.height) / (this.devicePixelRatio * this.devicePixelRatio * 4000));
-    while (this.dots.length < targetCount) {
-      const strength = Math.random();
-      const lifespan = 150 + Math.random() * 200;
-      this.dots.push({
-        x: Math.random() * (this.canvas.width / this.devicePixelRatio),
-        y: Math.random() * (this.canvas.height / this.devicePixelRatio),
-        strength: strength,
-        pulsePhase: Math.random() * Math.PI * 2,
-        connected: false,
-        baseStrength: strength,
-        lifespan: lifespan,
-        currentLife: 0,
-        opacity: 0,
-        flicker: Math.random()
-      });
+    // Wave particles move faster and fade slower
+    if (dot.isWave) {
+      dot.vx *= 0.985;
+      dot.vy *= 0.985;
+      dot.opacity -= dot.decay * 0.5;
+    } else {
+      dot.vx *= 0.94;
+      dot.vy *= 0.94;
+      dot.opacity -= dot.decay;
     }
 
-    this.time++;
+    dot.pulsePhase += 0.04;
+    this.drawDot(dot);
+  }
+
+  animate() {
+    if (this.tabVisible && this.animationsEnabled) {
+      this.ctx.fillStyle = '#080810';
+      this.ctx.fillRect(0, 0, this.canvas.width / this.devicePixelRatio, this.canvas.height / this.devicePixelRatio);
+
+      this.gridOpacity += (this.targetGridOpacity - this.gridOpacity) * 0.1;
+
+      this.drawGrid();
+      this.drawConnections();
+
+      this.dots = this.dots.filter(dot => {
+        if (dot.isExplosion) {
+          this.drawExplosion(dot);
+          return dot.opacity > 0;
+        }
+
+        // Normal particle logic
+        dot.currentLife++;
+        const lifeProgress = dot.currentLife / dot.lifespan;
+
+        if (lifeProgress < 0.25) {
+          dot.opacity = lifeProgress / 0.25;
+        } else if (lifeProgress > 0.75) {
+          dot.opacity = 1 - ((lifeProgress - 0.75) / 0.25);
+        } else {
+          dot.opacity = 1;
+        }
+
+        dot.pulsePhase += 0.02;
+        this.drawDot(dot);
+
+        return dot.currentLife < dot.lifespan;
+      });
+
+      const targetCount = Math.min(this.maxDots, Math.max(30, Math.ceil((this.canvas.width * this.canvas.height) / (this.devicePixelRatio * this.devicePixelRatio * 12000))));
+      while (this.dots.length < targetCount) {
+        this.dots.push(this.newBackgroundDot());
+      }
+
+      this.time++;
+    }
     this.animationId = requestAnimationFrame(() => this.animate());
   }
 

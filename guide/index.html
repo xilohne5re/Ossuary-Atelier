@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The First Stop in Phuket — Thrift Shops, Guides, Maps & Tools | Ossuary Atelier</title>
+
+  <!-- @@SEO_SLOT@@ -->
+  <link rel="canonical" href="https://ossuaryphuket.me/Ossuary-Atelier/guide">
+  <meta name="description" content="The Phuket Thrift Guide — a living directory of secondhand shops, sourcing notes, and recovery tips across Phuket, plus maps, tools, and the Ossuary Atelier archive.">
+  <meta property="og:site_name" content="Ossuary Atelier">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="The First Stop in Phuket — Thrift Shops, Guides, Maps &amp; Tools | Ossuary Atelier">
+  <meta property="og:description" content="The Phuket Thrift Guide — a living directory of secondhand shops, sourcing notes, and recovery tips across Phuket, plus maps, tools, and the Ossuary Atelier archive.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ossuaryphuket.me/Ossuary-Atelier/guide">
+  <meta property="og:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
+  <meta property="og:image:alt" content="Ossuary Atelier — secondhand fashion with verified stories.">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ossuaryatelier">
+  <meta name="twitter:title" content="The First Stop in Phuket — Thrift Shops, Guides, Maps &amp; Tools | Ossuary Atelier">
+  <meta name="twitter:description" content="The Phuket Thrift Guide — a living directory of secondhand shops, sourcing notes, and recovery tips across Phuket, plus maps, tools, and the Ossuary Atelier archive.">
+  <meta name="twitter:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
+  <meta name="theme-color" content="#080810">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<!-- @@SEO_END@@ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/nav.css">
+
+  <style>
+    /* ===== Guide Hub :: readability-first, dark purple, mobile-first ===== */
+    :root {
+      --hub-text: #d8d0e6;        /* body copy — lifted for readability */
+      --hub-text-soft: #b4a8c9;
+      --hub-muted: #9d92b5;
+      --hub-rule: rgba(201, 184, 232, 0.12);
+      --hub-card: rgba(24, 20, 36, 0.55);
+    }
+
+    /* — hero (kept modest; not full-screen) — */
+    #hub-hero {
+      padding: calc(var(--nav-height) + 7vh) 6vw 3rem;
+      text-align: center;
+    }
+
+    .hub-kicker {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--bruise-mid);
+      display: block;
+      margin-bottom: 1.4rem;
+    }
+
+    .hub-heading {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(2.1rem, 6vw, 4rem);
+      letter-spacing: 0.1em;
+      color: var(--violet);
+      text-transform: uppercase;
+      line-height: 1.1;
+      max-width: 15ch;
+      margin: 0 auto;
+    }
+
+    .hub-subtitle {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: var(--hub-text);
+      max-width: 620px;
+      margin: 1.4rem auto 0;
+      line-height: 1.75;
+    }
+
+    /* — editorial intro (your copy lives here) — */
+    #hub-intro {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 6vw 3rem;
+    }
+
+    .hub-prose {
+      font-family: var(--font-body);
+      font-size: 1.18rem;
+      color: var(--hub-text);
+      line-height: 1.9;
+    }
+
+    .hub-prose strong {
+      color: var(--violet);
+      font-weight: 600;
+    }
+
+    .hub-prose a {
+      color: var(--violet);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* — branch tiles — */
+    #hub-branches {
+      padding: 1rem 5vw 4rem;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .hub-section-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--bruise-mid);
+      text-align: center;
+      margin-bottom: 2.2rem;
+    }
+
+    .hub-branch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .hub-branch {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      padding: 1.6rem 1.5rem;
+      background: var(--hub-card);
+      border: 1px solid var(--hub-rule);
+      text-decoration: none;
+      transition: border-color 0.3s var(--ease-out), transform 0.3s var(--ease-out), background 0.3s;
+      position: relative;
+    }
+
+    .hub-branch:hover {
+      border-color: var(--bruise-mid);
+      background: rgba(28, 24, 40, 0.75);
+      transform: translateY(-3px);
+    }
+
+    .hub-branch-ico {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--violet);
+      letter-spacing: 0.1em;
+    }
+
+    .hub-branch-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.02rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--violet);
+      line-height: 1.3;
+    }
+
+    .hub-branch-desc {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--hub-text);
+      line-height: 1.65;
+      flex-grow: 1;
+    }
+
+    .hub-branch-meta {
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--hub-muted);
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--hub-rule);
+      margin-top: 0.4rem;
+    }
+
+    .hub-branch.live .hub-branch-meta::after {
+      content: ' →';
+      color: var(--violet);
+    }
+
+    .hub-branch.coming-soon {
+      opacity: 0.62;
+      pointer-events: none;
+      border-style: dashed;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .hub-branch.coming-soon .hub-branch-meta::after {
+      content: '';
+    }
+
+    /* — featured shop modules (auto from shops.json via runShops? static for now) — */
+    #hub-directory {
+      padding: 0 6vw 4rem;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .hub-inline-shop {
+      background: var(--hub-card);
+      border: 1px solid var(--hub-rule);
+      border-left: 3px solid var(--bruise-mid);
+      padding: 1.5rem 1.6rem;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .hub-inline-shop-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--violet);
+    }
+
+    .hub-inline-shop-loc {
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--hub-muted);
+    }
+
+    .hub-inline-shop-desc {
+      font-family: var(--font-body);
+      font-size: 1.02rem;
+      color: var(--hub-text);
+      line-height: 1.65;
+    }
+
+    .hub-inline-shop a {
+      font-family: var(--font-display);
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--violet);
+      text-decoration: none;
+      align-self: flex-start;
+      border-bottom: 1px solid var(--bruise-mid);
+      padding-bottom: 2px;
+    }
+
+    .hub-directory-cta {
+      display: block;
+      text-align: center;
+      margin-top: 1.75rem;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--violet);
+      text-decoration: none;
+    }
+
+    .hub-directory-cta:hover {
+      color: var(--bruise-mid);
+    }
+
+    /* — FAQ (People Also Ask target) — */
+    #hub-faq {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 6vw 4rem;
+    }
+
+    .faq-item {
+      border: 1px solid var(--hub-rule);
+      border-left: 3px solid var(--bruise-mid);
+      background: var(--hub-card);
+      margin-bottom: 0.9rem;
+      overflow: hidden;
+    }
+
+    .faq-q {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.4rem;
+      background: none;
+      border: none;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.98rem;
+      letter-spacing: 0.04em;
+      color: var(--violet);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .faq-q::after {
+      content: '+';
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--bruise-mid);
+      transition: transform 0.3s var(--ease-out);
+      flex-shrink: 0;
+    }
+
+    .faq-item.open .faq-q::after {
+      transform: rotate(45deg);
+    }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s var(--ease-out);
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 500px;
+    }
+
+    .faq-a p {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      color: var(--hub-text-soft);
+      line-height: 1.75;
+      padding: 0 1.4rem 1.25rem;
+      margin: 0;
+    }
+
+    .faq-a a {
+      color: var(--violet);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* — footer — */
+    #footer {
+      border-top: 1px solid var(--violet-faint);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-family: var(--font-display);
+      font-size: 0.66rem;
+      letter-spacing: 0.32em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+    }
+
+    .footer-links a {
+      font-family: var(--font-display);
+      font-size: 0.66rem;
+      letter-spacing: 0.28em;
+      color: var(--hub-muted);
+      text-transform: uppercase;
+      margin: 0 0.8rem;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--violet); }
+
+    .footer-ig {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-display);
+      font-size: 0.66rem;
+      letter-spacing: 0.3em;
+      color: var(--hub-muted);
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .footer-ig:hover { color: var(--violet); }
+
+    /* reveal (calm, CSS-only) */
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.vis {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      #hub-branches { padding: 1rem 5vw 3rem; }
+      .hub-branch-grid { grid-template-columns: 1fr; }
+      #footer { flex-direction: column; gap: 1rem; text-align: center; }
+      #hub-hero { padding-top: calc(var(--nav-height) + 5vh); }
+    }
+
+    @media (max-width: 480px) {
+      .hub-heading { letter-spacing: 0.06em; }
+      .hub-branch { padding: 1.4rem 1.2rem; }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "The First Stop in Phuket — Thrift Shops, Guides, Maps & Tools",
+    "description": "Ossuary Atelier's thrift guide hub for Phuket: shop directory, sourcing guides, interactive maps, tools, the archive, and how to reach the workshop.",
+    "url": "https://ossuaryphuket.me/Ossuary-Atelier/guide/index.html",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ossuaryphuket.me/Ossuary-Atelier/index.html" },
+        { "@type": "ListItem", "position": 2, "name": "Guide", "item": "https://ossuaryphuket.me/Ossuary-Atelier/guide/index.html" }
+      ]
+    },
+    "mainEntity": {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Where is the best thrifting in Phuket?", "acceptedAnswer": { "@type": "Answer", "text": "Phuket Town holds the densest concentration of secondhand shops. Our living directory covers each shop with reviews, price ranges, and sourcing notes." } },
+        { "@type": "Question", "name": "Are thrift prices in Phuket cheap?", "acceptedAnswer": { "@type": "Answer", "text": "Mostly — tees and basics can run a few hundred baht, while curated Japanese imports can climb higher. Price ranges are listed per shop." } },
+        { "@type": "Question", "name": "What should I look for when thrifting in Phuket?", "acceptedAnswer": { "@type": "Answer", "text": "Japanese domestic-market labels, heavyweight knits and jacquards, and deadstock with tags intact. Slow digging wins." } },
+        { "@type": "Question", "name": "When is the best time to visit Phuket secondhand shops?", "acceptedAnswer": { "@type": "Answer", "text": "Weekday mornings, when shops are freshly stocked and the crowd hasn't arrived." } },
+        { "@type": "Question", "name": "Where do I even start thrifting in Phuket?", "acceptedAnswer": { "@type": "Answer", "text": "With the Guide — a real, growing directory of Phuket secondhand shops (not just ours), an interactive map, and reviews from someone who's actually walked into every shop listed." } }
+      ]
+    }
+  }
+  </script>
+
+  <!-- @@SITE_JSONLD_BEGIN@@ -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#website",
+      "url": "https://ossuaryphuket.me/Ossuary-Atelier/",
+      "name": "Ossuary Atelier",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#organization",
+      "url": "https://ossuaryphuket.me/Ossuary-Atelier/",
+      "name": "Ossuary Atelier",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#logo",
+        "url": "https://ossuaryphuket.me/Ossuary-Atelier/assets/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://www.instagram.com/ossuary.atelier/"
+      ]
+    }
+  ]
+}
+  </script>
+<!-- @@SITE_JSONLD_END@@ -->
+  </head>
+<body>
+  <div id="page-transition"></div>
+
+  <!-- @@NAV_SLOT@@ -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <a href="../index.html" class="nav-logo" aria-label="Ossuary Atelier — Home">
+    <div class="nav-logo-eye" aria-hidden="true"></div>
+    <div class="nav-logo-text">OSSUARY<span>ATELIER</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../about.html">About</a></li>
+    <li><a href="../shop.html">Shop</a></li>
+    <li><a href="index.html">Guide</a></li>
+    <li><a href="../contact.html">Contact</a></li>
+    <li><a href="../blog/index.html">Journal</a></li>
+  </ul>
+  <button class="nav-burger" aria-label="Open navigation"><span></span><span></span><span></span></button>
+</nav>
+<div id="nav-overlay" role="dialog" aria-modal="true" aria-label="Navigation">
+  <a href="../index.html">Home</a>
+  <a href="../about.html">About</a>
+  <a href="../shop.html">Shop</a>
+  <a href="index.html">Guide</a>
+  <a href="../contact.html">Contact</a>
+  <a href="../blog/index.html">Journal</a>
+</div>
+<!-- @@NAV_END@@ -->
+
+  <header id="hub-hero" class="reveal">
+    <span class="hub-kicker">Ossuary Atelier · The Guide Hub</span>
+    <h1 class="hub-heading">The Guide</h1>
+    <p class="hub-subtitle">Phuket's living thrift guide — real shop reviews, sourcing notes, an open map, and the tools the archive actually uses.</p>
+  </header>
+
+  <section id="hub-intro" class="reveal">
+    <!-- CONTENT: hub-intro-copy — replace this block with your editorial intro -->
+    <p class="hub-prose">
+      We are Ossuary Atelier — a secondhand studio in Phuket that recovers garments and keeps the receipts on everything we find.
+      This hub is the front door to everything we publish: <strong>the Phuket thrift directory</strong>, <strong>sourcing notes and field reports</strong>,
+      an <strong>open map</strong> of the island's markets, beaches, and activities, and small <strong>tools</strong> we build along the way.
+      New guides drop as the archive grows.
+      (<em>Editorial intro to be written.</em>)
+    </p>
+    <!-- /CONTENT -->
+  </section>
+
+  <section id="hub-branches">
+    <h2 class="hub-section-title reveal">Explore</h2>
+    <div class="hub-branch-grid">
+      <a href="../blog/index.html" class="hub-branch live reveal">
+        <span class="hub-branch-ico">01</span>
+        <span class="hub-branch-title">The Osteology — Journal</span>
+        <span class="hub-branch-desc">Articles, sourcing studies, and the newsletter of what the archive is up to.</span>
+        <span class="hub-branch-meta">Enter the journal</span>
+      </a>
+
+      <a href="../blog/guide/index.html" class="hub-branch live reveal">
+        <span class="hub-branch-ico">02</span>
+        <span class="hub-branch-title">Phuket Thrift Directory</span>
+        <span class="hub-branch-desc">Reviewed shops, price ranges, and what to look for — the living guide.</span>
+        <span class="hub-branch-meta">Browse the directory</span>
+      </a>
+
+      <a href="../tools/phuket-map/index.html" class="hub-branch live reveal">
+        <span class="hub-branch-ico">03</span>
+        <span class="hub-branch-title">Phuket Map & Tools</span>
+        <span class="hub-branch-desc">An open, editable map of thrift shops, beaches, and activity spots — plus tools.</span>
+        <span class="hub-branch-meta">Map, beaches & tools</span>
+      </a>
+
+      <a href="../shop.html#claimed" class="hub-branch live reveal">
+        <span class="hub-branch-ico">04</span>
+        <span class="hub-branch-title">The Archive — Past Pieces</span>
+        <span class="hub-branch-desc">Every recovered garment stays documented. Claimed or available.</span>
+        <span class="hub-branch-meta">Browse the archive</span>
+      </a>
+
+      <a href="../contact.html" class="hub-branch live reveal">
+        <span class="hub-branch-ico">05</span>
+        <span class="hub-branch-title">Talk to Us</span>
+        <span class="hub-branch-desc">DM to claim a piece, correct a fact, or start a collaboration.</span>
+        <span class="hub-branch-meta">Instagram · contact</span>
+      </a>
+
+      <div class="hub-branch coming-soon reveal">
+        <span class="hub-branch-ico">06</span>
+        <span class="hub-branch-title">Deep Dives & Extras</span>
+        <span class="hub-branch-desc">Brand histories, sourcing studies, and long-form guides outside the directory.</span>
+        <span class="hub-branch-meta">Coming soon</span>
+      </div>
+
+      <div class="hub-branch coming-soon reveal">
+        <span class="hub-branch-ico">07</span>
+        <span class="hub-branch-title">Guitar Tuner</span>
+        <span class="hub-branch-desc">The DAEAC#E fretboard trainer, ported in as a free tool.</span>
+        <span class="hub-branch-meta">Coming soon</span>
+      </div>
+
+      <div class="hub-branch coming-soon reveal">
+        <span class="hub-branch-ico">08</span>
+        <span class="hub-branch-title">From the Ossuary — Newsletter</span>
+        <span class="hub-branch-desc">Occasional digests: new finds, new guides, new tools.</span>
+        <span class="hub-branch-meta">Coming soon</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="hub-directory">
+    <h2 class="hub-section-title reveal">Spotlight · New this season</h2>
+
+    <div class="hub-inline-shop reveal">
+      <span class="hub-inline-shop-name">Waanwaal</span>
+      <span class="hub-inline-shop-loc">Phuket Town · ฿100 – ฿1,000+</span>
+      <p class="hub-inline-shop-desc">Curated vintage and secondhand with a strong women's selection — where the Spinash polo was found.</p>
+      <a href="../blog/guide/waanwaal-phuket.html">Read the review →</a>
+    </div>
+
+    <div class="hub-inline-shop reveal">
+      <span class="hub-inline-shop-name">O-WA Second Hand</span>
+      <span class="hub-inline-shop-loc">Phuket · dense, well-stocked</span>
+      <p class="hub-inline-shop-desc">A dense, unbrowsed-bin shop best visited weekday mornings — where the Michiko Koshino dress was found.</p>
+      <a href="../blog/guide/owa-phuket.html">Read the review →</a>
+    </div>
+
+    <a href="../blog/guide/index.html" class="hub-directory-cta">Full directory →</a>
+  </section>
+
+  <section id="hub-faq">
+    <h2 class="hub-section-title reveal">Questions, answered</h2>
+
+    <div class="faq-item reveal">
+      <button class="faq-q">Where is the best thrifting in Phuket?</button>
+      <div class="faq-a"><p>Phuket Town holds the densest concentration of secondhand shops. The <a href="../blog/guide/index.html">thrift directory</a> covers each shop with real reviews, price ranges, and sourcing notes.</p></div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q">Are thrift prices in Phuket cheap?</button>
+      <div class="faq-a"><p>Mostly — everyday basics can run a few hundred baht, while curated Japanese imports climb higher. Each shop entry lists its price range.</p></div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q">What should I look for when thrifting in Phuket?</button>
+      <div class="faq-a"><p>Japanese domestic-market labels, heavyweight knits and jacquards, and deadstock with tags intact. Slow digging wins.</p></div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q">When is the best time to visit Phuket secondhand shops?</button>
+      <div class="faq-a"><p>Weekday mornings — freshly stocked racks, no crowd, better negotiating light.</p></div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q">Where do I even start thrifting in Phuket?</button>
+      <div class="faq-a"><p>With the Guide — a real, growing directory of Phuket secondhand shops (not just ours), an interactive map, and reviews from someone who's actually walked into every shop listed. The <a href="../blog/guide/index.html">directory</a> and <a href="../tools/phuket-map/index.html">map</a> are the right place to start.</p></div>
+    </div>
+  </section>
+
+  <!-- @@FOOTER_SLOT@@ -->
+<footer id="footer">
+  <span class="footer-copy">Ossuary Atelier © 2026</span>
+  <div class="footer-links">
+    <a href="../tos.html">TOS</a>
+  </div>
+  <a href="https://www.instagram.com/ossuary.atelier/"
+     target="_blank" rel="noopener"
+     class="footer-ig" aria-label="Instagram">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+    @ossuaryatelier
+  </a>
+</footer>
+<!-- @@FOOTER_END@@ -->
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // calm reveal
+      const reveals = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('vis');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      reveals.forEach(el => io.observe(el));
+
+      // FAQ accordions
+      document.querySelectorAll('.faq-q').forEach(btn => {
+        btn.addEventListener('click', () => {
+          btn.parentElement.classList.toggle('open');
+        });
+      });
+    });
+  </script>
+  <script src="../js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Phuket Map — Thrift Shops, Beaches & Activities | Ossuary Atelier</title>
+
+  <!-- @@SEO_SLOT@@ -->
+  <link rel="canonical" href="https://ossuaryphuket.me/Ossuary-Atelier/tools/phuket-map">
+  <meta name="description" content="An interactive map of Phuket thrift shops, beaches, and activity spots — open, editable, and free to reuse.">
+  <meta property="og:site_name" content="Ossuary Atelier">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Interactive Phuket Map — Thrift Shops, Beaches &amp; Activities | Ossuary Atelier">
+  <meta property="og:description" content="An interactive map of Phuket thrift shops, beaches, and activity spots — open, editable, and free to reuse.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ossuaryphuket.me/Ossuary-Atelier/tools/phuket-map">
+  <meta property="og:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
+  <meta property="og:image:alt" content="Ossuary Atelier — secondhand fashion with verified stories.">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ossuaryatelier">
+  <meta name="twitter:title" content="Interactive Phuket Map — Thrift Shops, Beaches &amp; Activities | Ossuary Atelier">
+  <meta name="twitter:description" content="An interactive map of Phuket thrift shops, beaches, and activity spots — open, editable, and free to reuse.">
+  <meta name="twitter:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
+  <meta name="theme-color" content="#080810">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon-32.png">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+<!-- @@SEO_END@@ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <style>
+    :root {
+      --tools-bg: #0d0b14;
+      --tools-panel: #161226;
+      --tools-rule: rgba(201, 184, 232, 0.14);
+      --tools-text: #d8d0e6;
+      --tools-muted: #9d92b5;
+      --tools-violet: #C9B8E8;
+    }
+
+    body {
+      background: var(--tools-bg);
+      color: var(--tools-text);
+      font-family: 'Cormorant Garamond', serif;
+      margin: 0;
+    }
+
+    .tools-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 5vw 4rem;
+    }
+
+    .tools-head {
+      text-align: center;
+      padding: calc(var(--nav-height, 64px) + 5vh) 0 2rem;
+    }
+
+    .tools-kicker {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #6B3DAA;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .tools-title {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--tools-violet);
+      line-height: 1.15;
+      margin: 0;
+    }
+
+    .tools-sub {
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--tools-text);
+      max-width: 560px;
+      margin: 1.2rem auto 0;
+      line-height: 1.75;
+    }
+
+    #map {
+      height: 62vh;
+      min-height: 380px;
+      width: 100%;
+      border: 1px solid var(--tools-rule);
+      background: #10101a;
+      z-index: 0;
+    }
+
+    .tools-note {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--tools-muted);
+      text-align: center;
+      margin-top: 1rem;
+      line-height: 1.7;
+    }
+
+    .tools-note a {
+      color: var(--tools-violet);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.1rem;
+      justify-content: center;
+      margin: 1.4rem 0 2rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--tools-muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .tools-list-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #6B3DAA;
+      margin: 2rem 0 1rem;
+    }
+
+    .tools-row {
+      background: var(--tools-panel);
+      border: 1px solid var(--tools-rule);
+      border-left: 3px solid #6B3DAA;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.7rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .tools-row-name {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--tools-violet);
+    }
+
+    .tools-row-meta {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--tools-muted);
+    }
+
+    .tools-row-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--tools-text);
+      line-height: 1.6;
+    }
+
+    .tools-row a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--tools-violet);
+      text-decoration: none;
+      align-self: flex-start;
+      border-bottom: 1px solid #6B3DAA;
+      padding-bottom: 2px;
+    }
+
+    .tools-back {
+      display: block;
+      text-align: center;
+      margin-top: 2.5rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--tools-violet);
+      text-decoration: none;
+      line-height: 2;
+    }
+
+    .tools-back:hover {
+      color: #6B3DAA;
+    }
+
+    .tools-attrib {
+      font-size: 0.8rem;
+      color: var(--tools-muted);
+      font-style: italic;
+      line-height: 1.6;
+      max-width: 640px;
+      margin: 1rem auto 0;
+      text-align: center;
+    }
+
+    .tools-attrib a {
+      color: var(--tools-violet);
+    }
+
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    .tools-wrap { flex: 1; }
+
+    @media (max-width: 768px) {
+      #map { height: 52vh; min-height: 320px; }
+    }
+  </style>
+
+  <!-- @@SITE_JSONLD_BEGIN@@ -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#website",
+      "url": "https://ossuaryphuket.me/Ossuary-Atelier/",
+      "name": "Ossuary Atelier",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#organization",
+      "url": "https://ossuaryphuket.me/Ossuary-Atelier/",
+      "name": "Ossuary Atelier",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#logo",
+        "url": "https://ossuaryphuket.me/Ossuary-Atelier/assets/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://www.instagram.com/ossuary.atelier/"
+      ]
+    }
+  ]
+}
+  </script>
+<!-- @@SITE_JSONLD_END@@ -->
+  </head>
+<body>
+
+  <main class="tools-wrap">
+    <header class="tools-head">
+      <span class="tools-kicker">Free tool · built by Ossuary Atelier</span>
+      <h1 class="tools-title">Phuket Map</h1>
+      <p class="tools-sub">Thrift shops, beaches, and activity spots on one open, editable map. Add a pin — then share it.</p>
+    </header>
+
+    <div id="map" aria-label="Interactive map of Phuket"></div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:#C9B8E8"></span>Thrift shops</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#56CCF2"></span>Beaches</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#E8A020"></span>Activities</span>
+    </div>
+
+    <p class="tools-note">Data lives in <a href="phuket.geojson" download>phuket.geojson</a> — open, editable, and free to reuse.</p>
+
+    <h2 class="tools-list-title">Pins in this map</h2>
+    <div id="pin-list"></div>
+
+    <a href="../../guide/index.html" class="tools-back">← Back to the Guide Hub</a>
+
+    <p class="tools-attrib">
+      A tool from <a href="../../index.html">Ossuary Atelier</a> — every pin matches a documented visit.
+      Beaches and activities are starter entries; correct us or add your own via the GeoJSON.
+    </p>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const cats = {
+      thrift: { color: '#C9B8E8', label: 'Thrift' },
+      beach:  { color: '#56CCF2', label: 'Beach' },
+      activity: { color: '#E8A020', label: 'Activity' },
+    };
+
+    const map = L.map('map').setView([7.88, 98.30], 11);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      maxZoom: 18,
+    }).addTo(map);
+
+    const listEl = document.getElementById('pin-list');
+
+    fetch('phuket.geojson')
+      .then(r => r.json())
+      .then(geo => {
+        geo.features.forEach(f => {
+          const p = f.properties;
+          const cat = cats[p.category] || cats.activity;
+          const [lng, lat] = f.geometry.coordinates;
+
+          L.circleMarker([lat, lng], {
+            radius: 7,
+            color: cat.color,
+            weight: 1.5,
+            fill: true,
+            fillColor: cat.color,
+            fillOpacity: 0.55,
+          }).bindPopup(`<strong>${p.name}</strong><br>${p.description || ''}`).addTo(map);
+
+          const row = document.createElement('div');
+          row.className = 'tools-row';
+          const link = p.url
+            ? `<a class="tools-row-link" data-route="${p.url}">Review →</a>`
+            : '';
+          const meta = [cat.label, p.price_range].filter(Boolean).join(' · ');
+          row.innerHTML =
+            `<span class="tools-row-name">${p.name}</span>` +
+            (meta ? `<span class="tools-row-meta">${meta}</span>` : '') +
+            (p.description ? `<span class="tools-row-desc">${p.description}</span>` : '') +
+            link;
+          const reviewLink = row.querySelector('.tools-row-link');
+          if (reviewLink) {
+            reviewLink.href = '../../' + p.url;
+          }
+          listEl.appendChild(row);
+        });
+      });
+
+    // scale the map layers to the visible container
+    setTimeout(() => map.invalidateSize(), 150);
+  </script>
+</body>
+</html>

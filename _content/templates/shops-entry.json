@@ -1,0 +1,23 @@
+{
+  "shops": [
+    {
+      "id": "SHOP-SLUG",
+      "name": "Shop Name",
+      "city": "Phuket",
+      "tags": ["Secondhand", "Clothing"],
+      "price_range": "฿100 – ฿1,000+",
+      "address": "Street, Soi, Phuket 83000",
+      "instagram": "https://www.instagram.com/shop/",
+      "facebook": "https://www.facebook.com/shop/",
+      "related_item_id": "ITEM-000",
+      "related_item_url": "ITEM-000.html",
+      "status": "live",
+      "found_date": "YYYY-MM-DD",
+      "image": null,
+      "lat": null,
+      "lng": null,
+      "story_file": "shops/SHOP-SLUG.story.md",
+      "story_status": "draft"
+    }
+  ]
+}
