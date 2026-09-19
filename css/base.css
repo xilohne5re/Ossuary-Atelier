@@ -3,6 +3,33 @@
    Foundation: variables, reset, typography, shared
 ═══════════════════════════════════════════════ */
 
+/* ── SELF-HOSTED FONTS ──
+   Variable fonts (wght axis), served locally so the render-blocking
+   Google Fonts chain (css2 + gstatic woff2) is gone. */
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('../assets/fonts/cinzel.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../assets/fonts/cormorant.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../assets/fonts/cormorant-italic.woff2') format('woff2');
+}
+
 /* ── VARIABLES ── */
 :root {
   --void:       #080810;
@@ -11,7 +38,7 @@
   --violet-dim: #a693c0;
   --violet-faint: rgba(201,184,232,0.08);
   --bruise:     #4B2D7A;
-  --bruise-mid: #6B3DAA;
+  --bruise-mid: #A184CD;
   --midnight:   #1C1828;
   --faint:      #2A2440;
 
