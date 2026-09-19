@@ -321,8 +321,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ── SHARED: loop only while element is on-screen ── */
+  function loopWhenVisible(el, render, ms) {
+    let id = null;
+    const start = () => { if (!id) id = setInterval(render, ms); };
+    const stop  = () => { if (id) { clearInterval(id); id = null; } };
+
+    if (!el) return { start: () => {}, stop: () => {} };
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) start(); else stop(); }, { threshold: 0 });
+    io.observe(el);
+    if (document.hidden) document.addEventListener('visibilitychange', () => { document.hidden ? stop() : start(); }, { once: false });
+    return { start, stop };
+  }
+
   /* ── KINETIC TYPOGRAPHY: THE HUNT — typewriter + case wave ── */
-  function initHunt() {
+  (function initHunt() {
     const wrap = document.getElementById('hunt-wrap');
     if (!wrap) return;
 
@@ -336,48 +349,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function render() {
       tick++;
-
       if (phase === 'typewrite') {
         if (tick % 4 === 0) {
           currentLen++;
-          if (currentLen >= L) {
-            currentLen = L;
-            phase = 'hold';
-            holdFrames = 0;
-          }
+          if (currentLen >= L) { currentLen = L; phase = 'hold'; holdFrames = 0; }
         }
       } else if (phase === 'hold') {
         holdFrames++;
-        if (holdFrames >= HOLD_FRAMES) {
-          currentLen = 0;
-          phase = 'typewrite';
-        }
+        if (holdFrames >= HOLD_FRAMES) { currentLen = 0; phase = 'typewrite'; }
       }
-
       let html = '';
       for (let i = 0; i < L; i++) {
-        const c = BASE[i];
-        let displayChar = c;
-        const wave = Math.sin((tick * 0.06) + i * 0.55);
-        if (phase === 'typewrite' || (phase === 'hold' && holdFrames < 20)) {
-          displayChar = c;
-        } else {
-          displayChar = c;
-        }
-        const visible = i < currentLen ? '1' : '0';
-        html += `<span class="hunt-char" style="opacity:${visible}">${displayChar}</span>`;
+        html += `<span class="hunt-char" style="opacity:${i < currentLen ? 1 : 0}">${BASE[i]}</span>`;
       }
-
       wrap.innerHTML = html;
     }
 
-    setInterval(render, 50);
-  }
-
-  initHunt();
+    loopWhenVisible(wrap, render, 50).start();
+  })();
 
   /* ── KINETIC TYPOGRAPHY: THE STORY — left scroll marquee with symbols ── */
-  function initStory() {
+  (function initStory() {
     const wrap = document.getElementById('story-wrap');
     if (!wrap) return;
 
@@ -390,46 +382,36 @@ document.addEventListener('DOMContentLoaded', () => {
       const s = PHRASE + ' ' + glyphs[tick % glyphs.length] + ' ';
       const off = tick % s.length;
       const scrolled = s.substring(off) + s.substring(0, off);
-
       let html = '';
-      for (const c of scrolled) {
-        html += `<span class="story-char">${c}</span>`;
-      }
-
+      for (const c of scrolled) { html += `<span class="story-char">${c}</span>`; }
       wrap.innerHTML = html;
     }
 
-    setInterval(render, 190);
-  }
-
-  initStory();
+    loopWhenVisible(wrap, render, 190).start();
+  })();
 
   /* ── KINETIC TYPOGRAPHY: THE CLAIM — case wave ── */
-  function initClaim() {
+  (function initClaim() {
     const wrap = document.getElementById('claim-wrap');
-    if (!wrap) { console.warn('claim-wrap not found'); return; }
+    if (!wrap) return;
 
     const PHRASE = '\u00A0THE\u00A0CLAIM\u00A0';
     let tick = 0;
 
     function render() {
       tick++;
-const mapped = PHRASE.split('').map((char, idx) => {
+      const mapped = PHRASE.split('').map((char, idx) => {
         if (char === '\u00A0') return '\u00A0';
         const wave = Math.sin(tick * 0.5 + idx * 0.75);
         if (wave > 0.55) return char.toUpperCase();
         else if (wave < -0.55) return char.toLowerCase();
-        else return char;
-    }).join('');
-
-      const html = `<span class="story-char">⁅</span>${mapped.split('').map(c => `<span class="story-char">${c}</span>`).join('')}<span class="story-char">⁆</span>`;
-      wrap.innerHTML = html;
+        return char;
+      }).join('');
+      wrap.innerHTML = `<span class="story-char">⁅</span>${mapped.split('').map(c => `<span class="story-char">${c}</span>`).join('')}<span class="story-char">⁆</span>`;
     }
 
-    setInterval(render, 110);
-  }
-
-  initClaim();
+    loopWhenVisible(wrap, render, 110).start();
+  })();
 
   /* ── MARQUEE STRIP: duplicate for seamless loop ── */
   const marqueeInner = document.querySelector('.marquee-inner');

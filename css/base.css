@@ -3,8 +3,6 @@
    Foundation: variables, reset, typography, shared
 ═══════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');
-
 /* ── VARIABLES ── */
 :root {
   --void:       #080810;
@@ -32,9 +30,14 @@
 }
 
 html {
-  font-size: 16px;
+  font-size: 17px;
   scroll-behavior: auto; /* lenis handles this */
   overflow-x: hidden;
+}
+
+/* Larger base type on wide screens */
+@media (min-width: 1440px) {
+  html { font-size: 18px; }
 }
 
 body {
@@ -42,7 +45,7 @@ body {
   color: var(--violet);
   font-family: var(--font-body);
   font-weight: 400;
-  line-height: 1.7;
+  line-height: 1.78;
   overflow-x: hidden;
   cursor: crosshair;
   -webkit-font-smoothing: antialiased;
@@ -200,4 +203,39 @@ button {
   overflow: hidden;
   clip: rect(0,0,0,0);
   white-space: nowrap;
+}
+
+/* ── READABILITY ──
+   Body copy is set upright; italics are reserved for single-word
+   emphasis, titles, thoughts, foreign words, and technical labels.
+   These rules override page-level inline styles that set entire
+   paragraphs in italics. */
+.modal-desc,
+.story-body,
+.care-text,
+.prov-detail,
+.about-sub,
+.mission-text,
+.philosophy-prose p,
+.timeline-content p,
+.phone-section-head p,
+.how-body,
+.how-bridge,
+.pull-quote,
+.b2b-intro,
+.b2b-a p,
+.vision-quote,
+.vsc-story,
+.b2b-links-note,
+.contact-sub,
+.buy-step-body,
+.error-sub,
+.intro,
+.contact-text,
+.tools-attrib,
+.shop-prose,
+.note-prose,
+.dm-note,
+.gg-list li {
+  font-style: normal !important;
 }

@@ -1,0 +1,42 @@
+{
+  "shops": [
+    {
+      "id": "waanwaal",
+      "name": "Waanwaal",
+      "city": "Phuket",
+      "tags": ["Secondhand", "Clothing"],
+      "price_range": "฿100 – ฿1,000+",
+      "address": "317 Saensook Soi 2, Phuket Town, Phuket 83000",
+      "instagram": "https://www.instagram.com/waanwaal/",
+      "facebook": "https://www.facebook.com/wanwan.sapanhin/",
+      "related_item_id": "ITEM-005",
+      "related_item_url": "ITEM-005.html",
+      "status": "live",
+      "found_date": "2025-12-23",
+      "image": null,
+      "lat": null,
+      "lng": null,
+      "story_file": "shops/waanwaal.story.md",
+      "story_status": "draft"
+    },
+    {
+      "id": "owa",
+      "name": "O-WA Second Hand",
+      "city": "Phuket",
+      "tags": ["Secondhand", "Clothing"],
+      "price_range": null,
+      "address": null,
+      "instagram": null,
+      "facebook": null,
+      "related_item_id": "ITEM-001",
+      "related_item_url": "ITEM-001.html",
+      "status": "live",
+      "found_date": "2026-01-15",
+      "image": null,
+      "lat": null,
+      "lng": null,
+      "story_file": "shops/owa.story.md",
+      "story_status": "draft"
+    }
+  ]
+}

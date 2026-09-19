@@ -359,7 +359,6 @@
 
 .reveal-body {
   font-family: var(--font-body);
-  font-style: italic;
   font-size: clamp(1.2rem, 2.8vw, 1.7rem);
   font-weight: 400;
   color: var(--violet);
@@ -480,7 +479,6 @@
 
 .panel-body {
   font-family: var(--font-body);
-  font-style: italic;
   font-size: clamp(1rem, 1.8vw, 1.25rem);
   font-weight: 400;
   color: var(--violet);
@@ -616,8 +614,8 @@
   .panel-body { font-size: clamp(1rem, 4.5vw, 1.2rem); }
 }
 
-/* Connections Toggle Button */
-.connections-toggle {
+/* Background Toggle Button */
+.background-toggle {
   position: fixed;
   top: 70px;
   right: 10px;
@@ -635,6 +633,6 @@
   transform: translateY(0);
 }
 
-.connections-toggle:hover {
+.background-toggle:hover {
   background: rgba(75,45,122,0.5);
 }

@@ -1,0 +1,79 @@
+{
+  "type": "FeatureCollection",
+  "name": "phuket-map",
+  "description": "Open map of Phuket thrift shops, beaches, and activity spots. Editable — add a pin, submit a PR-equivalent, share freely.",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Waanwaal",
+        "category": "thrift",
+        "description": "Curated vintage and secondhand. Strong women's selection.",
+        "price_range": "฿100 – ฿1,000+",
+        "url": "blog/guide/waanwaal-phuket.html"
+      },
+      "geometry": { "type": "Point", "coordinates": [98.3865, 7.8854] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "O-WA Second Hand",
+        "category": "thrift",
+        "description": "Dense, well-stocked secondhand. Best weekday mornings.",
+        "price_range": "To be confirmed",
+        "url": "blog/guide/owa-phuket.html"
+      },
+      "geometry": { "type": "Point", "coordinates": [98.3890, 7.8800] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Patong Beach",
+        "category": "beach",
+        "description": "Most commercial beach — long sands, nightlife, easy access.",
+        "tags": ["tourist", "nightlife"]
+      },
+      "geometry": { "type": "Point", "coordinates": [98.2966, 7.8972] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Kata Beach",
+        "category": "beach",
+        "description": "Softer sand, good surf seasonally, family-friendly.",
+        "tags": ["surf", "family"]
+      },
+      "geometry": { "type": "Point", "coordinates": [98.2867, 7.8228] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Nai Harn Beach",
+        "category": "beach",
+        "description": "Quieter bay with a park, joggers, and sunset crowds.",
+        "tags": ["quiet", "sunset"]
+      },
+      "geometry": { "type": "Point", "coordinates": [98.3011, 7.7739] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Phuket Weekend & Night Markets",
+        "category": "activity",
+        "description": "Chatuchak-style stalls for clothes, snacks, and people-watching.",
+        "tags": ["market", "food"]
+      },
+      "geometry": { "type": "Point", "coordinates": [98.3929, 7.8907] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Promthep Cape",
+        "category": "activity",
+        "description": "Sunset viewpoint at Phuket's southern tip.",
+        "tags": ["view", "sunset"]
+      },
+      "geometry": { "type": "Point", "coordinates": [98.3064, 7.7608] }
+    }
+  ]
+}

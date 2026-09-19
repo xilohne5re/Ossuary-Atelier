@@ -73,11 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 
   // Hide/show on leave/enter
+  const hasCursor = typeof cursor !== 'undefined' && cursor;
   document.addEventListener('mouseleave', () => {
-    cursor.style.opacity = '0';
+    if (hasCursor) cursor.style.opacity = '0';
   });
   document.addEventListener('mouseenter', () => {
-    cursor.style.opacity = '1';
+    if (hasCursor) cursor.style.opacity = '1';
   });
 
   /* ── PAGE TRANSITION ───────────────────────── */

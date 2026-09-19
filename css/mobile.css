@@ -5,7 +5,7 @@
 
 @media (max-width: 768px) {
   /* Base typography */
-  html { font-size: 15px; }
+  html { font-size: 16px; }
   
   /* Spacing */
   section, main { padding: 4vh 5vw !important; }
@@ -13,7 +13,7 @@
   /* Typography fixes */
   h1, .title { font-size: clamp(1.75rem, 10vw, 2.5rem) !important; }
   h2 { font-size: clamp(1.35rem, 8vw, 1.75rem) !important; }
-  p { font-size: 0.95rem; line-height: 1.65; }
+  p { font-size: 1rem; line-height: 1.72; }
   
   /* Touch-friendly interactive elements */
   a, button, .filter-pill, .btn-seal {
@@ -71,8 +71,8 @@ html {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Connections Toggle Button */
-.connections-toggle {
+/* Background Toggle Button */
+.background-toggle {
   position: fixed;
   top: calc(var(--nav-height, 60px) + 10px);
   right: 10px;
@@ -88,12 +88,12 @@ html {
   transition: background 0.2s, color 0.2s;
 }
 
-.connections-toggle:hover {
+.background-toggle:hover {
   background: rgba(75,45,122,0.5);
 }
 
 @media (max-width: 768px) {
-  .connections-toggle {
+  .background-toggle {
     top: 70px;
     font-size: 0.6rem;
     padding: 0.35rem 0.6rem;
