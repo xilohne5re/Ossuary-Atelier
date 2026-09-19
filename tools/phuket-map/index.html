@@ -67,7 +67,7 @@
       font-size: 0.68rem;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: #6B3DAA;
+      color: #A184CD;
       display: block;
       margin-bottom: 1rem;
     }
@@ -149,14 +149,14 @@
       font-size: 0.8rem;
       letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: #6B3DAA;
+      color: #A184CD;
       margin: 2rem 0 1rem;
     }
 
     .tools-row {
       background: var(--tools-panel);
       border: 1px solid var(--tools-rule);
-      border-left: 3px solid #6B3DAA;
+      border-left: 3px solid #A184CD;
       padding: 1rem 1.2rem;
       margin-bottom: 0.7rem;
       display: flex;
@@ -196,7 +196,7 @@
       color: var(--tools-violet);
       text-decoration: none;
       align-self: flex-start;
-      border-bottom: 1px solid #6B3DAA;
+      border-bottom: 1px solid #A184CD;
       padding-bottom: 2px;
     }
 
@@ -214,7 +214,7 @@
     }
 
     .tools-back:hover {
-      color: #6B3DAA;
+      color: #A184CD;
     }
 
     .tools-attrib {
@@ -358,5 +358,22 @@
     // scale the map layers to the visible container
     setTimeout(() => map.invalidateSize(), 150);
   </script>
+
+<!-- @@NOTICE_SLOT@@ -->
+<div id="notice-privacy" role="status">
+  <style>#notice-privacy{position:fixed;right:1rem;bottom:1rem;z-index:9900;max-width:20rem;background:rgba(8,8,16,.95);border:1px solid rgba(201,184,232,.18);border-left:3px solid #A184CD;color:#C9B8E8;font-size:.92rem;line-height:1.6;padding:.9rem 1.1rem;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:1;transition:opacity .5s ease,transform .5s ease}#notice-privacy p{margin:0}#notice-privacy a{color:#C9B8E8;text-decoration:underline;text-underline-offset:2px}#notice-privacy button{margin-top:.6rem;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:#C9B8E8;background:none;border:1px solid rgba(201,184,232,.25);padding:.45rem 1rem;cursor:pointer}#notice-privacy.off{opacity:0;transform:translateY(6px);pointer-events:none}@media(max-width:768px){#notice-privacy{right:.75rem;left:.75rem;bottom:.75rem;max-width:none}}</style>
+  <p>This site uses <strong>no tracking cookies</strong> and no analytics. Read our <a href="../../privacy.html">privacy policy</a>.</p>
+  <button type="button" class="notice-dismiss">Got it</button>
+</div>
+<script>
+(function(){
+  var el=document.getElementById('notice-privacy');
+  if(!el)return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.style.transition='none';}
+  var b=el.querySelector('.notice-dismiss');
+  if(b)b.addEventListener('click',function(){el.classList.add('off');});
+  setTimeout(function(){el.classList.add('off');},4000);
+})();
+</script>
 </body>
 </html>

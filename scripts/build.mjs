@@ -524,6 +524,7 @@ const SEO_DESC = {
   'about.html': 'The story of Ossuary Atelier \u2014 a Phuket secondhand clothing brand that grew into a thrift guide, an interactive map, and a growing record of Phuket\u2019s secondhand culture.',
   'contact.html': 'Contact Ossuary Atelier \u2014 DM to claim a piece, ask about provenance, or begin a collaboration.',
   'tos.html': 'Ossuary Atelier purchase terms \u2014 payment, shipping, returns policy, and condition disclosure for all orders.',
+  'privacy.html': 'Ossuary Atelier privacy notice \u2014 what this site collects (comments, purchase enquiries, technical logs), our cookie-free policy, and your data rights.',
   'partnership.html': 'Ossuary Atelier creator partnership agreement \u2014 what we offer, what we ask, and how it works.',
   'blog/index.html': "Ossuary Atelier's field journal \u2014 thrift guides, sourcing notes, and the study of found things.",
   'blog/guide/index.html': 'Phuket thrift & secondhand guide \u2014 honest shop reviews, price ranges, and what to look for when thrifting in Phuket.',
@@ -814,6 +815,68 @@ function runJs(report) {
   log(`[js] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 scripts deferred, registerPlugin in DCL`);
 }
 
+/* ── legal notice step ────────────────────────────────────────
+   Injects a small, auto-closing privacy notice on every page,
+   anchored by a stacked marker so rebuilds are idempotent. The
+   site uses no cookies and no analytics, so this is a transparency
+   notice (not a consent wall). The notice auto-dismisses after 4
+   seconds, can be closed manually, and honours prefers-reduced-motion. */
+const NOTICE_MARKER = '<!-- @@NOTICE_SLOT@@ -->';
+const NOTICE_CSS = [
+  '#notice-privacy{position:fixed;right:1rem;bottom:1rem;z-index:9900;max-width:20rem;',
+  'background:rgba(8,8,16,.95);border:1px solid rgba(201,184,232,.18);border-left:3px solid #A184CD;',
+  'color:#C9B8E8;font-size:.92rem;line-height:1.6;padding:.9rem 1.1rem;box-shadow:0 10px 30px rgba(0,0,0,.5);',
+  'opacity:1;transition:opacity .5s ease,transform .5s ease}',
+  '#notice-privacy p{margin:0}',
+  '#notice-privacy a{color:#C9B8E8;text-decoration:underline;text-underline-offset:2px}',
+  '#notice-privacy button{margin-top:.6rem;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;',
+  'color:#C9B8E8;background:none;border:1px solid rgba(201,184,232,.25);padding:.45rem 1rem;cursor:pointer}',
+  '#notice-privacy.off{opacity:0;transform:translateY(6px);pointer-events:none}',
+  '@media(max-width:768px){#notice-privacy{right:.75rem;left:.75rem;bottom:.75rem;max-width:none}}'
+].join('');
+
+function noticeSnippet(prefix) {
+  return `${NOTICE_MARKER}\n` +
+    `<div id="notice-privacy" role="status">\n` +
+    `  <style>${NOTICE_CSS}</style>\n` +
+    `  <p>This site uses <strong>no tracking cookies</strong> and no analytics. Read our <a href="${prefix}privacy.html">privacy policy</a>.</p>\n` +
+    `  <button type="button" class="notice-dismiss">Got it</button>\n` +
+    `</div>\n` +
+    `<script>\n` +
+    `(function(){\n` +
+    `  var el=document.getElementById('notice-privacy');\n` +
+    `  if(!el)return;\n` +
+    `  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.style.transition='none';}\n` +
+    `  var b=el.querySelector('.notice-dismiss');\n` +
+    `  if(b)b.addEventListener('click',function(){el.classList.add('off');});\n` +
+    `  setTimeout(function(){el.classList.add('off');},4000);\n` +
+    `})();\n` +
+    `</script>`;
+}
+
+function runLegalNotice(report) {
+  gate('legal');
+  const files = walkHtml(ROOT);
+  let changed = 0;
+
+  for (const abs of files) {
+    const original = readFileSync(abs, 'utf8');
+    if (original.includes(NOTICE_MARKER)) continue;
+    const rel = relOf(abs);
+    const prefix = rel.includes('/') ? '../'.repeat(rel.split('/').length - 1) : '';
+    const html = original.replace(/<\/body>\s*<\/html>/i, `\n${noticeSnippet(prefix)}\n</body>\n</html>`);
+    if (html !== original) {
+      changed++;
+      if (report) {
+        log(`  [legal] ${rel} \u2014 would rewrite`);
+      } else {
+        writeFileSync(abs, html, 'utf8');
+      }
+    }
+  }
+  log(`[legal] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 privacy notice injected`);
+}
+
 function runSitemap() {
   gate('sitemap');
   const EXCLUDE = new Set(['item-template.html', 'internal-dm-scripts.html', '404.html', 'craft.html', 'drops.html']);
@@ -872,10 +935,11 @@ const STEPS = {
   seo: runSeo,
   fonts: runFonts,
   js: runJs,
+  legal: runLegalNotice,
   sitemap: runSitemap,
 };
 
-const stepOrder = ['items', 'shops', 'posts', 'partials', 'seo', 'fonts', 'js', 'links', 'sitemap'];
+const stepOrder = ['items', 'shops', 'posts', 'partials', 'seo', 'fonts', 'js', 'legal', 'links', 'sitemap'];
 const toRun = opts.steps
   ? opts.steps
   : (opts.enableContent ? stepOrder : ['partials', 'links']);
