@@ -790,7 +790,7 @@ function runJs(report) {
 
     // 1. defer every external script
     html = html.replace(scriptSrcRe, (m, attrs) => {
-      if (/\bdefer\b/.test(attrs)) return m;
+      if (/\b(?:async|defer)\b/.test(attrs)) return m;
       return `<script ${attrs} defer>`;
     });
 
@@ -877,6 +877,44 @@ function runLegalNotice(report) {
   log(`[legal] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 privacy notice injected`);
 }
 
+/* ── preferred-sources step ─────────────────────────────────
+   Injects Google's "Add to preferred sources" library into the
+   head of every page that presents the shared footer button.
+   Only the article/promotional pages keep the script; internal
+   and utility pages (craft/drops/internal scripts, the map and
+   the verification file) are skipped since they carry no button. */
+const PREF_EXCLUDE = new Set([
+  'craft.html',
+  'drops.html',
+  'internal-dm-scripts.html',
+  'googlecf73118a74657205.html',
+  'tools/phuket-map/index.html',
+]);
+const PREF_SCRIPT = `<script async src="https://news.google.com/swg/js/v1/publisher.js"><\/script>`;
+
+function runPreferred(report) {
+  gate('preferred');
+  const files = walkHtml(ROOT);
+  let changed = 0;
+
+  for (const abs of files) {
+    const rel = relOf(abs);
+    if (PREF_EXCLUDE.has(rel)) continue;
+    const original = readFileSync(abs, 'utf8');
+    if (original.includes('news.google.com/swg/js/v1/publisher.js')) continue;
+    const html = original.replace(/<\/head>/i, `\n${PREF_SCRIPT}\n</head>`);
+    if (html !== original) {
+      changed++;
+      if (report) {
+        log(`  [preferred] ${rel} \u2014 would rewrite`);
+      } else {
+        writeFileSync(abs, html, 'utf8');
+      }
+    }
+  }
+  log(`[preferred] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 preferred-sources script injected`);
+}
+
 function runSitemap() {
   gate('sitemap');
   const EXCLUDE = new Set(['item-template.html', 'internal-dm-scripts.html', '404.html', 'craft.html', 'drops.html']);
@@ -935,11 +973,12 @@ const STEPS = {
   seo: runSeo,
   fonts: runFonts,
   js: runJs,
+  preferred: runPreferred,
   legal: runLegalNotice,
   sitemap: runSitemap,
 };
 
-const stepOrder = ['items', 'shops', 'posts', 'partials', 'seo', 'fonts', 'js', 'legal', 'links', 'sitemap'];
+const stepOrder = ['items', 'shops', 'posts', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'links', 'sitemap'];
 const toRun = opts.steps
   ? opts.steps
   : (opts.enableContent ? stepOrder : ['partials', 'links']);
