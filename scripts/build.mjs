@@ -600,6 +600,9 @@ function runSeo(report) {
     if (!desc) desc = 'Ossuary Atelier \u2014 secondhand fashion with verified stories.';
 
     const root = rootPrefix(rel);
+    const preloads = FONT_FILES.map(f =>
+      `  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="${root}assets/fonts/${f}.woff2">\n`
+    ).join('');
     const canonicalPath = rel === 'index.html' ? '' : rel.replace(/\/index\.html$/, '');
     const canonical = canonicalPath ? `${SITE_BASE}/${canonicalPath}` : `${SITE_BASE}/`;
     const ogType = rel.startsWith('blog/') ? 'article' : 'website';
@@ -638,7 +641,8 @@ function runSeo(report) {
       `  <meta name="theme-color" content="#080810">\n` +
       `  <link rel="icon" type="image/png" sizes="32x32" href="${root}assets/favicon-32.png">\n` +
       `  <link rel="icon" type="image/svg+xml" href="${root}assets/favicon.svg">\n` +
-      `  <link rel="apple-touch-icon" href="${root}assets/apple-touch-icon.png">` +
+      `  <link rel="apple-touch-icon" href="${root}assets/apple-touch-icon.png">\n` +
+      `${preloads}` +
       `${noindex}\n` +
       `<!-- @@SEO_END@@ -->`;
 
@@ -658,6 +662,42 @@ function runSeo(report) {
     }
   }
   log(`[seo] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'}`);
+}
+
+/* ── fonts step ───────────────────────────────────────────────
+   Removes the Google Fonts chain (preconnects + css2 stylesheet),
+   which was the render-blocking bottleneck. Font preloads for the
+   self-hosted variable fonts are injected by the seo step (inside
+   the SEO slot, so ordering is deterministic and idempotent). */
+const FONT_FILES = ['cinzel', 'cormorant', 'cormorant-italic'];
+
+function stripGoogleFontLinks(html) {
+  return html.replace(/[ \t]*\r?\n?\s*<link[^>]*fonts\.(?:googleapis|gstatic)\.com[^>]*>\s*/gi, '\n');
+}
+
+function runFonts(report) {
+  gate('fonts');
+  const files = walkHtml(ROOT);
+  let changed = 0;
+
+  for (const abs of files) {
+    const rel = relOf(abs);
+    const original = readFileSync(abs, 'utf8');
+    let html = original;
+
+    // Remove every Google Fonts <link> (stylesheet + preconnects)
+    html = stripGoogleFontLinks(html);
+
+    if (html !== original) {
+      changed++;
+      if (report) {
+        log(`  [fonts] ${rel} \u2014 would rewrite`);
+      } else {
+        writeFileSync(abs, html, 'utf8');
+      }
+    }
+  }
+  log(`[fonts] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 Google Fonts stripped`);
 }
 
 function runSitemap() {
@@ -716,10 +756,11 @@ const STEPS = {
   shops: runShops,
   posts: runPosts,
   seo: runSeo,
+  fonts: runFonts,
   sitemap: runSitemap,
 };
 
-const stepOrder = ['items', 'shops', 'posts', 'partials', 'seo', 'links', 'sitemap'];
+const stepOrder = ['items', 'shops', 'posts', 'partials', 'seo', 'fonts', 'links', 'sitemap'];
 const toRun = opts.steps
   ? opts.steps
   : (opts.enableContent ? stepOrder : ['partials', 'links']);

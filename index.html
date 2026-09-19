@@ -32,14 +32,16 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="assets/fonts/cinzel.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="assets/fonts/cormorant.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="assets/fonts/cormorant-italic.woff2">
+
 <!-- @@SEO_END@@ -->
   <meta name="google-site-verification" content="mlP-UvJYd4hkz3pHvMT83oCbSprN2J7cToK7en3E4x8" />
   <link rel="stylesheet" href="css/base.css">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/nav.css">
+
+<link rel="stylesheet" href="css/nav.css">
   <link rel="stylesheet" href="css/target-cursor.css">
   <link rel="stylesheet" href="css/index.css">
   <link rel="stylesheet" href="css/mobile.css" media="screen and (max-width: 768px)">
@@ -92,7 +94,7 @@
   <div id="cursor-trail"></div>
 
   <!-- ── SPLASH INTRO ── -->
-  <div id="splash-intro" aria-label="Intro">
+  <div id="splash-intro" role="region" aria-label="Intro">
     <div id="splash-shatter" aria-hidden="true"></div>
     <div id="splash-eye" aria-hidden="true"></div>
     <div id="splash-prompt" class="splash-prompt">
@@ -220,7 +222,7 @@
 
     <article class="intro-panel">
       <span class="panel-number">01 / Find</span>
-      <div id="hunt-wrap" class="hunt-wrap" aria-label="The Hunt"></div>
+      <div id="hunt-wrap" class="hunt-wrap" role="img" aria-label="The Hunt"></div>
       <p class="panel-body">
         We source in under ground thrift stores, market stalls, and estate sales.
         Only pieces with a story worth telling make it through.
@@ -230,7 +232,7 @@
 
     <article class="intro-panel">
       <span class="panel-number">02 / Prove</span>
-      <div id="story-wrap" class="hunt-wrap" aria-label="The Story"></div>
+      <div id="story-wrap" class="hunt-wrap" role="img" aria-label="The Story"></div>
       <p class="panel-body">
         Our most beloved items get a dedicated story page — origin, era, provenance.
         A QR code on the tag is your key to reading it.
@@ -240,7 +242,7 @@
 
     <article class="intro-panel">
       <span class="panel-number">03 / Own</span>
-      <div id="claim-wrap" class="hunt-wrap" aria-label="The Claim"></div>
+      <div id="claim-wrap" class="hunt-wrap" role="img" aria-label="The Claim"></div>
       <p class="panel-body">
         See something? DM us on Instagram. Every transaction is personal.
         No cart, no algorithm — just you, us, and the piece.

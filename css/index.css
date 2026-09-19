@@ -419,7 +419,7 @@
 }
 
 .marquee-inner span.sep {
-  color: #9D72D6;
+  color: var(--bruise-mid);
   padding: 0;
 }
 

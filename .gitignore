@@ -11,3 +11,10 @@ Thumbs.db
 # Editor
 .idea/
 .vscode/
+
+# Private working docs — never committed
+DOMAIN-SWITCH.md
+README.md
+OA_BLOG_BUILD_GUIDE.txt
+oa-about-page-content.md
+oa-implementation-plan.md

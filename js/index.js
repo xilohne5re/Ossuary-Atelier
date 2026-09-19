@@ -67,31 +67,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   splashEye.innerHTML = buildEyeSVG();
 
-  /* ── SPLASH ANIMATION SEQUENCE ── */
+  /* ── SPLASH: SKIP OR PLAY ── */
+  const splashIntro = document.getElementById('splash-intro');
+  const bot          = navigator.webdriver === true;
+  const revisit      = sessionStorage.getItem('splashSeen') === 'true';
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const autoDismiss  = bot || revisit || reduceMotion;
+
   let splashCompleted = false;
 
-  const splashTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-  // Eye opens
-  splashTl.to(splashEye, {
-    opacity: 1,
-    scale: 1,
-    duration: 1.4,
-    ease: 'power2.out',
-    onStart: () => splashEye.style.opacity = '0',
-  });
-
-  /* ── HANDLE SPLASH CLICK ── */
-  const splashIntro = document.getElementById('splash-intro');
-  splashIntro.addEventListener('click', () => {
+  const exitSplash = (withShatter) => {
     if (splashCompleted) return;
     splashCompleted = true;
-
-    // Mark splash as seen immediately
     sessionStorage.setItem('splashSeen', 'true');
 
     // Trigger shatter BEFORE hiding splash (container is inside splash-intro)
-    createSplashShatter();
+    if (withShatter) createSplashShatter();
 
     // Then hide splash
     splashIntro.style.transition = 'opacity 0.1s';
@@ -101,10 +92,34 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(() => {
       setTimeout(() => {
         splashIntro.classList.add('hidden');
-        startHeroAnimation();
+        startHeroAnimation({ instant: autoDismiss });
       }, 50);
     });
-  });
+  };
+
+  if (autoDismiss) {
+    // Skip the cinematic intro entirely (bots / same-tab revisits / reduced-motion)
+    splashCompleted = true;
+    sessionStorage.setItem('splashSeen', 'true');
+    splashIntro.style.opacity = '0';
+    splashIntro.classList.add('hidden');
+    startHeroAnimation({ instant: autoDismiss });
+  } else {
+    /* ── SPLASH ANIMATION SEQUENCE ── */
+    const splashTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    // Eye opens
+    splashTl.to(splashEye, {
+      opacity: 1,
+      scale: 1,
+      duration: 1.4,
+      ease: 'power2.out',
+      onStart: () => splashEye.style.opacity = '0',
+    });
+
+    /* ── HANDLE SPLASH CLICK ── */
+    splashIntro.addEventListener('click', () => exitSplash(true));
+  }
 
   /* ── SPLASH SHATTER PARTICLES ── */
   function createSplashShatter() {
@@ -154,7 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 /* ── MAIN HERO ANIMATION ── */
-  function startHeroAnimation() {
+  function startHeroAnimation(opts) {
+    const instant = opts && opts.instant;
     const eyeContainer = document.getElementById('hero-eye');
     const heroEye = document.getElementById('hero-eye');
     const hero = document.getElementById('hero');
@@ -217,8 +233,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       requestAnimationFrame(() => animateHeadline());
     };
-    hero.addEventListener('click', skip, { once: true });
-    hero.addEventListener('wheel', skip, { once: true });
+    if (instant) {
+      // Jump straight to the resolved hero state (no cinematic)
+      skip();
+    } else {
+      hero.addEventListener('click', skip, { once: true });
+      hero.addEventListener('wheel', skip, { once: true });
+    }
   }
 
   /* ── HERO SHATTER PARTICLES ── */

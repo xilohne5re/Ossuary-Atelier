@@ -27,10 +27,11 @@
   <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon-32.png">
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
   <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="../../assets/fonts/cinzel.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="../../assets/fonts/cormorant.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="../../assets/fonts/cormorant-italic.woff2">
+
 <!-- @@SEO_END@@ -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
   <style>
@@ -281,7 +282,7 @@
       <p class="tools-sub">Thrift shops, beaches, and activity spots on one open, editable map. Add a pin — then share it.</p>
     </header>
 
-    <div id="map" aria-label="Interactive map of Phuket"></div>
+    <div id="map" role="img" aria-label="Interactive map of Phuket"></div>
 
     <div class="legend">
       <span class="legend-item"><span class="legend-dot" style="background:#C9B8E8"></span>Thrift shops</span>
