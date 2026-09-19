@@ -621,7 +621,7 @@ html {
       --violet:     #C9B8E8;
       --violet-dim: #A898C8;
       --bruise:     #4B2D7A;
-      --bruise-mid: #6B3DAA;
+      --bruise-mid: #A184CD;
       --mid:        #1C1828;
       --faint:      #2A2440;
       --font-d: 'Cinzel', serif;
@@ -974,7 +974,7 @@ html {
 
     <div class="page-label">Legal</div>
     <h1 class="page-title">Terms of<br>Service</h1>
-    <p class="page-updated">Last updated: May 2026 · Applies to all purchases made through Ossuary Atelier</p>
+    <p class="page-updated">Last updated: 20 Sep 2026 · Applies to all purchases made through Ossuary Atelier</p>
 
     <div class="rule"></div>
 
@@ -1163,9 +1163,43 @@ html {
       </div>
     </div>
 
+    <!-- 08 PRIVACY -->
+    <div class="section">
+      <div class="section-num">08</div>
+      <div class="section-title">Privacy &amp; Data</div>
+      <div class="section-body">
+        <p>
+          We collect very little: the details you choose to share when you comment
+          on the guide or message us about an order over Instagram DM, plus routine
+          technical connection data. This site sets no cookies and uses no
+          advertising or analytics. Everything we collect, where data goes, how
+          long we keep it, and the rights you have over it is set out in full:
+        </p>
+        <div class="policy-note">
+          Privacy &amp; data notice: <strong><a href="privacy.html">privacy.html</a></strong>.
+          Questions or data requests: <a href="mailto:6630612019psu@gmail.com">6630612019psu@gmail.com</a>.
+        </div>
+      </div>
+    </div>
+
+    <!-- 09 GOVERNING LAW -->
+    <div class="section">
+      <div class="section-num">09</div>
+      <div class="section-title">Governing Law &amp; Jurisdiction</div>
+      <div class="section-body">
+        <p>
+          These terms are governed by the laws of the <strong>Kingdom of Thailand</strong>,
+          and we process personal data consistently with the Personal Data
+          Protection Act. Any dispute arising from a purchase will be subject to
+          the exclusive jurisdiction of the Thai courts.
+        </p>
+      </div>
+    </div>
+
     <!-- PAGE FOOTER -->
     <div class="page-footer">
       <span class="footer-copy">Ossuary Atelier © 2026 · Thailand</span>
+      <a href="privacy.html">Privacy</a>
       <a href="tos.html">TOS</a>
         <a href="shop.html">Shop</a>
         <a href="contact.html">Contact</a>
@@ -1175,5 +1209,22 @@ html {
 
   </div><!-- /page -->
 
+
+<!-- @@NOTICE_SLOT@@ -->
+<div id="notice-privacy" role="status">
+  <style>#notice-privacy{position:fixed;right:1rem;bottom:1rem;z-index:9900;max-width:20rem;background:rgba(8,8,16,.95);border:1px solid rgba(201,184,232,.18);border-left:3px solid #A184CD;color:#C9B8E8;font-size:.92rem;line-height:1.6;padding:.9rem 1.1rem;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:1;transition:opacity .5s ease,transform .5s ease}#notice-privacy p{margin:0}#notice-privacy a{color:#C9B8E8;text-decoration:underline;text-underline-offset:2px}#notice-privacy button{margin-top:.6rem;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:#C9B8E8;background:none;border:1px solid rgba(201,184,232,.25);padding:.45rem 1rem;cursor:pointer}#notice-privacy.off{opacity:0;transform:translateY(6px);pointer-events:none}@media(max-width:768px){#notice-privacy{right:.75rem;left:.75rem;bottom:.75rem;max-width:none}}</style>
+  <p>This site uses <strong>no tracking cookies</strong> and no analytics. Read our <a href="privacy.html">privacy policy</a>.</p>
+  <button type="button" class="notice-dismiss">Got it</button>
+</div>
+<script>
+(function(){
+  var el=document.getElementById('notice-privacy');
+  if(!el)return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.style.transition='none';}
+  var b=el.querySelector('.notice-dismiss');
+  if(b)b.addEventListener('click',function(){el.classList.add('off');});
+  setTimeout(function(){el.classList.add('off');},4000);
+})();
+</script>
 </body>
 </html>

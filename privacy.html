@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Creator Partnership — Ossuary Atelier</title>
+  <title>Privacy & Data — Ossuary Atelier</title>
 
   <!-- @@SEO_SLOT@@ -->
-  <link rel="canonical" href="https://ossuaryphuket.me/Ossuary-Atelier/partnership.html">
-  <meta name="description" content="Ossuary Atelier creator partnership agreement — what we offer, what we ask, and how it works.">
+  <link rel="canonical" href="https://ossuaryphuket.me/Ossuary-Atelier/privacy.html">
+  <meta name="description" content="Ossuary Atelier privacy notice — what this site collects (comments, purchase enquiries, technical logs), our cookie-free policy, and your data rights.">
   <meta property="og:site_name" content="Ossuary Atelier">
   <meta property="og:locale" content="en_US">
-  <meta property="og:title" content="Creator Partnership — Ossuary Atelier">
-  <meta property="og:description" content="Ossuary Atelier creator partnership agreement — what we offer, what we ask, and how it works.">
+  <meta property="og:title" content="Privacy &amp; Data — Ossuary Atelier">
+  <meta property="og:description" content="Ossuary Atelier privacy notice — what this site collects (comments, purchase enquiries, technical logs), our cookie-free policy, and your data rights.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://ossuaryphuket.me/Ossuary-Atelier/partnership.html">
+  <meta property="og:url" content="https://ossuaryphuket.me/Ossuary-Atelier/privacy.html">
   <meta property="og:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
   <meta property="og:image:alt" content="Ossuary Atelier — secondhand fashion with verified stories.">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@ossuaryatelier">
-  <meta name="twitter:title" content="Creator Partnership — Ossuary Atelier">
-  <meta name="twitter:description" content="Ossuary Atelier creator partnership agreement — what we offer, what we ask, and how it works.">
+  <meta name="twitter:title" content="Privacy &amp; Data — Ossuary Atelier">
+  <meta name="twitter:description" content="Ossuary Atelier privacy notice — what this site collects (comments, purchase enquiries, technical logs), our cookie-free policy, and your data rights.">
   <meta name="twitter:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
   <meta name="theme-color" content="#080810">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
@@ -617,20 +617,21 @@ html {
   <style>
     :root {
       --void:       #080810;
+      --void-deep:  #04040a;
       --violet:     #C9B8E8;
       --violet-dim: #A898C8;
       --bruise:     #4B2D7A;
       --bruise-mid: #A184CD;
       --mid:        #1C1828;
       --faint:      #2A2440;
-      --green:      #4CAF82;
-      --green-bg:   #0A1F14;
-      --amber:      #E8A020;
       --font-d: 'Cinzel', serif;
       --font-b: 'Cormorant Garamond', serif;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
     }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    html { font-size:16px; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; }
+
     body {
       background: var(--void);
       color: var(--violet);
@@ -639,236 +640,269 @@ html {
       line-height: 1.75;
       -webkit-font-smoothing: antialiased;
     }
-    a { color:var(--violet); text-decoration:none; transition:opacity 0.2s; }
-    a:hover { opacity:0.7; }
-    ::selection { background:var(--bruise); color:var(--violet); }
-    ::-webkit-scrollbar { width:3px; }
-    ::-webkit-scrollbar-track { background:var(--void); }
-    ::-webkit-scrollbar-thumb { background:var(--bruise); }
 
-    /* grain */
+    a { color: var(--violet); text-decoration: none; transition: opacity 0.2s; }
+    a:hover { opacity: 0.7; }
+
+    ::selection { background: var(--bruise); color: var(--violet); }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--void); }
+    ::-webkit-scrollbar-thumb { background: var(--bruise); }
+
+    /* Grain */
     body::after {
-      content:''; position:fixed; inset:-50%;
-      width:200%; height:200%;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity:0.03; pointer-events:none; z-index:9000;
+      content: '';
+      position: fixed; inset: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 9000;
     }
 
-    /* ── TOPBAR ── */
+    /* ── TOP BAR ── */
     #topbar {
-      position:fixed; top:0; left:0; right:0; height:52px;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0 2.5rem;
-      background:rgba(8,8,16,0.88); backdrop-filter:blur(16px);
-      border-bottom:1px solid rgba(201,184,232,0.06); z-index:100;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      background: rgba(8,8,16,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(201,184,232,0.06);
+      z-index: 100;
     }
-    .topbar-brand { display:flex; align-items:center; gap:0.75rem; }
-    .topbar-eye { width:30px; height:19px; }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .topbar-eye { width: 30px; height: 19px; }
+
     .topbar-name {
-      font-family:var(--font-d); font-weight:900;
-      font-size:0.65rem; letter-spacing:0.28em; color:var(--violet); line-height:1;
+      font-family: var(--font-d);
+      font-weight: 900;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      color: var(--violet);
+      line-height: 1;
     }
     .topbar-name span {
-      display:block; font-weight:400; font-size:0.48rem;
-      letter-spacing:0.45em; color:var(--violet-dim); margin-top:2px;
+      display: block;
+      font-weight: 400;
+      font-size: 0.48rem;
+      letter-spacing: 0.45em;
+      color: var(--violet-dim);
+      margin-top: 2px;
     }
+
     .topbar-back {
-      font-family:var(--font-d); font-size:0.52rem;
-      letter-spacing:0.35em; color:var(--violet-dim); text-transform:uppercase;
-      transition:color 0.2s;
+      font-family: var(--font-d);
+      font-size: 0.52rem;
+      letter-spacing: 0.35em;
+      color: var(--violet-dim);
+      text-transform: uppercase;
+      transition: color 0.2s;
     }
-    .topbar-back:hover { color:var(--violet); opacity:1; }
+    .topbar-back:hover { color: var(--violet); opacity: 1; }
 
-    /* ── PAGE ── */
-    #page { max-width:720px; margin:0 auto; padding:calc(52px + 5rem) 2rem 6rem; }
+    /* ── PAGE WRAPPER ── */
+    #page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: calc(52px + 5rem) 2rem 6rem;
+    }
 
+    /* ── HEADER ── */
     .page-label {
-      font-family:var(--font-d); font-size:0.55rem;
-      letter-spacing:0.55em; color:var(--bruise-mid);
-      text-transform:uppercase; margin-bottom:1.25rem;
-      display:flex; align-items:center; gap:0.75rem;
+      font-family: var(--font-d);
+      font-size: 0.55rem;
+      letter-spacing: 0.55em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
     .page-label::before {
-      content:''; display:block; width:28px; height:1px; background:var(--bruise-mid);
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--bruise-mid);
     }
+
     .page-title {
-      font-family:var(--font-d); font-weight:900;
-      font-size:clamp(1.8rem,4vw,2.8rem);
-      letter-spacing:0.06em; text-transform:uppercase;
-      line-height:1.1; color:var(--violet); margin-bottom:0.6rem;
+      font-family: var(--font-d);
+      font-weight: 900;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      color: var(--violet);
+      margin-bottom: 0.6rem;
     }
+
     .page-updated {
-      font-family:var(--font-b); font-style:italic;
-      font-size:0.9rem; color:var(--violet-dim); margin-bottom:3rem;
+      font-family: var(--font-b);
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--violet-dim);
+      margin-bottom: 3rem;
     }
+
+    /* ── RULE ── */
     .rule {
-      width:100%; height:1px;
-      background:linear-gradient(to right, var(--faint), transparent);
-      margin-bottom:3rem;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, var(--faint), transparent);
+      margin-bottom: 3rem;
     }
 
+    /* ── INTRO ── */
     .intro {
-      font-family:var(--font-b); font-style:italic;
-      font-size:1.15rem; color:var(--violet); line-height:1.8;
-      margin-bottom:3.5rem;
-      padding-left:1.25rem; border-left:2px solid var(--bruise);
+      font-family: var(--font-b);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--violet);
+      line-height: 1.8;
+      margin-bottom: 3.5rem;
+      padding-left: 1.25rem;
+      border-left: 2px solid var(--bruise);
     }
 
-    /* ── SECTIONS ── */
-    .section { margin-bottom:3rem; }
+    /* ── SECTION ── */
+    .section {
+      margin-bottom: 3rem;
+    }
+
     .section-num {
-      font-family:var(--font-d); font-size:0.52rem;
-      letter-spacing:0.5em; color:var(--bruise-mid);
-      text-transform:uppercase; margin-bottom:0.5rem;
+      font-family: var(--font-d);
+      font-size: 0.52rem;
+      letter-spacing: 0.5em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
     }
+
     .section-title {
-      font-family:var(--font-d); font-weight:700;
-      font-size:0.85rem; letter-spacing:0.2em;
-      text-transform:uppercase; color:var(--violet);
-      margin-bottom:1rem; padding-bottom:0.6rem;
-      border-bottom:1px solid var(--faint);
+      font-family: var(--font-d);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--violet);
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--faint);
     }
+
     .section-body {
-      font-family:var(--font-b); font-size:1.05rem;
-      color:var(--violet-dim); line-height:1.8;
+      font-family: var(--font-b);
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      line-height: 1.8;
     }
-    .section-body p { margin-bottom:0.75rem; }
-    .section-body p:last-child { margin-bottom:0; }
-    .section-body strong { color:var(--violet); font-weight:600; font-style:normal; }
 
-    /* ── GIVE / GET TWO COL ── */
-    .give-get {
-      display:grid; grid-template-columns:1fr 1fr; gap:1px;
-      background:var(--faint); border:1px solid var(--faint);
-      margin-bottom:1.5rem;
-    }
-    .gg-col { background:var(--mid); padding:1.5rem 1.5rem 1.75rem; }
-    .gg-head {
-      font-family:var(--font-d); font-size:0.6rem;
-      letter-spacing:0.4em; text-transform:uppercase;
-      margin-bottom:1rem; padding-bottom:0.6rem;
-      border-bottom:1px solid var(--faint);
-    }
-    .gg-head.give { color:var(--green); }
-    .gg-head.get  { color:var(--amber); }
-    .gg-list { list-style:none; display:flex; flex-direction:column; gap:0.6rem; }
-    .gg-list li {
-      font-family:var(--font-b); font-style:italic;
-      font-size:1rem; color:var(--violet-dim); line-height:1.6;
-      display:flex; gap:0.6rem; align-items:flex-start;
-    }
-    .gg-list li::before {
-      content:'◈'; font-style:normal;
-      flex-shrink:0; margin-top:1px;
-    }
-    .gg-col.give .gg-list li::before { color:var(--green); }
-    .gg-col.get  .gg-list li::before { color:var(--amber); }
+    .section-body p { margin-bottom: 0.75rem; }
+    .section-body p:last-child { margin-bottom: 0; }
 
-    /* ── POLICY NOTE ── */
+    .section-body strong {
+      color: var(--violet);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* Highlighted policy note */
     .policy-note {
-      background:var(--mid); border:1px solid var(--faint);
-      border-left:3px solid var(--bruise-mid);
-      padding:1rem 1.25rem; margin:1rem 0;
-      font-family:var(--font-b); font-size:1rem;
-      color:var(--violet); line-height:1.7;
-    }
-    .policy-note.green-note {
-      border-left-color:var(--green);
-      background:var(--green-bg);
-      color:rgba(76,175,130,0.9);
-    }
-
-    /* ── QUALITY STANDARDS GRID ── */
-    .standards {
-      display:flex; flex-direction:column; gap:0;
-      border:1px solid var(--faint);
-    }
-    .std-row {
-      display:grid; grid-template-columns:auto 1fr;
-      gap:1rem; padding:0.9rem 1.25rem;
-      border-bottom:1px solid rgba(42,36,64,0.5);
-      align-items:center; background:var(--mid);
-    }
-    .std-row:last-child { border-bottom:none; }
-    .std-icon { font-size:10px; }
-    .std-icon.pass { color:var(--green); }
-    .std-icon.fail { color:#E05555; }
-    .std-text {
-      font-family:var(--font-b); font-size:1rem;
-      color:var(--violet-dim); line-height:1.55;
-    }
-    .std-text strong { color:var(--violet); font-weight:600; font-style:normal; }
-
-    /* ── SIGNATURE BLOCK ── */
-    .sig-block {
-      display:grid; grid-template-columns:1fr 1fr; gap:24px;
-      margin-top:1rem;
-    }
-    .sig-col {
-      border:1px solid var(--faint); padding:1.5rem;
-      background:var(--mid);
-    }
-    .sig-label {
-      font-family:var(--font-d); font-size:0.52rem;
-      letter-spacing:0.4em; color:var(--bruise-mid);
-      text-transform:uppercase; margin-bottom:1rem;
-    }
-    .sig-line {
-      border-bottom:1px solid var(--faint);
-      height:2rem; margin-bottom:0.5rem;
-    }
-    .sig-desc {
-      font-family:var(--font-b); font-style:italic;
-      font-size:0.85rem; color:var(--violet-dim);
+      background: var(--mid);
+      border: 1px solid var(--faint);
+      border-left: 3px solid var(--bruise-mid);
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-family: var(--font-b);
+      font-size: 1rem;
+      color: var(--violet);
+      line-height: 1.7;
     }
 
-    /* ── DM SCRIPTS ── */
-    .dm-script {
-      background:var(--mid); border:1px solid var(--faint);
-      border-left:3px solid var(--bruise-mid);
-      padding:1.5rem 1.75rem; margin-bottom:1.5rem;
-    }
-    .dm-script-label {
-      font-family:var(--font-d); font-size:0.52rem;
-      letter-spacing:0.4em; color:var(--bruise-mid);
-      text-transform:uppercase; margin-bottom:0.85rem;
-    }
-    .dm-script-body {
-      font-family:var(--font-b); font-size:1.05rem;
-      color:var(--violet); line-height:1.8;
-    }
-    .dm-script-body em { color:var(--violet-dim); font-style:italic; }
-    .dm-script-body .placeholder {
-      color:var(--amber); font-style:normal; font-weight:600;
-    }
-    .dm-note {
-      font-family:var(--font-b); font-style:italic;
-      font-size:0.88rem; color:var(--violet-dim);
-      margin-top:0.75rem; line-height:1.6;
+    .policy-note.final-sale {
+      border-left-color: #E05555;
+      background: #100808;
     }
 
-    /* ── FOOTER ── */
+    /* ── CONTACT BLOCK ── */
+    .contact-block {
+      background: var(--mid);
+      border: 1px solid var(--faint);
+      padding: 1.5rem 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .contact-icon {
+      flex-shrink: 0;
+      width: 36px; height: 22px;
+      opacity: 0.7;
+    }
+
+    .contact-text {
+      font-family: var(--font-b);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--violet-dim);
+      line-height: 1.65;
+    }
+
+    .contact-text a {
+      color: var(--violet);
+      font-style: normal;
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-color: var(--bruise-mid);
+      text-underline-offset: 3px;
+    }
+
+    /* ── FOOTER RULE + NOTE ── */
     .page-footer {
-      margin-top:4rem; padding-top:1.5rem;
-      border-top:1px solid var(--faint);
-      display:flex; align-items:center; justify-content:space-between;
-      flex-wrap:wrap; gap:1rem;
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--faint);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-    .footer-copy {
-      font-family:var(--font-d); font-size:0.52rem;
-      letter-spacing:0.4em; color:var(--bruise-mid); text-transform:uppercase;
-    }
-    .footer-links { display:flex; gap:1.5rem; }
-    .footer-links a {
-      font-family:var(--font-d); font-size:0.52rem;
-      letter-spacing:0.35em; color:var(--violet-dim); text-transform:uppercase;
-    }
-    .footer-links a:hover { color:var(--violet); opacity:1; }
 
-    @media (max-width:600px) {
-      .give-get { grid-template-columns:1fr; }
-      .sig-block { grid-template-columns:1fr; }
+    .footer-copy {
+      font-family: var(--font-d);
+      font-size: 0.52rem;
+      letter-spacing: 0.4em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
     }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-family: var(--font-d);
+      font-size: 0.52rem;
+      letter-spacing: 0.35em;
+      color: var(--violet-dim);
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--violet); opacity: 1; }
   </style>
 
   <!-- @@SITE_JSONLD_BEGIN@@ -->
@@ -906,7 +940,7 @@ html {
   </head>
 <body>
 
-  <!-- TOPBAR -->
+  <!-- TOP BAR -->
   <!-- @@TOPBAR_SLOT@@ -->
 <div id="topbar">
   <a href="index.html" class="topbar-brand" aria-label="Ossuary Atelier">
@@ -935,216 +969,227 @@ html {
 </div>
 <!-- @@TOPBAR_END@@ -->
 
+  <!-- PAGE CONTENT -->
   <div id="page">
 
-    <div class="page-label">For Creators</div>
-    <h1 class="page-title">Creator<br>Partnership</h1>
-    <p class="page-updated">Ossuary Atelier · Archive Collaboration Agreement · 2026</p>
+    <div class="page-label">Legal</div>
+    <h1 class="page-title">Terms of<br>Service</h1>
+    <p class="page-updated">Last updated: 20 Sep 2026 · Cookie-free · No analytics</p>
 
     <div class="rule"></div>
 
-    <p class="intro">
-      Ossuary Atelier is built around the idea that a garment's story doesn't
-      end at the point of sale. Archive pieces — our rarest, most documented finds —
-      deserve to be seen in the world. This agreement is how we make that happen
-      together. It's simple, mutual, and built on taste rather than follower count.
+<p class="intro">
+      We keep things simple. This site sets <strong>no cookies</strong>, runs
+      <strong>no advertising</strong>, and skips analytics entirely. What little
+      we do collect — and how you can control it — is set out below, in plain
+      language.
     </p>
 
-    <!-- 01 WHAT IS AN ARCHIVE PIECE -->
+    <!-- 01 WHO WE ARE -->
     <div class="section">
       <div class="section-num">01</div>
-      <div class="section-title">The Archive Tier</div>
+      <div class="section-title">Who We Are &amp; What This Covers</div>
       <div class="section-body">
         <p>
-          Archive pieces are items with verified provenance, unusual labels,
-          or significant story value — things we've researched, dated, and
-          documented in detail. Each Archive item has a dedicated story page
-          accessible via a QR code on its physical hangtag.
+          Ossuary Atelier is a secondhand clothing brand based in
+          <strong>Phuket, Thailand</strong>. We act as the data controller for the
+          personal data described in this notice. It applies to everything we do:
+          this website, the guide, and purchases arranged through our Instagram
+          direct messages.
         </p>
         <p>
-          These are not standard thrift finds. They are <strong>recovered objects
-          with a documented history</strong> — and the right person wearing one,
-          in the right context, is part of what makes that history worth telling.
-          That's where you come in.
+          We handle your data under Thailand’s Personal Data Protection Act (PDPA)
+          and apply good-practice standards consistent with the EU’s GDPR for
+          visitors from the European Economic Area and the United Kingdom.
         </p>
       </div>
     </div>
 
-    <!-- 02 THE EXCHANGE -->
+    <!-- 02 WHAT WE COLLECT -->
     <div class="section">
       <div class="section-num">02</div>
-      <div class="section-title">What We Each Bring</div>
-
-      <div class="give-get">
-        <div class="gg-col give">
-          <div class="gg-head give">What Ossuary Atelier provides</div>
-          <ul class="gg-list">
-            <li>One Archive piece, gifted or at a mutually agreed discounted price before any collaboration begins</li>
-            <li>The item's full story page — era, origin, provenance — which you can share and reference as context for your content</li>
-            <li>Credit and feature placement on the item's story page and/or our website blog under an "As Worn By" section</li>
-            <li>No scripting, no brand voice demands — you talk about the piece in your own words, the way you would with anything you genuinely wear</li>
-          </ul>
-        </div>
-        <div class="gg-col get">
-          <div class="gg-head get">What we ask in return</div>
-          <ul class="gg-list">
-            <li>A minimum of <strong>2 posts</strong> featuring the item within <strong>4 weeks</strong> of receiving it — at least one must be a Reel or video format</li>
-            <li><strong>@ossuaryatelier</strong> tagged in every post — in the caption, not just as a vague mention</li>
-            <li>Content that meets our quality standard — see Section 03 below</li>
-            <li>Permission for Ossuary Atelier to repost or embed your content on our website, story pages, or Instagram — with credit to you, always</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="policy-note">
-        The 4-week window starts from the date of confirmed receipt — not the date of this agreement.
-        If something comes up and you need more time, let us know before the deadline, not after.
-        We're flexible with people who communicate.
+      <div class="section-title">What We Collect &amp; Why</div>
+      <div class="section-body">
+        <p>
+          <strong>Comments on the guide and field notes.</strong> The comment
+          boxes on our blog and guide pages collect your <strong>name</strong>,
+          <strong>email address</strong>, and the <strong>message</strong> you
+          write. The forms are processed for us by <strong>Formspree</strong>, a
+          third-party provider. We use this information only to respond or to
+          publish a note with your name — never to market to you, and your email
+          address is not published.
+        </p>
+        <p>
+          <strong>Purchases and enquiries through Instagram DM.</strong> When you
+          buy a piece you share contact, shipping, and payment details with us
+          over Instagram direct message. That conversation and the data in it is
+          handled through Instagram (Meta) and is subject to
+          <a href="https://privacycenter.instagram.com/policy/" target="_blank" rel="noopener">Meta’s privacy policy</a>.
+          It is not stored on this website.
+        </p>
+        <p>
+          <strong>Technical information.</strong> Our hosting provider (GitHub
+          Pages, served through the Fastly CDN) and the content-delivery services
+          we rely on for a few small libraries (unpkg, jsDelivr, cdnjs) receive
+          routine connection data — IP address, browser and device type, and the
+          pages you request. This is standard site operation, used only to serve
+          and secure the pages.
+        </p>
+        <p>
+          <strong>Map page location.</strong> The interactive Phuket map loads
+          its base tiles from <strong>CARTO</strong>, which receives the map area
+          you are viewing — an approximate location, not precise GPS.
+        </p>
+        <p>
+          <strong>On your device.</strong> When you skip the opening splash, a
+          small flag is kept in your browser’s <em>session storage</em>. It lives
+          only on your device, clears when the tab closes, is not a cookie, and
+          is never sent anywhere.
+        </p>
       </div>
     </div>
 
-    <!-- 03 CONTENT QUALITY -->
+    <!-- 03 COOKIES -->
     <div class="section">
       <div class="section-num">03</div>
-      <div class="section-title">Content Standard</div>
+      <div class="section-title">Cookies &amp; Tracking</div>
       <div class="section-body">
         <p>
-          We're not asking for a production shoot. We're asking for content
-          that looks like you actually care about the piece — which, if you've
-          agreed to this, we hope you do.
+          We do not set cookies and we do not use advertising, analytics,
+          cross-site tracking, or fingerprinting anywhere on this site. The small
+          notice that appears in the corner of each page is transparent
+          information, not a consent wall — because there is nothing to consent to.
         </p>
-
-        <div class="standards">
-          <div class="std-row">
-            <span class="std-icon pass">✓</span>
-            <div class="std-text"><strong>Natural light or considered artificial light.</strong> The item should be visible and readable — not lost in a dark background or blown out.</div>
-          </div>
-          <div class="std-row">
-            <span class="std-icon pass">✓</span>
-            <div class="std-text"><strong>The garment is the focus.</strong> At least one post should show the full piece clearly — flat lay, hanging, or worn head-to-toe.</div>
-          </div>
-          <div class="std-row">
-            <span class="std-icon pass">✓</span>
-            <div class="std-text"><strong>Some mention of what the piece is.</strong> Not a paragraph — a line in the caption, or a spoken moment in a video. "This is an Archive piece from Ossuary Atelier — scan the tag if you want to know its story."</div>
-          </div>
-          <div class="std-row">
-            <span class="std-icon pass">✓</span>
-            <div class="std-text"><strong>QR tag visible in at least one shot</strong> if possible — not required, but appreciated. It's the brand's main feature.</div>
-          </div>
-          <div class="std-row">
-            <span class="std-icon fail">✗</span>
-            <div class="std-text"><strong>No blurry mirror selfies</strong> where the item is barely visible. If we can't tell what you're wearing from the thumbnail, it doesn't count toward the minimum.</div>
-          </div>
-          <div class="std-row">
-            <span class="std-icon fail">✗</span>
-            <div class="std-text"><strong>No bulk tag dumps</strong> — @ossuaryatelier buried in 30 other tags counts as tagged but not as genuine reach. We'd prefer one post where the tag means something over five posts where it doesn't.</div>
-          </div>
-        </div>
-
-        <div class="policy-note green-note" style="margin-top:1rem">
-          If you're unsure whether something meets the standard before you post,
-          send it to us over DM first. We'd rather give feedback than have
-          either side feel like the collaboration didn't land.
-        </div>
       </div>
     </div>
 
-    <!-- 04 CONTENT RIGHTS -->
+    <!-- 04 LEGAL BASIS -->
     <div class="section">
       <div class="section-num">04</div>
-      <div class="section-title">Content Rights & Credit</div>
+      <div class="section-title">Why We’re Allowed To Process It</div>
       <div class="section-body">
         <p>
-          You own your content. We are asking for permission to share it —
-          not to claim it. Specifically: by entering this agreement you grant
-          Ossuary Atelier a non-exclusive, royalty-free licence to repost,
-          embed, or feature your content on our Instagram, website, and item
-          story pages, <strong>with clear credit to your account in every use.</strong>
-        </p>
-        <p>
-          We will never use your content in paid advertising without a separate
-          conversation and your explicit written agreement. We will never crop
-          out your username or remove your watermark.
-        </p>
-        <p>
-          You may continue to wear, style, and post the item however you like
-          after the collaboration window. The piece is yours. The story page
-          remains live. If you want to add something to it — a photo, a caption,
-          a chapter — we welcome that. There is no obligation.
+          We process data on the following grounds: <strong>consent</strong> when
+          you submit a comment; <strong>contract</strong> when you make a
+          purchase; and our <strong>legitimate interests</strong> in operating,
+          securing, and improving the site.
         </p>
       </div>
     </div>
 
-    <!-- 05 WHAT HAPPENS IF -->
+    <!-- 05 TRANSFERS -->
     <div class="section">
       <div class="section-num">05</div>
-      <div class="section-title">What Happens If…</div>
-      <div class="section-body">
-        <p><strong>…you post fewer than the agreed minimum?</strong><br>
-        We'll follow up once. If content isn't forthcoming and there's been
-        no communication, future collaboration offers won't be extended.
-        We don't chase or invoice — we just don't repeat the arrangement.</p>
-
-        <p><strong>…you don't like the item when it arrives?</strong><br>
-        Tell us before you post anything. If there's a genuine fit or condition
-        issue we weren't aware of, we'll discuss it. We're not asking you to
-        promote something you don't want to wear.</p>
-
-        <p><strong>…you want to resell the item later?</strong><br>
-        That's your right — you own it. We'd appreciate a heads up so we can
-        note the ownership change on the story page. Not a requirement,
-        just considerate of the concept.</p>
-
-        <p><strong>…you want to do more than the minimum?</strong><br>
-        Please do. Some of the best content comes from people who genuinely
-        connect with a piece. We will always reshare and credit it.</p>
-      </div>
-    </div>
-
-    <!-- 06 AGREEMENT / SIGNATURE -->
-    <div class="section">
-      <div class="section-num">06</div>
-      <div class="section-title">Agreement & Confirmation</div>
+      <div class="section-title">Where It Goes</div>
       <div class="section-body">
         <p>
-          This is a good-faith agreement between two people who both
-          want the collaboration to work. It is not a legal contract —
-          it is a clear statement of what we each expect so that nothing
-          is ambiguous.
+          Our processors are mostly based in the <strong>United States</strong>
+          and the <strong>European Union</strong>: Formspree (comment forms),
+          GitHub and Fastly (hosting and CDN), unpkg, jsDelivr and cdnjs (script
+          libraries), CARTO (map tiles), and Meta/Instagram (direct-message
+          purchases). International transfers rely on the standard contractual
+          clauses or other appropriate safeguards maintained by those providers.
         </p>
-        <p style="margin-bottom:1.25rem">
-          Confirming this agreement over DM — with a message like
-          <em>"I've read the partnership terms and I'm in"</em> —
-          constitutes acceptance. No signature required. The 4-week
-          content window begins from the date of that confirmation.
-        </p>
-      </div>
-
-      <div class="sig-block">
-        <div class="sig-col">
-          <div class="sig-label">Ossuary Atelier</div>
-          <div class="sig-line"></div>
-          <div class="sig-desc">@ossuaryatelier · Instagram DM</div>
-        </div>
-        <div class="sig-col">
-          <div class="sig-label">Creator / Partner</div>
-          <div class="sig-line"></div>
-          <div class="sig-desc">Confirmed via Instagram DM reply</div>
-        </div>
       </div>
     </div>
 
-    <!-- FOOTER -->
+    <!-- 06 RETENTION -->
+    <div class="section">
+      <div class="section-num">06</div>
+      <div class="section-title">How Long We Keep It</div>
+      <div class="section-body">
+        <p>
+          Comment submissions are kept until you ask us to remove them. Purchase
+          and payment records connected to a sale are kept as long as required by
+          Thai commercial and tax law, and no longer than reasonably necessary
+          for resolving a question about an order.
+        </p>
+      </div>
+    </div>
+
+    <!-- 07 YOUR RIGHTS -->
+    <div class="section">
+      <div class="section-num">07</div>
+      <div class="section-title">Your Rights</div>
+      <div class="section-body">
+        <p>
+          Under the PDPA (and, where applicable, the GDPR) you can request
+          <strong>access</strong>, <strong>correction</strong>,
+          <strong>deletion</strong>, or <strong>restriction</strong> of your
+          data, <strong>object</strong> to processing, ask for a
+          <strong>portable copy</strong>, or <strong>withdraw any consent</strong>
+          you have given — without affecting the lawfulness of processing that
+          happened before. Send any request to
+          <a href="mailto:6630612019psu@gmail.com">6630612019psu@gmail.com</a> —
+          Instagram DMs work too. We respond within 30 days. If you are in
+          Thailand you may also lodge a complaint with the Personal Data
+          Protection Committee (PDPC).
+        </p>
+      </div>
+    </div>
+
+    <!-- 08 CHILDREN -->
+    <div class="section">
+      <div class="section-num">08</div>
+      <div class="section-title">Children</div>
+      <div class="section-body">
+        <p>
+          We do not knowingly collect personal data from anyone under 16 without
+          a parent or guardian’s consent. If you believe we have, contact us and
+          we will delete it.
+        </p>
+      </div>
+    </div>
+
+    <!-- 09 SECURITY -->
+    <div class="section">
+      <div class="section-num">09</div>
+      <div class="section-title">Security</div>
+      <div class="section-body">
+        <p>
+          The site is served over HTTPS, keeps no account database, and collects
+          the minimum needed for its pages and purchases to work. If anything in
+          this notice ever changes, we will update the date below.
+        </p>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="section">
+      <div class="section-num">10</div>
+      <div class="section-title">Questions</div>
+      <div class="section-body">
+        <div class="contact-block">
+          <div class="contact-icon" aria-hidden="true">
+            <svg viewBox="-90 -58 180 116" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+              <path d="M -72 0 C -52 -48, 52 -48, 72 0 C 52 48, -52 48, -72 0 Z" fill="#C9B8E8"/>
+              <ellipse cx="0" cy="0" rx="46" ry="36" fill="#1C1828"/>
+              <circle cx="0" cy="0" r="18" fill="#C9B8E8"/>
+              <circle cx="0" cy="0" r="10" fill="#1C1828"/>
+            </svg>
+          </div>
+          <div class="contact-text">
+            Privacy questions: email
+            <a href="mailto:6630612019psu@gmail.com">6630612019psu@gmail.com</a>,
+            or DM
+            <a href="https://www.instagram.com/ossuary.atelier/" target="_blank" rel="noopener">@ossuary.atelier</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- PAGE FOOTER -->
     <div class="page-footer">
       <span class="footer-copy">Ossuary Atelier © 2026 · Thailand</span>
-      <div class="footer-links">
+      <a href="privacy.html">Privacy</a>
+      <a href="tos.html">TOS</a>
         <a href="shop.html">Shop</a>
         <a href="contact.html">Contact</a>
-        <a href="tos.html">Terms of Service</a>
+        <a href="about.html">About</a>
       </div>
     </div>
 
   </div><!-- /page -->
+
 
 <!-- @@NOTICE_SLOT@@ -->
 <div id="notice-privacy" role="status">
