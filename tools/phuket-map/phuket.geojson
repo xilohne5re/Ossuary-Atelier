@@ -1,79 +1,202 @@
 {
   "type": "FeatureCollection",
   "name": "phuket-map",
-  "description": "Open map of Phuket thrift shops, beaches, and activity spots. Editable — add a pin, submit a PR-equivalent, share freely.",
+  "description": "Open map of Phuket thrift spots and documented visits. Regenerated from _data/shops.json + _data/map-pins.json by scripts/build.mjs --show the map pins only (starter labels are excluded).",
   "features": [
     {
       "type": "Feature",
       "properties": {
         "name": "Waanwaal",
         "category": "thrift",
-        "description": "Curated vintage and secondhand. Strong women's selection.",
-        "price_range": "฿100 – ฿1,000+",
         "url": "blog/guide/waanwaal-phuket.html"
       },
-      "geometry": { "type": "Point", "coordinates": [98.3865, 7.8854] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.393876,
+          7.875223
+        ]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "O-WA Second Hand",
+        "name": "O-WA Second Hand (โอ-ว่ะ เสื้อผ้ามือสอง ภูเก็ต)",
+        "category": "thrift"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.389,
+          7.88
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Phuket Chatuchak",
         "category": "thrift",
-        "description": "Dense, well-stocked secondhand. Best weekday mornings.",
-        "price_range": "To be confirmed",
-        "url": "blog/guide/owa-phuket.html"
+        "description": "Biggest Second-hand Market in Phuket.",
+        "url": "blog/guide/chatuchak-phuket-guide.html"
       },
-      "geometry": { "type": "Point", "coordinates": [98.3890, 7.8800] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3988628,
+          7.8843115
+        ]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "Patong Beach",
-        "category": "beach",
-        "description": "Most commercial beach — long sands, nightlife, easy access.",
-        "tags": ["tourist", "nightlife"]
+        "name": "Jiahe Japanese Secondhand",
+        "category": "thrift",
+        "description": "Japanese antiques and more."
       },
-      "geometry": { "type": "Point", "coordinates": [98.2966, 7.8972] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3727129,
+          7.8797779
+        ]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "Kata Beach",
-        "category": "beach",
-        "description": "Softer sand, good surf seasonally, family-friendly.",
-        "tags": ["surf", "family"]
+        "name": "Ammerry Japanese Secondhand Cloth Warehouse (โกดังผ้าญี่ปุ่นมือสองภูเก็ต By Ammerry)",
+        "category": "thrift",
+        "description": "Substandard piles of clothes and shoes."
       },
-      "geometry": { "type": "Point", "coordinates": [98.2867, 7.8228] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3814512,
+          7.8893175
+        ]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "Nai Harn Beach",
-        "category": "beach",
-        "description": "Quieter bay with a park, joggers, and sunset crowds.",
-        "tags": ["quiet", "sunset"]
+        "name": "222 Thrift and Selected Store",
+        "category": "thrift",
+        "description": "High quality vintage clothing and accessories."
       },
-      "geometry": { "type": "Point", "coordinates": [98.3011, 7.7739] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3866959,
+          7.8771348
+        ]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "Phuket Weekend & Night Markets",
-        "category": "activity",
-        "description": "Chatuchak-style stalls for clothes, snacks, and people-watching.",
-        "tags": ["market", "food"]
+        "name": "66 Flex — Second-Hand Shoes",
+        "category": "thrift",
+        "description": "Only shoes."
       },
-      "geometry": { "type": "Point", "coordinates": [98.3929, 7.8907] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3705175,
+          7.8627262
+        ]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "Promthep Cape",
-        "category": "activity",
-        "description": "Sunset viewpoint at Phuket's southern tip.",
-        "tags": ["view", "sunset"]
+        "name": "Jovintage Bangjo",
+        "category": "thrift",
+        "description": "Vintage clothes."
       },
-      "geometry": { "type": "Point", "coordinates": [98.3064, 7.7608] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.330132,
+          7.9889137
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Shawtyboy Studio",
+        "category": "thrift",
+        "description": "Highly fashionable clothes and accessories."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3851772,
+          7.8801504
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sampeng Daek, Cherngtalay (สำเพ็งแตก เชิงทะเล)",
+        "category": "thrift",
+        "description": "Interesting and very local shoes and clothes."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3023681,
+          7.9883375
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Kadee Secondhand Clothes, Ban Lipon (ก้ะดีร้านผ้ามือสองบ้านลิพอน)",
+        "category": "thrift",
+        "description": "Low-grade but high amounts of clothes."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3401355,
+          8.0039959
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "TR Sneakers Secondhand (รองเท้ามือสองภูเก็ต แยกท่าเรือ)",
+        "category": "thrift",
+        "description": "Only shoes."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3637734,
+          7.9805363
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Good Shepherd Crafts & Thrift Shop",
+        "category": "thrift",
+        "description": "Clothes, books, board games, jewelry, hats, shoes, CDs."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3293531,
+          7.9796879
+        ]
+      }
     }
   ]
 }

@@ -1,0 +1,533 @@
+/* ═══════════════════════════════════════════════
+   OSSUARY ATELIER — map.css
+   Interactive Phuket Thrift Map (tools/phuket-map)
+   Self-contained "tool" styling: dark, utilitarian,
+   minimal brand weight. Inlined by the seo build step.
+   ═══════════════════════════════════════════════ */
+
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('../../assets/fonts/cinzel.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../../assets/fonts/cormorant.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../../assets/fonts/cormorant-italic.woff2') format('woff2');
+}
+
+:root {
+  --ma-bg: #0d0b14;
+  --ma-panel: #161226;
+  --ma-rule: rgba(201, 184, 232, 0.14);
+  --ma-text: #d8d0e6;
+  --ma-muted: #9d92b5;
+  --ma-violet: #C9B8E8;
+  --ma-bruise: #A184CD;
+  --ma-thrift: #C9B8E8;
+  --ma-beach: #56CCF2;
+  --ma-activity: #E8A020;
+  --ma-gold: #E8C557;
+}
+
+html, body { height: 100%; }
+
+body {
+  background: var(--ma-bg);
+  color: var(--ma-text);
+  font-family: 'Cormorant Garamond', serif;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tools-wrap {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+  padding: 0 3vw 1.5rem;
+  box-sizing: border-box;
+}
+
+.tools-head {
+  text-align: center;
+  padding: 1rem 0 0.8rem;
+}
+
+.tools-kicker {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ma-bruise);
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.tools-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ma-violet);
+  line-height: 1.15;
+  margin: 0;
+}
+
+.tools-sub {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ma-text);
+  margin: 0.9rem auto 0;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+/* ── toolbar: chips + near-me ─────────────────── */
+.map-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 0 0 0.8rem;
+}
+
+.map-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.map-chip {
+  font-family: 'Cinzel', serif;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ma-muted);
+  background: none;
+  border: 1px solid var(--ma-rule);
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  transition: color 0.25s, border-color 0.25s, background 0.25s;
+}
+
+.map-chip .chip-count {
+  opacity: 0.65;
+  font-size: 0.58rem;
+  margin-left: 0.25rem;
+}
+
+.map-chip:hover {
+  color: var(--ma-violet);
+  border-color: rgba(201, 184, 232, 0.4);
+}
+
+.map-chip.is-active {
+  color: #0d0b14;
+  background: var(--ma-violet);
+  border-color: var(--ma-violet);
+}
+
+.map-chip.is-active .chip-count { opacity: 0.8; }
+
+.map-nearme {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ma-violet);
+  background: none;
+  border: 1px solid rgba(201, 184, 232, 0.35);
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.map-nearme:hover { background: rgba(74, 45, 122, 0.45); border-color: var(--ma-bruise); }
+.map-nearme:disabled { opacity: 0.5; cursor: default; }
+
+.map-tools-right {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.map-price {
+  position: relative;
+}
+
+.map-price-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ma-violet);
+  background: none;
+  border: 1px solid rgba(201, 184, 232, 0.35);
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.map-price-btn:hover,
+.map-price.is-open .map-price-btn {
+  background: rgba(74, 45, 122, 0.45);
+  border-color: var(--ma-bruise);
+}
+
+.map-price-label { color: var(--ma-muted); }
+.map-price-value { color: var(--ma-violet); }
+.map-price-caret { opacity: 0.7; font-size: 0.55rem; }
+
+.map-price-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 1200;
+  min-width: 160px;
+  background: var(--ma-panel);
+  border: 1px solid var(--ma-rule);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  padding: 0.25rem 0;
+}
+
+.map-price-opt {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ma-text);
+  cursor: pointer;
+}
+
+.map-price-opt:hover { background: rgba(201, 184, 232, 0.08); }
+
+.map-price-opt input { position: absolute; opacity: 0; pointer-events: none; }
+
+.map-price-check {
+  width: 1em;
+  height: 1em;
+  font-size: 0.7rem;
+  line-height: 1em;
+  text-align: center;
+  color: transparent;
+  transition: color 0.2s;
+}
+
+.map-price-opt input:checked + .map-price-check { color: var(--ma-bruise); }
+
+/* ── layout: map + list ───────────────────────── */
+.map-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(290px, 31vw);
+  gap: 0.9rem;
+  align-items: stretch;
+}
+
+#map {
+  min-height: 0;
+  border: 1px solid var(--ma-rule);
+  background: #10101a;
+  z-index: 0;
+}
+
+.map-side {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-list-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  border: 1px solid var(--ma-rule);
+  background: var(--ma-panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.map-list-status {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ma-muted);
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--ma-rule);
+  flex-shrink: 0;
+}
+
+.map-list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* ── list rows ────────────────────────────────── */
+.map-row {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--ma-rule);
+  border-left: 3px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.map-row[data-cat="thrift"] { border-left-color: rgba(201, 184, 232, 0.55); }
+.map-row[data-cat="beach"]  { border-left-color: rgba(86, 204, 242, 0.55); }
+.map-row[data-cat="activity"] { border-left-color: rgba(232, 160, 32, 0.55); }
+.map-row.map-row--featured { border-left-color: var(--ma-gold); }
+
+.map-row-star {
+  color: var(--ma-gold);
+  margin-right: 0.4rem;
+}
+
+.map-row:hover { background: rgba(74, 45, 122, 0.22); }
+
+.map-row.is-active {
+  background: rgba(201, 184, 232, 0.09);
+  border-left-width: 3px;
+}
+
+.map-row--starter {
+  opacity: 0.72;
+  cursor: default;
+  border-left-style: dashed;
+}
+
+.map-row--starter:hover { background: none; }
+
+.map-row-name {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ma-violet);
+  line-height: 1.4;
+}
+
+.map-row--starter .map-row-name { text-transform: none; letter-spacing: 0.02em; }
+
+.map-thai {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 0.92rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ma-muted);
+}
+
+.map-row-meta {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ma-muted);
+}
+
+.map-row-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.02rem;
+  color: var(--ma-text);
+  line-height: 1.55;
+}
+
+.map-row-link {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ma-violet);
+  text-decoration: none;
+  align-self: flex-start;
+  border-bottom: 1px solid var(--ma-bruise);
+  padding-bottom: 2px;
+}
+
+.map-row-badge {
+  float: none;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.6rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ma-muted);
+  border: 1px solid var(--ma-rule);
+  padding: 0.15rem 0.45rem;
+  transform: translateY(-1px);
+}
+
+.map-empty {
+  padding: 1.4rem 1rem;
+  font-style: italic;
+  color: var(--ma-muted);
+  text-align: center;
+}
+
+/* ── map popups ───────────────────────────────── */
+.leaflet-container { background: #10101a; font-family: inherit; }
+.leaflet-popup-content-wrapper {
+  background: var(--ma-panel);
+  color: var(--ma-text);
+  border: 1px solid var(--ma-rule);
+  border-left: 3px solid var(--ma-bruise);
+  border-radius: 0;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+}
+.leaflet-popup-content { font-family: 'Cormorant Garamond', serif; margin: 14px 16px; line-height: 1.5; }
+.leaflet-popup-tip { background: var(--ma-panel); }
+a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
+.leaflet-popup-close-button:hover { background: none !important; }
+
+.map-pop-name {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ma-violet);
+  margin-bottom: 0.3rem;
+}
+.map-pop-meta {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ma-muted);
+  margin-bottom: 0.4rem;
+}
+.map-pop-desc { font-size: 1.02rem; color: var(--ma-text); }
+.map-pop-link {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ma-violet);
+  border-bottom: 1px solid var(--ma-bruise);
+  padding-bottom: 2px;
+}
+
+/* ── leaflet controls ─────────────────────────── */
+.leaflet-control-zoom a {
+  background: var(--ma-panel) !important;
+  color: var(--ma-violet) !important;
+  border-color: var(--ma-rule) !important;
+}
+.leaflet-control-zoom a:hover { background: #1c1830 !important; }
+.leaflet-control-attribution {
+  background: rgba(13, 11, 20, 0.75) !important;
+  color: var(--ma-muted) !important;
+  font-size: 10px;
+}
+.leaflet-control-attribution a { color: var(--ma-bruise) !important; }
+
+/* ── custom pin markers ───────────────────────── */
+.oa-pin {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.55));
+}
+.oa-pin svg { display: block; width: 26px; height: 26px; }
+
+.oa-pin__star {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
+  z-index: 2;
+}
+.oa-pin__star svg { width: 10px; height: 10px; display: block; fill: var(--ma-gold); }
+.oa-pin--featured .oa-pin__star svg { fill: var(--ma-bruise); }
+
+/* ── starter spot markers (labels, not visit pins) ── */
+.oa-label {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+.oa-label svg { display: block; width: 24px; height: 24px; }
+
+/* ── footer extras ────────────────────────────── */
+.tools-back {
+  display: block;
+  text-align: center;
+  margin-top: 0.8rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ma-violet);
+  text-decoration: none;
+  line-height: 2;
+  flex-shrink: 0;
+}
+.tools-back:hover { color: var(--ma-bruise); }
+
+.tools-attrib {
+  font-size: 0.78rem;
+  color: var(--ma-muted);
+  font-style: normal;
+  line-height: 1.6;
+  max-width: 420px;
+  margin: 0.5rem auto 0;
+  text-align: center;
+  flex-shrink: 0;
+}
+.tools-attrib a { color: var(--ma-violet); }
+
+/* ── responsive ───────────────────────────────── */
+@media (max-width: 860px) {
+  body { overflow: auto; }
+  .map-layout { grid-template-columns: 1fr; }
+  #map { height: 55vh; }
+  .map-list-panel { flex: 0 1 auto; max-height: 42vh; }
+  .map-tools-right { width: 100%; justify-content: flex-end; }
+  .tools-sub, .tools-back, .tools-attrib { text-align: left; }
+}

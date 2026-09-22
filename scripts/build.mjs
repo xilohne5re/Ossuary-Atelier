@@ -261,6 +261,9 @@ function runPartials(report) {
 
 /* ── links step ───────────────────────────────────────────── */
 const ATTR_RE = /(?:href|src|action)="([^"]+)"/g;
+// item-template.html holds placeholder asset paths (with onerror
+// fallbacks) and is excluded from SEO + sitemap — never checked.
+const LINKS_SKIP = new Set(['item-template.html']);
 
 function runLinks(strict) {
   const files = walkHtml(ROOT);
@@ -269,6 +272,7 @@ function runLinks(strict) {
 
   for (const abs of files) {
     const relPath = relOf(abs);
+    if (LINKS_SKIP.has(relPath)) continue;
     const html = readFileSync(abs, 'utf8');
     const baseDir = dirname(abs);
     const broken = [];
@@ -505,6 +509,152 @@ function runShops() {
   log(`[shops] blog/guide/index.html: ${cards.length ? shops.length : 0} shop card(s) + ItemList rendered`);
 }
 
+/* ── map step ────────────────────────────────────────────────
+   Reads the thrift-shop source (_data/shops.json) plus the
+   standalone POI pins (_data/map-pins.json), validates every
+   location, inlines the merged array into tools/phuket-map/
+   index.html (window.OA_MAP_LOCATIONS), and regenerates the
+   downloadable phuket.geojson export (documented pins only;
+   starter labels are kept out of the map markers). */
+const MAP_BOX = { minLat: 7.0, maxLat: 8.5, minLng: 97.8, maxLng: 98.8 };
+const MAP_CATS = new Set(['thrift', 'beach', 'activity']);
+const PRICE_TIERS = ['low', 'medium', 'high'];
+function normalizePriceTags(raw) {
+  if (!Array.isArray(raw)) return undefined;
+  const out = raw.filter(t => PRICE_TIERS.includes(t));
+  return out.length ? out : undefined;
+}
+
+function runMap() {
+  gate('map');
+  const shopsFile = join(DATA_DIR, 'shops.json');
+  const pinsFile = join(DATA_DIR, 'map-pins.json');
+  const pageFile = join(ROOT, 'tools/phuket-map/index.html');
+  const geoFile = join(ROOT, 'tools/phuket-map/phuket.geojson');
+  if (!existsSync(shopsFile)) throw new Error('[map] _data/shops.json missing');
+  if (!existsSync(pinsFile)) throw new Error('[map] _data/map-pins.json missing');
+
+  const { shops } = JSON.parse(readFileSync(shopsFile, 'utf8'));
+  const { mapPins = [] } = JSON.parse(readFileSync(pinsFile, 'utf8'));
+
+  const locations = [];
+  const seen = new Set();
+  const assertValid = (loc, src) => {
+    if (!loc.id) throw new Error(`[map] ${src}: entry missing "id"`);
+    if (seen.has(loc.id)) throw new Error(`[map] duplicate id "${loc.id}" (${src})`);
+    seen.add(loc.id);
+    if (!MAP_CATS.has(loc.category)) {
+      throw new Error(`[map] "${loc.id}" has unknown category "${loc.category}" (want: ${[...MAP_CATS].join(', ')})`);
+    }
+    const { lat, lng } = loc;
+    if (typeof lat !== 'number' || !Number.isFinite(lat) || typeof lng !== 'number' || !Number.isFinite(lng)) {
+      throw new Error(`[map] "${loc.id}" has non-numeric coords (${lat}, ${lng})`);
+    }
+    if (lat < MAP_BOX.minLat || lat > MAP_BOX.maxLat || lng < MAP_BOX.minLng || lng > MAP_BOX.maxLng) {
+      throw new Error(`[map] "${loc.id}" out of Phuket bounds (lat ${lat}, lng ${lng})`);
+    }
+  };
+
+  // 1) shops with coordinates are thrift pins linked to their review page
+  for (const s of shops) {
+    if (s.lat == null || s.lng == null) continue;
+    const loc = {
+      id: s.id,
+      name: s.name,
+      thaiName: s.thai_name || undefined,
+      category: 'thrift',
+      lat: s.lat,
+      lng: s.lng,
+      address: s.address || undefined,
+      priceTags: normalizePriceTags(s.price_tags),
+      priceRange: s.price_range || undefined,
+      tags: Array.isArray(s.tags) ? s.tags.slice(0, 4) : undefined,
+      guideSlug: s.guide_slug || undefined,
+      featured: s.featured === true,
+      pin: true,
+    };
+    assertValid(loc, 'shops.json');
+    locations.push(loc);
+  }
+
+  // 2) standalone POI pins (verified thrift spots + starter labels)
+  for (const p of mapPins) {
+    const loc = {
+      id: p.id,
+      name: p.name,
+      thaiName: p.thaiName,
+      category: p.category,
+      lat: p.lat,
+      lng: p.lng,
+      note: p.note,
+      tags: Array.isArray(p.tags) ? p.tags : undefined,
+      guideSlug: p.guideSlug,
+      priceTags: normalizePriceTags(p.price_tags),
+      priceRange: p.priceRange || undefined,
+      featured: p.featured === true,
+      pin: p.pin !== false,
+    };
+    assertValid(loc, 'map-pins.json');
+    locations.push(loc);
+  }
+
+  const pinCount = locations.filter(l => l.pin).length;
+  log(`[map] ${pinCount} pin(s) + ${locations.length - pinCount} starter label(s) from shops.json + map-pins.json`);
+
+  // 3) inject the merged array into the page (idempotent via the slot marker)
+  if (!existsSync(pageFile)) throw new Error('[map] tools/phuket-map/index.html missing');
+  const json = JSON.stringify(locations, null, 2);
+  const dataBlock =
+    `<!-- @@MAP_DATA_SLOT@@ -->\n` +
+    `  <script>\n` +
+    `  window.OA_MAP_LOCATIONS = /* @@MAP_DATA_BEGIN@@ */\n` +
+    `${json}\n` +
+    `  /* @@MAP_DATA_END@@ */;\n` +
+    `  </script>`;
+
+  let page = readFileSync(pageFile, 'utf8');
+  const slot = '<!-- @@MAP_DATA_SLOT@@ -->';
+  if (!page.includes(slot)) throw new Error(`[map] ${relOf(pageFile)} missing @@MAP_DATA_SLOT@@ marker`);
+  const start = page.indexOf(slot);
+  let next;
+  const endMark = page.indexOf('/* @@MAP_DATA_END@@ */', start);
+  if (endMark !== -1) {
+    // already generated before: replace the whole prior data script (its own </script>)
+    const close = page.indexOf('</script>', endMark);
+    if (close === -1) throw new Error('[map] cannot locate the map data </script> in index.html');
+    const end = close + '</script>'.length;
+    next = page.slice(0, start) + dataBlock + page.slice(end);
+  } else {
+    // first run: live only a bare slot comment — drop it, then inject the script
+    const afterSlot = page.indexOf('\n', start) + 1;
+    const block = dataBlock.replace(slot + '\n', '');
+    next = page.slice(0, afterSlot) + block + '\n' + page.slice(afterSlot);
+  }
+  if (next !== page) writeFileSync(pageFile, next, 'utf8');
+
+  // 4) regenerate the open geojson export (documented pins only)
+  const features = locations
+    .filter(l => l.pin)
+    .map(l => ({
+      type: 'Feature',
+      properties: {
+        name: l.thaiName ? `${l.name} (${l.thaiName})` : l.name,
+        category: l.category,
+        ...(l.note ? { description: l.note } : {}),
+        ...(l.guideSlug ? { url: l.guideSlug } : {}),
+      },
+      geometry: { type: 'Point', coordinates: [l.lng, l.lat] },
+    }));
+  const geojson = {
+    type: 'FeatureCollection',
+    name: 'phuket-map',
+    description: 'Open map of Phuket thrift spots and documented visits. Regenerated from _data/shops.json + _data/map-pins.json by scripts/build.mjs --show the map pins only (starter labels are excluded).',
+    features,
+  };
+  writeFileSync(geoFile, JSON.stringify(geojson, null, 2) + '\n', 'utf8');
+  log(`[map] phuket.geojson regenerated: ${features.length} feature(s)`);
+}
+
 function runPosts() {
   gate('posts');
   if (!existsSync(CONTENT_DIR)) throw new Error('[posts] _content/ missing');
@@ -518,17 +668,18 @@ const SEO_SKIP = new Set(['404.html']);
 const SEO_NOINDEX = new Set(['internal-dm-scripts.html', 'item-template.html', 'craft.html', 'drops.html']);
 
 const SEO_DESC = {
-  'index.html': "Curated secondhand fashion. Every piece carries proof of where it's been.",
+  'index.html': "Curated secondhand fashion from Phuket, with QR-verified provenance on every piece \u2014 plus a growing Phuket thrift guide and interactive map.",
   'guide/index.html': "The Phuket Thrift Guide — a living directory of secondhand shops, sourcing notes, and recovery tips across Phuket, plus maps, tools, and the Ossuary Atelier archive.",
-  'shop.html': 'Shop current and archived pieces from Ossuary Atelier. Every item carries a QR-verified story.',
+  'shop.html': 'Shop curated secondhand clothing from Phuket, sourced piece by piece from local thrift shops. Every item carries a QR-verified story of where it\'s been.',
   'about.html': 'The story of Ossuary Atelier \u2014 a Phuket secondhand clothing brand that grew into a thrift guide, an interactive map, and a growing record of Phuket\u2019s secondhand culture.',
   'contact.html': 'Contact Ossuary Atelier \u2014 DM to claim a piece, ask about provenance, or begin a collaboration.',
   'tos.html': 'Ossuary Atelier purchase terms \u2014 payment, shipping, returns policy, and condition disclosure for all orders.',
   'privacy.html': 'Ossuary Atelier privacy notice \u2014 what this site collects (comments, purchase enquiries, technical logs), our cookie-free policy, and your data rights.',
   'partnership.html': 'Ossuary Atelier creator partnership agreement \u2014 what we offer, what we ask, and how it works.',
-  'blog/index.html': "Ossuary Atelier's field journal \u2014 thrift guides, sourcing notes, and the study of found things.",
+  'blog/index.html': "Ossuary Atelier's field journal \u2014 Phuket thrift guides, sourcing notes, and the study of found things.",
   'blog/guide/index.html': 'Phuket thrift & secondhand guide \u2014 honest shop reviews, price ranges, and what to look for when thrifting in Phuket.',
   'blog/guide/waanwaal-phuket.html': '317 Saensook Soi 2, Phuket Town. Curated vintage and thrifted clothing with a strong women\u2019s selection.',
+  'blog/guide/chatuchak-phuket-guide.html': "Phuket's actual Chatuchak market \u2014 a 25-year secondhand institution with five buildings, plus the Vintage Market Phuket 77 weekend layer next door.",
   'blog/guide/owa-phuket.html': 'O-WA Second Hand, Phuket \u2014 a dense, well-stocked thrift shop worth visiting on weekday mornings. Source of the Michiko Koshino dress.',
   'blog/field-notes/chatuchak-nov-24.html': 'Four hours in and nothing. Then a face-down Glad News hoodie on a folding table between sections 5 and 6.',
   'tools/phuket-map/index.html': 'An interactive map of Phuket thrift shops, beaches, and activity spots \u2014 open, editable, and free to reuse.',
@@ -668,7 +819,7 @@ function runSeo(report) {
     const preloads = FONT_FILES.map(f =>
       `  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="${root}assets/fonts/${f}.woff2">\n`
     ).join('');
-    const canonicalPath = rel === 'index.html' ? '' : rel.replace(/\/index\.html$/, '');
+    const canonicalPath = rel === 'index.html' ? '' : rel.replace(/\/index\.html$/, '').replace(/\.html$/, '');
     const canonical = canonicalPath ? `${SITE_BASE}/${canonicalPath}` : `${SITE_BASE}/`;
     const ogType = rel.startsWith('blog/') ? 'article' : 'website';
 
@@ -969,6 +1120,7 @@ const STEPS = {
   links: runLinks,
   items: runItems,
   shops: runShops,
+  map: runMap,
   posts: runPosts,
   seo: runSeo,
   fonts: runFonts,
@@ -978,7 +1130,7 @@ const STEPS = {
   sitemap: runSitemap,
 };
 
-const stepOrder = ['items', 'shops', 'posts', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'links', 'sitemap'];
+const stepOrder = ['items', 'shops', 'map', 'posts', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'links', 'sitemap'];
 const toRun = opts.steps
   ? opts.steps
   : (opts.enableContent ? stepOrder : ['partials', 'links']);

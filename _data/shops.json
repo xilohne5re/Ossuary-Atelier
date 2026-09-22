@@ -14,8 +14,10 @@
       "status": "live",
       "found_date": "2025-12-23",
       "image": null,
-      "lat": null,
-      "lng": null,
+      "lat": 7.875223,
+      "lng": 98.393876,
+      "guide_slug": "blog/guide/waanwaal-phuket.html",
+      "price_tags": ["medium", "high"],
       "story_file": "shops/waanwaal.story.md",
       "story_status": "draft"
     },
@@ -33,8 +35,10 @@
       "status": "live",
       "found_date": "2026-01-15",
       "image": null,
-      "lat": null,
-      "lng": null,
+      "lat": 7.88,
+      "lng": 98.389,
+      "thai_name": "โอ-ว่ะ เสื้อผ้ามือสอง ภูเก็ต",
+      "price_tags": ["low"],
       "story_file": "shops/owa.story.md",
       "story_status": "draft"
     }

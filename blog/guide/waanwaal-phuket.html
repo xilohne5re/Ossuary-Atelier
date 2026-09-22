@@ -6,14 +6,14 @@
   <title>Waanwaal, Phuket — The Thrift Guide</title>
 
   <!-- @@SEO_SLOT@@ -->
-  <link rel="canonical" href="https://ossuaryphuket.me/Ossuary-Atelier/blog/guide/waanwaal-phuket.html">
+  <link rel="canonical" href="https://ossuaryphuket.me/Ossuary-Atelier/blog/guide/waanwaal-phuket">
   <meta name="description" content="317 Saensook Soi 2, Phuket Town. Curated vintage and thrifted clothing with a strong women’s selection.">
   <meta property="og:site_name" content="Ossuary Atelier">
   <meta property="og:locale" content="en_US">
   <meta property="og:title" content="Waanwaal, Phuket — The Thrift Guide">
   <meta property="og:description" content="317 Saensook Soi 2, Phuket Town. Curated vintage and thrifted clothing with a strong women’s selection.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://ossuaryphuket.me/Ossuary-Atelier/blog/guide/waanwaal-phuket.html">
+  <meta property="og:url" content="https://ossuaryphuket.me/Ossuary-Atelier/blog/guide/waanwaal-phuket">
   <meta property="og:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
   <meta property="og:image:alt" content="Ossuary Atelier — secondhand fashion with verified stories.">
   <meta property="og:image:width" content="1200">
@@ -561,7 +561,8 @@ button {
       font-size: 1.15rem;
       color: var(--violet);
       line-height: 1.85;
-      margin-bottom: 3rem;
+      margin: 0 auto 3rem;
+      text-align: center;
     }
 
     .shop-section {
@@ -572,10 +573,10 @@ button {
 
     .shop-section h3 {
       font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.2em;
-      color: var(--bruise-mid);
+      font-weight: 800;
+      font-size: clamp(0.95rem, 1.15vw, 1.1rem);
+      letter-spacing: 0.16em;
+      color: var(--violet);
       text-transform: uppercase;
       margin-bottom: 0.75rem;
     }
@@ -625,6 +626,28 @@ button {
       border: 1px solid var(--faint);
       padding: 2rem;
       margin-top: 1.5rem;
+    }
+
+    .shop-figure {
+      margin: 0 0 3rem;
+    }
+
+    .shop-figure img {
+      width: 100%;
+      border: 1px solid var(--faint);
+      background: var(--mid);
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+
+    .shop-figure figcaption {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--violet-dim);
+      line-height: 1.6;
+      padding-top: 0.75rem;
+      opacity: 0.85;
     }
 
     .found-here-block p {
@@ -753,6 +776,31 @@ button {
       transform: translateY(-2px);
     }
 
+    @media (min-width: 900px) {
+      #shop-body {
+        max-width: min(1240px, 94vw);
+        padding-left: 3vw;
+        padding-right: 3vw;
+      }
+
+      .shop-prose,
+      .shop-section p,
+      .found-here-block p {
+        max-width: 68ch;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        align-items: start;
+      }
+
+      .split > .shop-figure {
+        margin: 0;
+      }
+    }
+
     @media (max-width: 768px) {
       #footer { flex-direction: column; gap: 1rem; text-align: center; }
     }
@@ -860,29 +908,38 @@ button {
       That's the thing about Waanwaal — you have to dig, but the good stuff is there. Located in a quiet soi off the main road, it's the kind of place you stumble into and leave with a bag.
     </p>
 
-    <div class="shop-section">
-      <h3>Location</h3>
-      <p>317 Saensook Soi 2, Phuket Town, Phuket 83000</p>
-      <p style="margin-top: 0.75rem; font-size: 0.9rem;">
-        <a href="https://www.instagram.com/waanwaal/" target="_blank" rel="noopener" style="color: var(--violet); text-decoration: underline;">Instagram</a> · 
-        <a href="https://www.facebook.com/wanwan.sapanhin/" target="_blank" rel="noopener" style="color: var(--violet); text-decoration: underline;">Facebook</a>
-      </p>
+    <div class="split">
+      <div class="shop-section">
+        <h3>Location</h3>
+        <p>317 Saensook Soi 2, Phuket Town, Phuket 83000</p>
+        <p style="margin-top: 0.75rem; font-size: 0.9rem;">
+          <a href="https://www.instagram.com/waanwaal/" target="_blank" rel="noopener" style="color: var(--violet); text-decoration: underline;">Instagram</a> · 
+          <a href="https://www.facebook.com/wanwan.sapanhin/" target="_blank" rel="noopener" style="color: var(--violet); text-decoration: underline;">Facebook</a>
+        </p>
+      </div>
+
+      <div class="shop-section">
+        <h3>Price Range</h3>
+        <p>฿100 – ฿1,000+</p>
+      </div>
     </div>
 
-    <div class="shop-section">
-      <h3>What to Expect</h3>
-      <p>A carefully curated mixture of vintage and thrifted clothing and accessories. The women's section is particularly strong, with a rotation that leans into the local skate scene aesthetic.</p>
-      <p style="margin-top: 0.75rem;">Vintage items carry a premium, but the pieces here earn their price — unique, well-preserved finds with actual character.</p>
+    <div class="split">
+      <div class="shop-section">
+        <h3>What to Expect</h3>
+        <p>A carefully curated mixture of vintage and thrifted clothing and accessories. The women's section is particularly strong, with a rotation that leans into the local skate scene aesthetic.</p>
+        <p style="margin-top: 0.75rem;">Vintage items carry a premium, but the pieces here earn their price — unique, well-preserved finds with actual character.</p>
+      </div>
+
+      <figure class="shop-figure">
+        <img src="../../assets/blog/waanwaal/shop.jpg" alt="The curated racks inside Waanwaal, a secondhand and vintage clothing shop in Phuket Town" loading="lazy">
+        <figcaption>Demo image — swap for a real photo of Waanwaal's racks before publishing.</figcaption>
+      </figure>
     </div>
 
     <div class="shop-section">
       <h3>The Owners</h3>
       <p>The duo behind Waanwaal are approachable, style-conscious, and happy to help you navigate the collection. Don't be afraid to ask — they're a great resource for discovering pieces you might have missed.</p>
-    </div>
-
-    <div class="shop-section">
-      <h3>Price Range</h3>
-      <p>฿100 – ฿1,000+</p>
     </div>
 
     <div class="shop-section found-here-block">
