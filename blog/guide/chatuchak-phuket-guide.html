@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatuchak Phuket (JJ Phuket) — The Thrift Guide</title>
+
+  <!-- @@SEO_SLOT@@ -->
+  <link rel="canonical" href="https://ossuaryphuket.me/Ossuary-Atelier/blog/guide/chatuchak-phuket-guide">
+  <meta name="description" content="Phuket's actual Chatuchak market — a 25-year secondhand institution with five buildings, plus the Vintage Market Phuket 77 weekend layer next door.">
+  <meta property="og:site_name" content="Ossuary Atelier">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Chatuchak Phuket (JJ Phuket) — The Thrift Guide">
+  <meta property="og:description" content="Phuket's actual Chatuchak market — a 25-year secondhand institution with five buildings, plus the Vintage Market Phuket 77 weekend layer next door.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://ossuaryphuket.me/Ossuary-Atelier/blog/guide/chatuchak-phuket-guide">
+  <meta property="og:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
+  <meta property="og:image:alt" content="Ossuary Atelier — secondhand fashion with verified stories.">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ossuaryatelier">
+  <meta name="twitter:title" content="Chatuchak Phuket (JJ Phuket) — The Thrift Guide">
+  <meta name="twitter:description" content="Phuket's actual Chatuchak market — a 25-year secondhand institution with five buildings, plus the Vintage Market Phuket 77 weekend layer next door.">
+  <meta name="twitter:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
+  <meta name="theme-color" content="#080810">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon-32.png">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="../../assets/fonts/cinzel.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="../../assets/fonts/cormorant.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="../../assets/fonts/cormorant-italic.woff2">
+  <!-- @@CSS_FILES:base.css:,nav.css:@@ -->
+  <style>
+/* ═══════════════════════════════════════════════
+   OSSUARY ATELIER — base.css
+   Foundation: variables, reset, typography, shared
+═══════════════════════════════════════════════ */
+
+/* ── SELF-HOSTED FONTS ──
+   Variable fonts (wght axis), served locally so the render-blocking
+   Google Fonts chain (css2 + gstatic woff2) is gone. */
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('../assets/fonts/cinzel.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../assets/fonts/cormorant.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../assets/fonts/cormorant-italic.woff2') format('woff2');
+}
+
+/* ── VARIABLES ── */
+:root {
+  --void:       #080810;
+  --void-deep:  #04040a;
+  --violet:     #C9B8E8;
+  --violet-dim: #a693c0;
+  --violet-faint: rgba(201,184,232,0.08);
+  --bruise:     #4B2D7A;
+  --bruise-mid: #A184CD;
+  --midnight:   #1C1828;
+  --faint:      #2A2440;
+
+  --font-display: 'Cinzel', serif;
+  --font-body:    'Cormorant Garamond', serif;
+
+  --nav-height: 64px;
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+/* ── RESET ── */
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 17px;
+  scroll-behavior: auto; /* lenis handles this */
+  overflow-x: hidden;
+}
+
+/* Larger base type on wide screens */
+@media (min-width: 1440px) {
+  html { font-size: 18px; }
+}
+
+body {
+  background: var(--void);
+  color: var(--violet);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.78;
+  overflow-x: hidden;
+  cursor: crosshair;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+/* ── INTERACTIVE BACKGROUND CANVAS ── */
+#background-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  display: block;
+}
+
+/* Ensure main content appears above canvas */
+section, nav, footer, [role="dialog"] {
+  position: relative;
+  z-index: 2;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  cursor: none;
+  background: none;
+  border: none;
+  font-family: inherit;
+  color: inherit;
+}
+
+/* ── SCANNER CURSOR DEVICE (HIDDEN) ── */
+#scanner-device {
+  display: none;
+}
+
+/* ── LASER LINE (HIDDEN) ── */
+#cursor {
+  display: none;
+}
+
+/* ── PAGE TRANSITION OVERLAY ── */
+#page-transition {
+  position: fixed;
+  inset: 0;
+  background: var(--void-deep);
+  z-index: 9990;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-in-out);
+}
+
+#page-transition.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── TYPOGRAPHY UTILITIES ── */
+.cinzel         { font-family: var(--font-display); }
+.cinzel-900     { font-family: var(--font-display); font-weight: 900; }
+.cormorant      { font-family: var(--font-body); }
+.cormorant-i    { font-family: var(--font-body); font-style: italic; }
+
+.text-violet    { color: var(--violet); }
+.text-dim       { color: var(--violet-dim); }
+.text-bruise    { color: var(--bruise-mid); }
+
+/* ── SHARED SECTION LABEL ── */
+.section-label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.5em;
+  color: var(--bruise-mid);
+  text-transform: uppercase;
+}
+
+/* ── SHARED RULE LINE ── */
+.rule {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right,
+    transparent,
+    var(--faint) 20%,
+    var(--faint) 80%,
+    transparent);
+}
+
+.rule-violet {
+  background: linear-gradient(to right,
+    transparent,
+    rgba(201,184,232,0.25) 20%,
+    rgba(201,184,232,0.25) 80%,
+    transparent);
+}
+
+/* ── SHARED BUTTON ── */
+.btn-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--violet);
+  border: 1px solid rgba(201,184,232,0.3);
+  padding: 1rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.4s, border-color 0.4s;
+}
+
+.btn-seal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bruise);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-out);
+  z-index: -1;
+}
+
+.btn-seal:hover::before  { transform: scaleX(1); }
+.btn-seal:hover          { border-color: var(--bruise); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: var(--bruise); border-radius: 2px; }
+
+/* ── SELECTION ── */
+::selection {
+  background: var(--bruise);
+  color: var(--violet);
+}
+
+/* ── VISIBILITY UTILS ── */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}
+
+/* ── READABILITY ──
+   Body copy is set upright; italics are reserved for single-word
+   emphasis, titles, thoughts, foreign words, and technical labels.
+   These rules override page-level inline styles that set entire
+   paragraphs in italics. */
+.modal-desc,
+.story-body,
+.care-text,
+.prov-detail,
+.about-sub,
+.mission-text,
+.philosophy-prose p,
+.timeline-content p,
+.phone-section-head p,
+.how-body,
+.how-bridge,
+.pull-quote,
+.b2b-intro,
+.b2b-a p,
+.vision-quote,
+.vsc-story,
+.b2b-links-note,
+.contact-sub,
+.buy-step-body,
+.error-sub,
+.intro,
+.contact-text,
+.tools-attrib,
+.shop-prose,
+.note-prose,
+.dm-note,
+.gg-list li {
+  font-style: normal !important;
+}
+
+/* ═══════════════════════════════════════════════
+   OSSUARY ATELIER — nav.css
+═══════════════════════════════════════════════ */
+
+/* ── NAV WRAPPER ── */
+#nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-height);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+  transition: background 0.4s, backdrop-filter 0.4s;
+}
+
+#nav.scrolled {
+  background: rgba(8,8,16,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--violet-faint);
+}
+
+/* ── LOGO MARK ── */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.6s, transform 0.6s var(--ease-out);
+}
+
+.nav-logo.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav-logo-eye {
+  width: 28px;
+  height: 18px;
+  flex-shrink: 0;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.nav-logo:hover .nav-logo-eye {
+  transform: scaleX(1.1);
+}
+
+.nav-logo-text {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  color: var(--violet);
+  line-height: 1;
+}
+
+.nav-logo-text span {
+  display: block;
+  font-weight: 600;
+  font-size: 0.6rem;
+  letter-spacing: 0.5em;
+  color: var(--violet-dim);
+  margin-top: 2px;
+}
+
+/* ── NAV LINKS ── */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  list-style: none;
+}
+
+.nav-links li {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.6s, transform 0.6s var(--ease-out);
+}
+
+.nav-links li:nth-child(1) { transition-delay: 0.05s; }
+.nav-links li:nth-child(2) { transition-delay: 0.10s; }
+.nav-links li:nth-child(3) { transition-delay: 0.15s; }
+.nav-links li:nth-child(4) { transition-delay: 0.20s; }
+.nav-links li:nth-child(5) { transition-delay: 0.25s; }
+
+.nav-links li.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav-links a {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--violet-dim);
+  position: relative;
+  padding: 8px 12px;
+  transition: color 0.3s;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 1px;
+  background: var(--violet);
+  transition: width 0.35s var(--ease-out);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--violet);
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
+
+/* ── HAMBURGER (mobile) ── */
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 4px;
+  z-index: 1001;
+}
+
+.nav-burger span {
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--violet);
+  transition: transform 0.35s var(--ease-out), opacity 0.35s;
+}
+
+.nav-burger.open span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.nav-burger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.nav-burger.open span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* ── MOBILE MENU OVERLAY ── */
+#nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--void-deep);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-out);
+}
+
+#nav-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#nav-overlay a {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--violet-dim);
+  transition: color 0.3s;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: color 0.3s, transform 0.5s var(--ease-out), opacity 0.5s;
+}
+
+#nav-overlay.open a {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#nav-overlay a:nth-child(1) { transition-delay: 0.05s; }
+#nav-overlay a:nth-child(2) { transition-delay: 0.10s; }
+#nav-overlay a:nth-child(3) { transition-delay: 0.15s; }
+#nav-overlay a:nth-child(4) { transition-delay: 0.20s; }
+#nav-overlay a:nth-child(5) { transition-delay: 0.25s; }
+
+#nav-overlay a:hover { color: var(--violet); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  #nav { padding: 0 1.5rem; }
+  .nav-links { display: none; }
+  .nav-burger { display: flex; }
+}
+
+  </style>
+
+<!-- @@SEO_END@@ -->
+  <style>
+    /* — Guide Header — */
+    #shop-header {
+      padding: calc(var(--nav-height) + 13vh) 8vw 5vh;
+      text-align: center;
+      position: relative;
+    }
+
+    .shop-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(2.2rem, 6vw, 3.6rem);
+      letter-spacing: 0.08em;
+      color: var(--violet);
+      text-transform: uppercase;
+      line-height: 1.05;
+    }
+
+    .shop-meta {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .shop-tag {
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--faint);
+    }
+
+    /* — Content Column — */
+    #shop-body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 4rem 8vw 6rem;
+    }
+
+    .shop-prose {
+      font-family: var(--font-body);
+      font-size: 1.2rem;
+      color: var(--violet);
+      line-height: 1.85;
+      margin: 0 auto 3rem;
+      text-align: center;
+    }
+
+    /* — Figures — */
+    .guide-figure {
+      margin: 0 0 3rem;
+    }
+
+    .guide-figure img {
+      width: 100%;
+      border: 1px solid var(--faint);
+      background: var(--mid);
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+
+    .guide-figure.wide img {
+      aspect-ratio: 21 / 9;
+    }
+
+    .guide-figure figcaption {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--violet-dim);
+      line-height: 1.6;
+      padding-top: 0.75rem;
+      opacity: 0.85;
+    }
+
+    /* — Guide Sections — */
+    .guide-section {
+      margin-bottom: 3.5rem;
+    }
+
+    .guide-section h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+      letter-spacing: 0.14em;
+      color: var(--violet);
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--faint);
+    }
+
+    .guide-section h3 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(0.9rem, 1.1vw, 1.02rem);
+      letter-spacing: 0.16em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+    }
+
+    .guide-section p {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .guide-section ul {
+      margin: 0 0 1.25rem;
+      padding-left: 1.25rem;
+    }
+
+    .guide-section li {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      line-height: 1.75;
+      margin-bottom: 0.5rem;
+    }
+
+    .guide-section strong {
+      color: var(--violet);
+      font-weight: 600;
+    }
+
+    .guide-section a {
+      color: var(--violet);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* — Quick Facts Card — */
+    .facts-card {
+      border: 1px solid var(--faint);
+      border-left: 3px solid var(--bruise-mid);
+      background: var(--mid);
+      margin-bottom: 3.5rem;
+      overflow: hidden;
+    }
+
+    .facts-card h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+      letter-spacing: 0.14em;
+      color: var(--violet);
+      text-transform: uppercase;
+      padding: 1.4rem 1.4rem 0.9rem;
+      margin: 0;
+    }
+
+    .facts-card table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .facts-card th,
+    .facts-card td {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      padding: 0.85rem 1.4rem;
+      vertical-align: top;
+      text-align: left;
+      border-top: 1px solid var(--faint);
+    }
+
+    .facts-card th {
+      font-family: var(--font-display);
+      font-size: 0.64rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--bruise-mid);
+      width: 40%;
+      white-space: nowrap;
+    }
+
+    .facts-card td {
+      color: var(--violet-dim);
+    }
+
+    .facts-card td:last-child {
+      white-space: nowrap;
+    }
+
+    /* — Rental Box — */
+    .rental-box {
+      background: var(--mid);
+      border: 1px solid var(--bruise);
+      border-left: 3px solid var(--bruise-mid);
+      padding: 2rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .rental-box h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(1rem, 1.2vw, 1.15rem);
+      letter-spacing: 0.14em;
+      color: var(--violet);
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+    }
+
+    .rental-box p {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      line-height: 1.8;
+      margin-bottom: 0.75rem;
+    }
+
+    .rental-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* — Checklist — */
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.5rem;
+    }
+
+    .checklist li {
+      position: relative;
+      padding: 0.65rem 0 0.65rem 2rem;
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      line-height: 1.7;
+      border-bottom: 1px solid var(--violet-faint);
+    }
+
+    .checklist li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      top: 0.65rem;
+      color: var(--bruise-mid);
+      font-family: var(--font-display);
+    }
+
+    /* — FAQ Accordion — */
+    #guide-faq {
+      margin-bottom: 3rem;
+    }
+
+    .faq-item {
+      border: 1px solid var(--faint);
+      border-left: 3px solid var(--bruise-mid);
+      background: var(--mid);
+      margin-bottom: 0.9rem;
+      overflow: hidden;
+    }
+
+    .faq-q {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.4rem;
+      background: none;
+      border: none;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.92rem;
+      letter-spacing: 0.04em;
+      color: var(--violet);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .faq-q::after {
+      content: '+';
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--bruise-mid);
+      transition: transform 0.3s var(--ease-out);
+      flex-shrink: 0;
+    }
+
+    .faq-item.open .faq-q::after {
+      transform: rotate(45deg);
+    }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s var(--ease-out);
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 600px;
+    }
+
+    .faq-a p {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--violet-dim);
+      line-height: 1.75;
+      padding: 0 1.4rem 1.25rem;
+      margin: 0;
+    }
+
+    .faq-a a {
+      color: var(--violet);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* — Guide Nav & Closing — */
+    .guide-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem 2rem;
+      margin: 3rem 0 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--faint);
+    }
+
+    .guide-nav a {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--violet);
+      text-transform: uppercase;
+      text-decoration: none;
+      border-bottom: 1px solid var(--bruise-mid);
+      padding-bottom: 2px;
+      transition: all 0.3s;
+    }
+
+    .guide-nav a:hover {
+      color: var(--bruise-mid);
+      border-color: var(--violet);
+    }
+
+    .guide-closing {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      line-height: 1.8;
+      padding: 1.5rem;
+      border-left: 2px solid var(--bruise);
+      margin-bottom: 2rem;
+    }
+
+    /* — Comment Prompt — */
+    .comment-prompt {
+      margin-top: 5rem;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      border-left: 2px solid var(--bruise);
+    }
+
+    .comment-prompt-label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .comment-prompt p {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--violet-dim);
+      margin: 0;
+    }
+
+    /* — Footer — */
+    #footer {
+      border-top: 1px solid var(--violet-faint);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      color: var(--bruise-mid);
+      text-transform: uppercase;
+    }
+
+    .footer-ig {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      color: var(--violet-dim);
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .footer-ig:hover { color: var(--violet); }
+
+    /* — Comment Form — */
+    .comment-form input[name="_gotcha"] {
+      display: none;
+    }
+
+    .comment-form {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 500px;
+    }
+
+    .comment-form input,
+    .comment-form textarea {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--violet);
+      background: var(--mid);
+      border: 1px solid var(--faint);
+      padding: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .comment-form input::placeholder,
+    .comment-form textarea::placeholder {
+      color: var(--faint);
+    }
+
+    .comment-form input:focus,
+    .comment-form textarea:focus {
+      border-color: var(--bruise-mid);
+    }
+
+    .comment-form textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-submit {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--void);
+      background: var(--violet);
+      border: none;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      align-self: flex-start;
+    }
+
+    .form-submit:hover {
+      background: var(--bruise-mid);
+      transform: translateY(-2px);
+    }
+
+    @media (min-width: 900px) {
+      #shop-body {
+        max-width: min(1280px, 94vw);
+        padding-left: 3vw;
+        padding-right: 3vw;
+      }
+
+      .shop-prose,
+      .guide-section p,
+      .guide-closing {
+        max-width: 70ch;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 2.5rem;
+        align-items: start;
+      }
+
+      .split.flip > :first-child {
+        order: 2;
+      }
+
+      .split > .guide-figure {
+        margin-bottom: 0;
+      }
+
+      .split > .guide-figure img {
+        height: 100%;
+      }
+
+      .list-2col {
+        columns: 2;
+        column-gap: 2.5rem;
+      }
+
+      .checklist.grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 2.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      #footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Chatuchak Phuket (JJ Phuket): Inside the Island's Real Secondhand Institution",
+      "description": "Phuket's actual Chatuchak market — a 25-year secondhand institution with five buildings, plus the Vintage Market Phuket 77 weekend layer next door.",
+      "datePublished": "2026-09-22",
+      "author": {
+        "@type": "Organization",
+        "name": "Ossuary Atelier"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Ossuary Atelier",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://ossuaryphuket.me/Ossuary-Atelier/assets/logo.png"
+        }
+      },
+      "image": "https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png"
+    }
+</script>
+<script async src="https://news.google.com/swg/js/v1/publisher.js"></script>
+
+  <!-- @@SITE_JSONLD_BEGIN@@ -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#website",
+      "url": "https://ossuaryphuket.me/Ossuary-Atelier/",
+      "name": "Ossuary Atelier",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#organization",
+      "url": "https://ossuaryphuket.me/Ossuary-Atelier/",
+      "name": "Ossuary Atelier",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#logo",
+        "url": "https://ossuaryphuket.me/Ossuary-Atelier/assets/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://www.instagram.com/ossuary.atelier/"
+      ]
+    }
+  ]
+}
+  </script>
+<!-- @@SITE_JSONLD_END@@ -->
+  </head>
+<body>
+  <div id="page-transition"></div>
+  <div id="cursor"></div>
+  <div id="cursor-trail"></div>
+
+  <!-- @@NAV_SLOT@@ -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <a href="../../index.html" class="nav-logo" aria-label="Ossuary Atelier — Home">
+    <div class="nav-logo-eye" aria-hidden="true"></div>
+    <div class="nav-logo-text">OSSUARY<span>ATELIER</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="../../index.html">Home</a></li>
+    <li><a href="../../about.html">About</a></li>
+    <li><a href="../../shop.html">Shop</a></li>
+    <li><a href="../../guide/index.html">Guide</a></li>
+    <li><a href="../../contact.html">Contact</a></li>
+    <li><a href="../index.html">Journal</a></li>
+  </ul>
+  <button class="nav-burger" aria-label="Open navigation"><span></span><span></span><span></span></button>
+</nav>
+<div id="nav-overlay" role="dialog" aria-modal="true" aria-label="Navigation">
+  <a href="../../index.html">Home</a>
+  <a href="../../about.html">About</a>
+  <a href="../../shop.html">Shop</a>
+  <a href="../../guide/index.html">Guide</a>
+  <a href="../../contact.html">Contact</a>
+  <a href="../index.html">Journal</a>
+</div>
+<!-- @@NAV_END@@ -->
+
+  <header id="shop-header">
+    <h1 class="shop-title">Chatuchak Phuket</h1>
+    <div class="shop-meta">
+      <span class="shop-tag">Phuket</span>
+      <span class="shop-tag">Markets</span>
+      <span class="shop-tag">Secondhand</span>
+      <span class="shop-tag">Est. 1999</span>
+    </div>
+  </header>
+
+  <article id="shop-body">
+    <p class="shop-prose">
+      There's a market in Phuket Town that actually carries the Chatuchak name — ตลาดจตุจักรภูเก็ต, JJ Phuket to locals.
+      Not a nickname borrowed from Bangkok's weekend giant, but a real namesake: 25 years old, open six days a week, and the biggest concentration of secondhand goods on the island.
+      This is how it's laid out, what's worth digging through, and how the weekend layer next door has turned it into something even bigger.
+    </p>
+
+    <figure class="guide-figure wide">
+      <img src="../../assets/blog/chatuchak-phuket/hero.jpg" alt="Rows of secondhand clothing racks inside one of JJ Phuket's covered buildings" loading="eager">
+      <figcaption>JJ Phuket is the everyday secondhand hub of Phuket Town — permanent covered buildings, not a weekend pop-up.</figcaption>
+    </figure>
+
+    <div class="guide-section">
+      <h2>Born From a Crisis, Built Into an Institution</h2>
+      <p>JJ Phuket opened on March 9, 1999 — in the aftershock of the 1997 Asian financial crisis, when people across Thailand started clearing out surplus household goods and selling them straight off their car trunks. Back then it was one of the first tailgate markets in Phuket Town: a wide-open lot, weekends only, no roof, no walls, just people and their goods.</p>
+      <p>It stuck. Over the following two decades the operators built permanent structures over the space — covered buildings so vendors and shoppers alike could get out of the sun and the rain, and so the market could stop being a weekend event and open nearly every day instead. What started as an improvised response to hard times became an institution: Phuket's largest secondhand market, full stop.</p>
+    </div>
+
+    <div class="guide-section split">
+      <div>
+        <h2>The Layout: Five Buildings, One Secondhand Hub</h2>
+        <p>The market covers around 6,000 square meters with parking for over 100 vehicles, organized into five main buildings:</p>
+        <ul>
+          <li><strong>Commercial Building</strong> — larger stores of secondhand clothing and general goods, plus restaurants.</li>
+          <li><strong>Buildings 1–2</strong> — the real secondhand core: clothes, shoes, bags, furniture, electrical appliances, and electronics. This is where most of the market's identity lives.</li>
+          <li><strong>Buildings 3–4</strong> — food stalls, a pet zone, a car wash service, and even a Flash Express courier counter. The market office sits at the back of Building 3.</li>
+        </ul>
+        <p>It's open every day except Monday — Tuesday to Thursday from 9:00 AM to 5:00 PM, Friday through Sunday from 9:00 AM to 7:00 PM. Hours at markets like this drift a little over the years, so it's always worth a quick check before heading out.</p>
+      </div>
+      <figure class="guide-figure">
+        <img src="../../assets/blog/chatuchak-phuket/interior-racks.jpg" alt="The main entrance of JJ Phuket, passage leading into the covered secondhand buildings" loading="lazy">
+        <figcaption>JJ Phuket's main entrance — the covered buildings hold the secondhand core.</figcaption>
+      </figure>
+    </div>
+
+    <div class="guide-section">
+      <h2>What's Actually For Sale</h2>
+      <p>This isn't a one-category market. Expect:</p>
+      <ul class="list-2col">
+        <li>Secondhand clothes, shoes, and bags — the bread and butter of the place</li>
+        <li>Kids' clothing and shoes</li>
+        <li>Perfume and jewelry</li>
+        <li>Secondhand electrical appliances</li>
+        <li>Used phones, iPads, and laptops</li>
+        <li>Electronics and components</li>
+        <li>Motorcycle parts</li>
+        <li>Furniture and home décor</li>
+        <li>Antiques, collectibles, and vintage odds and ends</li>
+        <li>Amulets (พระเครื่อง) — a genuinely serious collector category in Thailand</li>
+      </ul>
+      <p>If you're building a thrift habit around durability and buying circular instead of chasing fast fashion, this is the kind of place where that mindset actually pays off — at this volume, patience gets rewarded.</p>
+    </div>
+
+    <div class="guide-section split flip">
+      <div>
+        <h2>Vintage Market Phuket 77: The Weekend Layer</h2>
+        <p>Right at the same address, the market's weekend character gets a full upgrade under the name <strong>Vintage Market Phuket 77</strong> (ตลาดวินเทจภูเก็ต 77) — a rebrand of what used to be known locally as the old Anuphas tailgate market. It had a proper grand opening in May 2026, complete with a classic car show and a "Southwest Cowboy Phuket Night Party," opened by the president of the Phuket Provincial Administrative Organization. That's not a small local event — that's a market being taken seriously as a destination.</p>
+        <p>The weekend layer stacks outdoor stalls on top of the indoor buildings, adding secondhand goods, vintage pieces, collectibles, fashion, home décor, and food into the mix — with an indoor zone for when the heat gets to be too much. One note before you search it: don't confuse it with the separately branded "Vintage Market Phuket," a themed night market on the Kathu side of the island. Different places, different names, easy to mix up.</p>
+      </div>
+      <figure class="guide-figure">
+        <img src="../../assets/blog/chatuchak-phuket/vintage-market-77-outdoor.jpg" alt="Outdoor evening market stalls with string lights and a crowd browsing clothing racks" loading="lazy">
+        <figcaption>Vintage Market Phuket 77's weekend outdoor stalls — the same site, a different energy after dark.</figcaption>
+      </figure>
+    </div>
+
+    <div class="guide-section">
+      <h3>Vendors Worth Knowing</h3>
+      <ul>
+        <li><strong>Studio 90's Phuket</strong> — a secondhand fashion seller focused on vintage and '90s-style clothing. Like a lot of the smaller operators in this scene, they run primarily through social media (TikTok, Instagram) rather than a fixed storefront — follow for restock drops rather than assuming they'll always be in the exact same spot.</li>
+        <li><strong>Vintage Market Phuket 77</strong> runs community events beyond straight shopping too — aerobic dance sessions have shown up on their page alongside the usual secondhand and vintage browsing. It's as much a weekend gathering spot as a market.</li>
+      </ul>
+      <p>Vendors here (as with most Thai markets built around individual sellers) shift and rotate over time, so treat any specific stall as a lead worth checking on social media before you make a special trip for it.</p>
+    </div>
+
+    <div class="facts-card">
+      <h2>Quick Facts</h2>
+      <table>
+        <tr><th>Also known as</th><td>ตลาดจตุจักรภูเก็ต · JJ Phuket</td></tr>
+        <tr><th>Location</th><td>Khanit Hongyok Rd, Talat Yai, Mueang, Phuket</td></tr>
+        <tr><th>Founded</th><td>March 9, 1999</td></tr>
+        <tr><th>Hours</th><td>Tue–Thu 9 AM–5 PM · Fri–Sun 9 AM–7 PM</td></tr>
+        <tr><th>Closed</th><td>Mondays</td></tr>
+        <tr><th>Size</th><td>~6,000 sqm across 5 buildings · 100+ parking</td></tr>
+        <tr><th>Weekend layer</th><td>Vintage Market Phuket 77</td></tr>
+        <tr><th>Bargaining</th><td>Expected on goods</td></tr>
+      </table>
+    </div>
+
+    <div class="rental-box">
+      <h2>Want a Stall of Your Own?</h2>
+      <p>Here's the part most tourist guides skip: this market rents. If you've ever thought about testing a pop-up for your own secondhand or vintage pieces, JJ Phuket has two stall types — an open lock with no deposit (500 THB/day, 1,750 THB/week, or 6,500 THB/month) and an enclosed lock with walls, a door, and a ceiling (7,880 THB/month, deposit required for the space and electricity). Standard stall size is 4×4 meters.</p>
+      <p>Bookings go through the market office at the back of Building 3. That's worth remembering if you're ever weighing a physical pop-up alongside the online side of a secondhand brand.</p>
+    </div>
+
+    <div class="guide-section">
+      <h2>The Plug's Cheat Sheet</h2>
+      <ul class="checklist grid2">
+        <li>Go on a weekend if you want both the full indoor market and the Vintage Market Phuket 77 outdoor layer running at once.</li>
+        <li>Weekday visits (Tue–Thu) are calmer and better if you actually want to dig through Buildings 1–2 without a crowd.</li>
+        <li>Bring small bills — bargaining is expected, but nobody's breaking a large note for cheap secondhand pieces.</li>
+        <li>Check the social pages of Vintage Market Phuket 77 and individual vendors before you go — restocks and pop-up events get announced there first.</li>
+        <li>Buildings 3–4 cover food, pets, and a courier counter — worth remembering if you need to ship something home.</li>
+        <li>If a special event (classic car meet, themed night) is on, expect a bigger crowd — plan your browsing time accordingly.</li>
+      </ul>
+    </div>
+
+    <div id="guide-faq" class="guide-section">
+      <h2>FAQ</h2>
+      <div class="faq-item">
+        <button class="faq-q">Is this the same as Bangkok's Chatuchak Market?</button>
+        <div class="faq-a"><p>No. This is Phuket's own market that happens to carry the Chatuchak name locally (จตุจักรภูเก็ต / JJ Phuket) — a separate, much smaller market with its own 25+ year history.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is this the same as Naka Weekend Market?</button>
+        <div class="faq-a"><p>Also no. Naka Weekend Market is a different night market elsewhere in Phuket, informally nicknamed "Phuket Chatuchak" by some locals — but this market is the one that actually has Chatuchak in its name.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What's the difference between JJ Phuket and Vintage Market Phuket 77?</button>
+        <div class="faq-a"><p>JJ Phuket is the everyday indoor secondhand market (open Tuesday–Sunday). Vintage Market Phuket 77 is the weekend outdoor layer at the same site, leaning more into vintage, collectibles, and event nights. Two names, one address.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I bargain?</button>
+        <div class="faq-a"><p>Yes — bargaining is expected on goods here. It's a market built on individual sellers, and the price tags move a little for anyone who asks decently.</p></div>
+      </div>
+    </div>
+
+    <nav class="guide-nav" aria-label="Related reading">
+      <a href="index.html">← The Thrift Guide</a>
+      <a href="../index.html">← Back to The Osteology</a>
+      <a href="../field-notes/chatuchak-nov-24.html">Bangkok's Chatuchak, in the field →</a>
+      <a href="../../tools/phuket-map/index.html">Open the Phuket Map →</a>
+    </nav>
+
+    <p class="guide-closing">Ossuary Atelier is built on finding what's actually good in Phuket's secondhand scene — no QR codes, no gimmicks, just the spots worth your time.</p>
+
+    <div class="comment-prompt">
+      <span class="comment-prompt-label">Leave a note</span>
+      <p>Been here? Found something? Leave a note below — we read everything.</p>
+    </div>
+
+    <form class="comment-form" id="comment-form" action="https://formspree.io/f/xdayzjqv" method="POST">
+      <input type="text" name="_gotcha" style="display:none">
+      <input type="hidden" name="page" value="Chatuchak Phuket (JJ Phuket)">
+      <div class="form-group">
+        <input type="text" name="name" placeholder="Your name" required>
+      </div>
+      <div class="form-group">
+        <input type="email" name="email" placeholder="Your email (won't be published)" required>
+      </div>
+      <div class="form-group">
+        <textarea name="message" placeholder="Write your note..." rows="4" required></textarea>
+      </div>
+      <button type="submit" class="form-submit">Submit Note</button>
+    </form>
+
+  </article>
+
+  <!-- @@FOOTER_SLOT@@ -->
+<footer id="footer">
+  <span class="footer-copy">Ossuary Atelier © 2026</span>
+  <div class="footer-links">
+    <a href="../../privacy.html">Privacy</a>
+    <a href="../../tos.html">TOS</a>
+  </div>
+  <a href="https://www.instagram.com/ossuary.atelier/"
+     target="_blank" rel="noopener"
+     class="footer-ig" aria-label="Instagram">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+    @ossuaryatelier
+  </a>
+  <div class="footer-pref" google-add-preferred-source-btn data-theme="dark" data-lang="en"></div>
+</footer>
+<!-- @@FOOTER_END@@ -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+  <script>document.addEventListener('DOMContentLoaded', () => { if (typeof gsap !== 'undefined') gsap.registerPlugin(ScrollTrigger); });</script>
+  <script src="../../js/nav.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.faq-q').forEach(btn => {
+        btn.addEventListener('click', () => {
+          btn.parentElement.classList.toggle('open');
+        });
+      });
+    });
+  </script>
+
+<!-- @@NOTICE_SLOT@@ -->
+<div id="notice-privacy" role="status">
+  <style>#notice-privacy{position:fixed;right:1rem;bottom:1rem;z-index:9900;max-width:20rem;background:rgba(8,8,16,.95);border:1px solid rgba(201,184,232,.18);border-left:3px solid #A184CD;color:#C9B8E8;font-size:.92rem;line-height:1.6;padding:.9rem 1.1rem;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:1;transition:opacity .5s ease,transform .5s ease}#notice-privacy p{margin:0}#notice-privacy a{color:#C9B8E8;text-decoration:underline;text-underline-offset:2px}#notice-privacy button{margin-top:.6rem;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:#C9B8E8;background:none;border:1px solid rgba(201,184,232,.25);padding:.45rem 1rem;cursor:pointer}#notice-privacy.off{opacity:0;transform:translateY(6px);pointer-events:none}@media(max-width:768px){#notice-privacy{right:.75rem;left:.75rem;bottom:.75rem;max-width:none}}</style>
+  <p>This site uses <strong>no tracking cookies</strong> and no analytics. Read our <a href="../../privacy.html">privacy policy</a>.</p>
+  <button type="button" class="notice-dismiss">Got it</button>
+</div>
+<script>
+(function(){
+  var el=document.getElementById('notice-privacy');
+  if(!el)return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.style.transition='none';}
+  var b=el.querySelector('.notice-dismiss');
+  if(b)b.addEventListener('click',function(){el.classList.add('off');});
+  setTimeout(function(){el.classList.add('off');},4000);
+})();
+</script>
+</body>
+</html>
