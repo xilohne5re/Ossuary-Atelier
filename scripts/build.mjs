@@ -266,7 +266,7 @@ const LINKS_SKIP = new Set(['item-template.html']);
 function runLinks(strict) {
   const files = walkHtml(ROOT);
   let brokenTotal = 0;
-  const externalish = (u) => /^(?:https?:|mailto:|tel:|data:|javascript:|\/\/|#)/i.test(u);
+  const externalish = (u) => /^(?:https?:|mailto:|tel:|data:|javascript:|\/\/|\/|#)/i.test(u);
 
   for (const abs of files) {
     const relPath = relOf(abs);

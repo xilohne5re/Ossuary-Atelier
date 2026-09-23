@@ -121,10 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 600);
 
   /* ── ACTIVE LINK ────────────────────────────── */
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const here = window.location.pathname;
   document.querySelectorAll('.nav-links a, #nav-overlay a').forEach(link => {
     const href = link.getAttribute('href');
-    if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+    if (!href || href.startsWith('#') || href.startsWith('http')) return;
+    if (new URL(href, window.location.href).pathname === here) {
       link.classList.add('active');
     }
   });
