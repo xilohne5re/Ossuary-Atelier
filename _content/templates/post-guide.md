@@ -16,8 +16,8 @@ Copy either file, then:
 4. Keep the body's `.shop-prose`/`.note-prose` lead, sections, and the
    `found-here` / `found-link` cross-link back to the related ITEM page.
 5. Add back-links (the hub expects them):
-   - `<a href="../index.html">← The Thrift Guide</a>` (guide articles)
-   - `<a href="../../index.html">← The Osteology</a>` (field notes — align to depth)
+   - `<a href="./">← The Thrift Guide</a>` (guide articles)
+   - `<a href="../">← The Osteology</a>` (field notes — align to depth)
 6. Register the post in `blog/index.html`:
    - Add a `.post-card` with `data-category` (`guide` | `field-notes` | `archive`)
    - Optional: add a `blog/index.html` filter pill if you add a new category.
