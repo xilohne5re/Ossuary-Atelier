@@ -115,15 +115,13 @@ function rootPrefix(relPath) {
 }
 
 function journalHref(relPath) {
-  const dir = posix.dirname(relPath);
-  if (dir === '.') return 'blog/index.html';
-  return posix.relative(dir, 'blog/index.html');
+  const rel = posix.relative(posix.dirname(relPath), 'blog');
+  return (rel === '' ? './' : rel) + '/';
 }
 
 function guideHref(relPath) {
-  const dir = posix.dirname(relPath);
-  if (dir === '.') return 'guide/index.html';
-  return posix.relative(dir, 'guide/index.html');
+  const rel = posix.relative(posix.dirname(relPath), 'guide');
+  return (rel === '' ? './' : rel) + '/';
 }
 
 function findBalancedDiv(content, openPattern) {
@@ -663,7 +661,7 @@ function runPosts() {
 }
 
 /* ── seo step ──────────────────────────────────────────────── */
-const SEO_SKIP = new Set(['404.html']);
+const SEO_SKIP = new Set(['404.html', 'googlecf73118a74657205.html']);
 
 const SEO_NOINDEX = new Set(['internal-dm-scripts.html', 'item-template.html', 'craft.html', 'drops.html']);
 
@@ -820,7 +818,14 @@ function runSeo(report) {
     const preloads = FONT_FILES.map(f =>
       `  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="${root}assets/fonts/${f}.woff2">\n`
     ).join('');
-    const canonicalPath = rel === 'index.html' ? '' : rel.replace(/\/index\.html$/, '').replace(/\.html$/, '');
+    // Canonical === the literal URL GitHub Pages serves (sitemap agrees):
+    // - root index.html  -> SITE_BASE/            (directory form)
+    // - */index.html     -> SITE_BASE/<dir>/      (directory form, matches GH's /path -> /path/ redirect)
+    // - file pages       -> SITE_BASE/<file>.html (keep the real file path)
+    const canonicalPath =
+      rel === 'index.html' ? ''
+      : /\/index\.html$/.test(rel) ? rel.slice(0, -'index.html'.length)
+      : rel;
     const canonical = canonicalPath ? `${SITE_BASE}/${canonicalPath}` : `${SITE_BASE}/`;
     const ogType = rel.startsWith('blog/') ? 'article' : 'website';
 
@@ -1070,7 +1075,7 @@ function runPreferred(report) {
 
 function runSitemap() {
   gate('sitemap');
-  const EXCLUDE = new Set(['item-template.html', 'internal-dm-scripts.html', '404.html', 'craft.html', 'drops.html']);
+  const EXCLUDE = new Set(['item-template.html', 'internal-dm-scripts.html', '404.html', 'craft.html', 'drops.html', 'googlecf73118a74657205.html']);
   const files = walkHtml(ROOT).filter(abs => !EXCLUDE.has(relOf(abs)));
   const priorities = {
     'index.html': '1.0',
