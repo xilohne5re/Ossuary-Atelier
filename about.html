@@ -1925,7 +1925,7 @@ html {
     }
     .b2b-media .about-plate-frame { min-height: 220px; }
 
-    /* fretboard "coming soon" card */
+    /* fretboard card → DAEAC#E trainer */
     .fretboard-card {
       background:
         radial-gradient(circle at 50% 45%, rgba(75,45,122,0.25), transparent 62%),
@@ -2478,7 +2478,7 @@ html {
       <div class="b2b-item">
         <button class="b2b-q">Why is there a guitar tuner here?</button>
         <div class="b2b-a">
-          <p>Because the same instinct that makes someone dig through a thrift rack for one specific piece is the instinct that makes someone build a custom guitar tuning from scratch instead of using whatever came stock. It's not about clothes. It's about caring enough to get the specific thing right. It's coming soon — built the same way everything else here is: because we wanted it to exist and nobody else was going to build it.</p>
+          <p>Because the same instinct that makes someone dig through a thrift rack for one specific piece is the instinct that makes someone build a custom guitar tuning from scratch instead of using whatever came stock. It's not about clothes. It's about caring enough to get the specific thing right. It's live now — built the same way everything else here is: because we wanted it to exist and nobody else was going to build it. <a href="tools/fretboard-trainer/index.html">Try the fretboard trainer</a>.</p>
         </div>
       </div>
 
@@ -2534,11 +2534,11 @@ html {
         </div>
       </figure>
       <!-- /CONTENT -->
-      <figure class="about-plate" data-reveal style="transition-delay:0.24s;">
-        <div class="about-plate-frame fretboard-card">
-          <span class="fretboard-flag">Guitar tuner</span>
-          <span class="fretboard-flag fretboard-flag--soon">Coming soon</span>
-          <svg viewBox="0 0 300 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fretboard graphic for the DAEAC sharp E guitar tuner">
+      <a href="tools/fretboard-trainer/index.html" class="about-plate-link" style="display:block; transition-delay:0.24s;" aria-label="Open the DAEAC sharp E fretboard trainer">
+        <figure class="about-plate" data-reveal>
+          <div class="about-plate-frame fretboard-card">
+            <span class="fretboard-flag">Guitar tuner</span>
+            <svg viewBox="0 0 300 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fretboard graphic for the DAEAC sharp E guitar tuner">
             <g font-family="Cinzel, serif" font-size="13" letter-spacing="2" fill="#A184CD" text-anchor="middle">
               <text x="17"  y="26">D</text>
               <text x="17"  y="47">A</text>
@@ -2575,6 +2575,7 @@ html {
           </svg>
         </div>
       </figure>
+    </a>
     </div>
 
     <div class="b2b-links">

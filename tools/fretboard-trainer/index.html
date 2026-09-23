@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAEAC♯E — Fretboard Trainer</title>
+
+  <!-- @@SEO_SLOT@@ -->
+  <link rel="canonical" href="https://ossuaryphuket.me/Ossuary-Atelier/tools/fretboard-trainer">
+  <meta name="description" content="A free multi-tuning fretboard trainer for DAEAC#E open tuning — explore scales, modes, chord voicings, and progressions with live audio.">
+  <meta property="og:site_name" content="Ossuary Atelier">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="DAEAC♯E — Fretboard Trainer">
+  <meta property="og:description" content="A free multi-tuning fretboard trainer for DAEAC#E open tuning — explore scales, modes, chord voicings, and progressions with live audio.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ossuaryphuket.me/Ossuary-Atelier/tools/fretboard-trainer">
+  <meta property="og:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
+  <meta property="og:image:alt" content="Ossuary Atelier — secondhand fashion with verified stories.">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ossuaryatelier">
+  <meta name="twitter:title" content="DAEAC♯E — Fretboard Trainer">
+  <meta name="twitter:description" content="A free multi-tuning fretboard trainer for DAEAC#E open tuning — explore scales, modes, chord voicings, and progressions with live audio.">
+  <meta name="twitter:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
+  <meta name="theme-color" content="#080810">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon-32.png">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="../../assets/fonts/cinzel.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="../../assets/fonts/cormorant.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="../../assets/fonts/cormorant-italic.woff2">
+
+<!-- @@SEO_END@@ -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- @@SITE_JSONLD_BEGIN@@ -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#website",
+      "url": "https://ossuaryphuket.me/Ossuary-Atelier/",
+      "name": "Ossuary Atelier",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#organization",
+      "url": "https://ossuaryphuket.me/Ossuary-Atelier/",
+      "name": "Ossuary Atelier",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://ossuaryphuket.me/Ossuary-Atelier/#logo",
+        "url": "https://ossuaryphuket.me/Ossuary-Atelier/assets/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://www.instagram.com/ossuary.atelier/"
+      ]
+    }
+  ]
+}
+  </script>
+<!-- @@SITE_JSONLD_END@@ -->
+  </head>
+<body>
+
+<header class="ft-top">
+  <a href="../../guide/index.html" class="ft-back">← Back to the Guide Hub</a>
+  <span class="ft-attrib">free tool · built by Ossuary Atelier</span>
+</header>
+
+<header class="app-header">
+  <div class="brand">
+    <span class="brand-mark">♯</span>
+    <div class="brand-text">
+      <h1 id="brandName">DAEAC#E</h1>
+      <span class="tagline">multi-tuning fretboard trainer</span>
+    </div>
+  </div>
+  <div class="header-chips">
+    <span class="chip chip-tuning" id="tuningChip" title="Active tuning">D · A · E · A · C# · E</span>
+    <button class="chip chip-btn" id="tuningBtn" title="Toggle reference pitch 440 / 432 Hz">A=440Hz</button>
+    <span class="chip chip-mode" id="modeChip">MODE&nbsp;·&nbsp;EXPLORER</span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <main class="main-col">
+
+    <!-- Controls -->
+    <div class="controls card">
+      <div class="ctrl-group">
+        <div class="ctrl-label">Root</div>
+        <div class="root-btns" id="rootBtns"></div>
+      </div>
+      <div class="ctrl-group scale-group">
+        <div class="ctrl-label">Scale / Mode</div>
+        <div class="sel-wrap">
+          <select id="scaleSelect"></select>
+        </div>
+      </div>
+      <div class="ctrl-group label-group">
+        <div class="ctrl-label">Labels</div>
+        <button class="label-toggle active" id="labelToggle">NOTE NAMES</button>
+      </div>
+      <div class="ctrl-group preset-wrap">
+        <div class="ctrl-label">Preset</div>
+        <div class="sel-wrap">
+          <select id="presetSelect"></select>
+        </div>
+      </div>
+      <div class="ctrl-group tuning-wrap">
+        <div class="ctrl-label">Tuning</div>
+        <div class="sel-wrap">
+          <select id="tuningSelect"></select>
+        </div>
+      </div>
+      <div class="ctrl-group custom-tuning-wrap" id="customTuningWrap" style="display:none">
+        <div class="custom-head">
+          <span class="ctrl-label">Custom tuning<span class="tuning-head-notes" id="tuningHeadNotes"></span></span>
+          <button class="tuning-collapse-btn" id="tuningCollapseBtn" type="button">▴ hide</button>
+        </div>
+        <div class="tuning-slot-row" id="customTuningEditor"></div>
+        <div class="tuning-actions" id="tuningActions">
+          <button class="tuning-action-btn" id="tuningStrumBtn" type="button">▶ strum all</button>
+          <button class="tuning-action-btn" id="tuningResetBtn" type="button">↺ back to preset</button>
+        </div>
+        <div class="tuning-hint" id="tuningOrderHint">strings out of order (low → high)</div>
+      </div>
+      <div class="ctrl-group chaos-wrap">
+        <div class="ctrl-label">Chaos</div>
+        <div class="chaos-row">
+          <span class="chaos-tag-lo chaos-tags">CLEAN</span>
+          <input type="range" id="chaosSlider" min="0" max="100" value="20">
+          <span class="chaos-tag-hi chaos-tags">DESTROY</span>
+        </div>
+        <div style="text-align:center"><span id="chaosVal">20</span></div>
+      </div>
+    </div>
+
+    <!-- Fretboard + PLAY bar -->
+    <div class="board-zone">
+
+      <div class="kb-bar card" id="kbBar"></div>
+
+      <div class="board-wrap card">
+        <svg id="fretboard"></svg>
+      </div>
+
+    </div>
+
+    <!-- Info panel -->
+    <div class="info-panel card">
+      <div class="ip-cell">
+        <div class="lbl">Note</div>
+        <div class="val icon-cell" id="iNote">—</div>
+      </div>
+      <div class="ip-cell">
+        <div class="lbl">Interval</div>
+        <div class="val accent" id="iInterval">—</div>
+      </div>
+      <div class="ip-cell">
+        <div class="lbl">Scale degree</div>
+        <div class="val" id="iDegree">—</div>
+      </div>
+    </div>
+
+  </main>
+
+  <aside class="side-col">
+
+    <!-- Vertical mode tabs -->
+    <nav class="mode-tabs">
+      <button class="mode-tab" data-mode="explorer">Explorer</button>
+      <button class="mode-tab" data-mode="chord">Chord&nbsp;Builder</button>
+      <button class="mode-tab" data-mode="progression">Progression</button>
+    </nav>
+
+    <!-- Mode panels -->
+    <div class="side-panels">
+
+      <div class="side-panel card" id="panel-explorer">
+        <div class="panel-head">
+          <span class="panel-title">Explorer</span>
+          <span class="panel-hint">pick a root+scale, then click around</span>
+        </div>
+        <div class="trace-panel" id="tracePanel">
+          <div id="trace"><span style="color:var(--dim)">click a note to see the calculation trace</span></div>
+        </div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div class="side-panel card" id="panel-chord" style="display:none">
+        <div id="chord-content"><span style="color:var(--dim)">switch to chord mode</span></div>
+      </div>
+
+      <div class="side-panel card" id="panel-progression" style="display:none"></div>
+
+    </div>
+
+    <!-- Keyboard cheatsheet -->
+    <details class="kb-cheat card" id="kbCheat">
+      <summary>⌨ keyboard shortcuts</summary>
+      <ul>
+        <li><b>Letter rows Q / A / Z</b> — play scale notes along the assigned string (each key is one distinct note)</li>
+        <li><b>1–6</b> — pluck each open string</li>
+        <li><b>Space</b> — strum the current chord</li>
+        <li><b>Space / Enter</b> — play / pause in Progression</li>
+        <li><b>Click</b> a note / chord = block · <b>hold</b> = strum</li>
+        <li><b>Drag the row chips</b> on the PLAY bar to assign each row to a string</li>
+        <li><b>Click the root again</b> to clear it → chromatic playing</li>
+      </ul>
+    </details>
+
+    <!-- Chord library (pinned bottom) -->
+    <div class="lib-section card" id="librarySection">
+      <div class="lib-head">
+        <span class="panel-title">Chord Library</span>
+        <span class="lib-count-badge" id="libCount">0</span>
+      </div>
+      <div class="lib-box" id="libraryBox"></div>
+      <div class="lib-hint">drag a tile onto the playlist &nbsp;·&nbsp; click = block · hold = strum</div>
+    </div>
+
+  </aside>
+
+</div>
+
+<div id="tooltip"></div>
+
+<script src="script.js" defer></script>
+
+<!-- @@NOTICE_SLOT@@ -->
+<div id="notice-privacy" role="status">
+  <style>#notice-privacy{position:fixed;right:1rem;bottom:1rem;z-index:9900;max-width:20rem;background:rgba(8,8,16,.95);border:1px solid rgba(201,184,232,.18);border-left:3px solid #A184CD;color:#C9B8E8;font-size:.92rem;line-height:1.6;padding:.9rem 1.1rem;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:1;transition:opacity .5s ease,transform .5s ease}#notice-privacy p{margin:0}#notice-privacy a{color:#C9B8E8;text-decoration:underline;text-underline-offset:2px}#notice-privacy button{margin-top:.6rem;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:#C9B8E8;background:none;border:1px solid rgba(201,184,232,.25);padding:.45rem 1rem;cursor:pointer}#notice-privacy.off{opacity:0;transform:translateY(6px);pointer-events:none}@media(max-width:768px){#notice-privacy{right:.75rem;left:.75rem;bottom:.75rem;max-width:none}}</style>
+  <p>This site uses <strong>no tracking cookies</strong> and no analytics. Read our <a href="../../privacy.html">privacy policy</a>.</p>
+  <button type="button" class="notice-dismiss">Got it</button>
+</div>
+<script>
+(function(){
+  var el=document.getElementById('notice-privacy');
+  if(!el)return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.style.transition='none';}
+  var b=el.querySelector('.notice-dismiss');
+  if(b)b.addEventListener('click',function(){el.classList.add('off');});
+  setTimeout(function(){el.classList.add('off');},4000);
+})();
+</script>
+</body>
+</html>
