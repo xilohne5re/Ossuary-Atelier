@@ -683,6 +683,7 @@ const SEO_DESC = {
   'blog/guide/owa-phuket.html': 'O-WA Second Hand, Phuket \u2014 a dense, well-stocked thrift shop worth visiting on weekday mornings. Source of the Michiko Koshino dress.',
   'blog/field-notes/chatuchak-nov-24.html': 'Four hours in and nothing. Then a face-down Glad News hoodie on a folding table between sections 5 and 6.',
   'tools/phuket-map/index.html': 'An interactive map of Phuket thrift shops, beaches, and activity spots \u2014 open, editable, and free to reuse.',
+  'tools/fretboard-trainer/index.html': 'A free multi-tuning fretboard trainer for DAEAC#E open tuning \u2014 explore scales, modes, chord voicings, and progressions with live audio.',
 };
 
 function stripSeoTags(html) {
@@ -1040,6 +1041,7 @@ const PREF_EXCLUDE = new Set([
   'internal-dm-scripts.html',
   'googlecf73118a74657205.html',
   'tools/phuket-map/index.html',
+  'tools/fretboard-trainer/index.html',
 ]);
 const PREF_SCRIPT = `<script async src="https://news.google.com/swg/js/v1/publisher.js"><\/script>`;
 
@@ -1077,6 +1079,7 @@ function runSitemap() {
     'blog/index.html': '0.9',
     'blog/guide/index.html': '0.9',
     'tools/phuket-map/index.html': '0.8',
+    'tools/fretboard-trainer/index.html': '0.8',
     'contact.html': '0.7',
     'about.html': '0.7',
   };
@@ -1087,6 +1090,7 @@ function runSitemap() {
     'blog/index.html': 'weekly',
     'blog/guide/index.html': 'weekly',
     'tools/phuket-map/index.html': 'monthly',
+    'tools/fretboard-trainer/index.html': 'monthly',
     'about.html': 'monthly',
   };
 
