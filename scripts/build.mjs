@@ -680,7 +680,7 @@ const SEO_DESC = {
   'blog/guide/chatuchak-phuket-guide.html': "Phuket's actual Chatuchak market \u2014 a 25-year secondhand institution with five buildings, plus the Vintage Market Phuket 77 weekend layer next door.",
   'blog/guide/owa-phuket.html': 'O-WA Second Hand, Phuket \u2014 a dense, well-stocked thrift shop worth visiting on weekday mornings. Source of the Michiko Koshino dress.',
   'blog/field-notes/chatuchak-nov-24.html': 'Four hours in and nothing. Then a face-down Glad News hoodie on a folding table between sections 5 and 6.',
-  'tools/phuket-map/index.html': 'An interactive map of Phuket thrift shops, beaches, and activity spots \u2014 open, editable, and free to reuse.',
+  'tools/phuket-map/index.html': 'Interactive map of second hand shops in Phuket \u2014 thrift stores, vintage dealers, and weekend markets with real reviews, price ranges, and addresses. Free to use.',
   'tools/fretboard-trainer/index.html': 'A free multi-tuning fretboard trainer for DAEAC#E open tuning \u2014 explore scales, modes, chord voicings, and progressions with live audio.',
 };
 
@@ -861,7 +861,7 @@ function runSeo(report) {
       `  <meta name="twitter:description" content="${esc(desc)}">\n` +
       `  <meta name="twitter:image" content="${SITE_BASE}/assets/og-image.png">\n` +
       `  <meta name="theme-color" content="#080810">\n` +
-      `  <link rel="icon" type="image/png" sizes="32x32" href="${root}assets/favicon-32.png">\n` +
+      `  <link rel="icon" type="image/png" sizes="192x192" href="${SITE_BASE}/assets/favicon-192.png">\n` +
       `  <link rel="icon" type="image/svg+xml" href="${root}assets/favicon.svg">\n` +
       `  <link rel="apple-touch-icon" href="${root}assets/apple-touch-icon.png">\n` +
       `${preloads}` +

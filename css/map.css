@@ -50,15 +50,12 @@ body {
   color: var(--ma-text);
   font-family: 'Cormorant Garamond', serif;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .tools-wrap {
   width: 100%;
-  flex: 1;
-  min-height: 0;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   max-width: none;
@@ -522,6 +519,155 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
 }
 .tools-attrib a { color: var(--ma-violet); }
 
+/* ── content below the map (intro, shop list, FAQ) ── */
+.map-content {
+  max-width: 980px;
+  margin: 2rem auto 0;
+  width: 100%;
+  border-top: 1px solid var(--ma-rule);
+  padding-top: 2.75rem;
+  padding-bottom: 2rem;
+}
+
+.map-section-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ma-bruise);
+  margin: 0 0 1.2rem;
+}
+
+.map-intro { margin-bottom: 3rem; }
+
+.map-intro-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.18rem;
+  color: var(--ma-text);
+  line-height: 1.9;
+  margin: 0;
+}
+
+.map-shops { margin-bottom: 3rem; }
+
+.map-shop-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.map-shop {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 1.1rem;
+  background: var(--ma-panel);
+  border: 1px solid var(--ma-rule);
+  border-left: 3px solid var(--ma-bruise);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+a.map-shop:hover {
+  border-color: var(--ma-violet);
+  transform: translateY(-2px);
+}
+
+.map-shop-name {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ma-violet);
+  line-height: 1.4;
+}
+
+.map-shop-meta {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ma-muted);
+}
+
+.map-shop-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.02rem;
+  color: var(--ma-text);
+  line-height: 1.55;
+  margin: 0.3rem 0 0;
+}
+
+.map-shops-foot {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.98rem;
+  color: var(--ma-muted);
+  margin: 1.1rem 0 0;
+}
+
+/* ── FAQ (second hand shopping in Phuket) —─ */
+.map-faq { max-width: 760px; }
+
+.faq-item {
+  border: 1px solid var(--ma-rule);
+  border-left: 3px solid var(--ma-bruise);
+  background: var(--ma-panel);
+  margin-bottom: 0.9rem;
+  overflow: hidden;
+}
+
+.faq-q {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.3rem;
+  background: none;
+  border: none;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 0.96rem;
+  letter-spacing: 0.04em;
+  color: var(--ma-violet);
+  text-align: left;
+  cursor: pointer;
+}
+
+.faq-q::after {
+  content: '+';
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: var(--ma-bruise);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.faq-item.open .faq-q::after { transform: rotate(45deg); }
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.faq-item.open .faq-a { max-height: 500px; }
+
+.faq-a p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  color: var(--ma-text);
+  line-height: 1.75;
+  padding: 0 1.3rem 1.15rem;
+  margin: 0;
+}
+
+.faq-a a { color: var(--ma-violet); text-decoration: underline; text-underline-offset: 3px; }
+
 /* ── responsive ───────────────────────────────── */
 @media (max-width: 860px) {
   body { overflow: auto; }
@@ -530,4 +676,5 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
   .map-list-panel { flex: 0 1 auto; max-height: 42vh; }
   .map-tools-right { width: 100%; justify-content: flex-end; }
   .tools-sub, .tools-back, .tools-attrib { text-align: left; }
+  .map-shop-list { grid-template-columns: 1fr; }
 }
