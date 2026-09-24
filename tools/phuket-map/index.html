@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Phuket Map — Thrift Shops, Beaches & Activities | Ossuary Atelier</title>
+  <title>Map of Second Hand Shops in Phuket — Thrift &amp; Vintage Stores | Ossuary Atelier</title>
 
   <!-- @@SEO_SLOT@@ -->
   <link rel="canonical" href="https://ossuaryphuket.me/Ossuary-Atelier/tools/phuket-map/">
-  <meta name="description" content="An interactive map of Phuket thrift shops, beaches, and activity spots — open, editable, and free to reuse.">
+  <meta name="description" content="Interactive map of second hand shops in Phuket — thrift stores, vintage dealers, and weekend markets with real reviews, price ranges, and addresses. Free to use.">
   <meta property="og:site_name" content="Ossuary Atelier">
   <meta property="og:locale" content="en_US">
-  <meta property="og:title" content="Interactive Phuket Map — Thrift Shops, Beaches &amp; Activities | Ossuary Atelier">
-  <meta property="og:description" content="An interactive map of Phuket thrift shops, beaches, and activity spots — open, editable, and free to reuse.">
+  <meta property="og:title" content="Map of Second Hand Shops in Phuket — Thrift &amp;amp; Vintage Stores | Ossuary Atelier">
+  <meta property="og:description" content="Interactive map of second hand shops in Phuket — thrift stores, vintage dealers, and weekend markets with real reviews, price ranges, and addresses. Free to use.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ossuaryphuket.me/Ossuary-Atelier/tools/phuket-map/">
   <meta property="og:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
@@ -20,11 +20,11 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@ossuaryatelier">
-  <meta name="twitter:title" content="Interactive Phuket Map — Thrift Shops, Beaches &amp; Activities | Ossuary Atelier">
-  <meta name="twitter:description" content="An interactive map of Phuket thrift shops, beaches, and activity spots — open, editable, and free to reuse.">
+  <meta name="twitter:title" content="Map of Second Hand Shops in Phuket — Thrift &amp;amp; Vintage Stores | Ossuary Atelier">
+  <meta name="twitter:description" content="Interactive map of second hand shops in Phuket — thrift stores, vintage dealers, and weekend markets with real reviews, price ranges, and addresses. Free to use.">
   <meta name="twitter:image" content="https://ossuaryphuket.me/Ossuary-Atelier/assets/og-image.png">
   <meta name="theme-color" content="#080810">
-  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://ossuaryphuket.me/Ossuary-Atelier/assets/favicon-192.png">
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
   <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
   <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="../../assets/fonts/cinzel.woff2">
@@ -84,15 +84,12 @@ body {
   color: var(--ma-text);
   font-family: 'Cormorant Garamond', serif;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .tools-wrap {
   width: 100%;
-  flex: 1;
-  min-height: 0;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   max-width: none;
@@ -556,6 +553,155 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
 }
 .tools-attrib a { color: var(--ma-violet); }
 
+/* ── content below the map (intro, shop list, FAQ) ── */
+.map-content {
+  max-width: 980px;
+  margin: 2rem auto 0;
+  width: 100%;
+  border-top: 1px solid var(--ma-rule);
+  padding-top: 2.75rem;
+  padding-bottom: 2rem;
+}
+
+.map-section-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ma-bruise);
+  margin: 0 0 1.2rem;
+}
+
+.map-intro { margin-bottom: 3rem; }
+
+.map-intro-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.18rem;
+  color: var(--ma-text);
+  line-height: 1.9;
+  margin: 0;
+}
+
+.map-shops { margin-bottom: 3rem; }
+
+.map-shop-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.map-shop {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 1.1rem;
+  background: var(--ma-panel);
+  border: 1px solid var(--ma-rule);
+  border-left: 3px solid var(--ma-bruise);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+a.map-shop:hover {
+  border-color: var(--ma-violet);
+  transform: translateY(-2px);
+}
+
+.map-shop-name {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ma-violet);
+  line-height: 1.4;
+}
+
+.map-shop-meta {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ma-muted);
+}
+
+.map-shop-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.02rem;
+  color: var(--ma-text);
+  line-height: 1.55;
+  margin: 0.3rem 0 0;
+}
+
+.map-shops-foot {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.98rem;
+  color: var(--ma-muted);
+  margin: 1.1rem 0 0;
+}
+
+/* ── FAQ (second hand shopping in Phuket) —─ */
+.map-faq { max-width: 760px; }
+
+.faq-item {
+  border: 1px solid var(--ma-rule);
+  border-left: 3px solid var(--ma-bruise);
+  background: var(--ma-panel);
+  margin-bottom: 0.9rem;
+  overflow: hidden;
+}
+
+.faq-q {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.3rem;
+  background: none;
+  border: none;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 0.96rem;
+  letter-spacing: 0.04em;
+  color: var(--ma-violet);
+  text-align: left;
+  cursor: pointer;
+}
+
+.faq-q::after {
+  content: '+';
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: var(--ma-bruise);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.faq-item.open .faq-q::after { transform: rotate(45deg); }
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.faq-item.open .faq-a { max-height: 500px; }
+
+.faq-a p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  color: var(--ma-text);
+  line-height: 1.75;
+  padding: 0 1.3rem 1.15rem;
+  margin: 0;
+}
+
+.faq-a a { color: var(--ma-violet); text-decoration: underline; text-underline-offset: 3px; }
+
 /* ── responsive ───────────────────────────────── */
 @media (max-width: 860px) {
   body { overflow: auto; }
@@ -564,12 +710,26 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
   .map-list-panel { flex: 0 1 auto; max-height: 42vh; }
   .map-tools-right { width: 100%; justify-content: flex-end; }
   .tools-sub, .tools-back, .tools-attrib { text-align: left; }
+  .map-shop-list { grid-template-columns: 1fr; }
 }
   </style>
 
 <!-- @@SEO_END@@ -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Where are the best second hand shops in Phuket?", "acceptedAnswer": { "@type": "Answer", "text": "Phuket Town holds the densest cluster — Waanwaal, O-WA, 222 Thrift, and the Phuket Chatuchak market are all inside the town bowl. Every thrift pin on this map is a documented visit." } },
+      { "@type": "Question", "name": "Is there a map of second hand shops in Phuket?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — this page is exactly that. Every pin on the map is a documented visit with a note, and shops with full reviews link straight to the Phuket thrift guide." } },
+      { "@type": "Question", "name": "Are second hand clothes in Phuket cheap?", "acceptedAnswer": { "@type": "Answer", "text": "Usually. Tees and basic secondhand clothing run a few hundred baht, while curated Japanese imports can climb higher. Price ranges are listed per shop." } },
+      { "@type": "Question", "name": "When is the best time to visit Phuket's thrift shops?", "acceptedAnswer": { "@type": "Answer", "text": "Weekday mornings, when the second hand shops are freshly stocked and the crowd hasn't arrived." } },
+      { "@type": "Question", "name": "Can I reuse this map of Phuket second hand shops?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The map and its data are open and free to reuse — the downloadable GeoJSON export and attribution live on this page." } }
+    ]
+  }
+  </script>
+  
   <!-- @@SITE_JSONLD_BEGIN@@ -->
   <script type="application/ld+json">
 {
@@ -607,8 +767,9 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
 
   <main class="tools-wrap">
     <header class="tools-head">
-      <span class="tools-kicker">Free tool · built by Ossuary Atelier</span>
-      <h1 class="tools-title">Phuket Thrift Map</h1>
+      <span class="tools-kicker">Phuket Thrift Map · A free tool by Ossuary Atelier</span>
+      <h1 class="tools-title">Phuket Second Hand Shops</h1>
+      <p class="tools-sub">The interactive map of second hand shops in Phuket — thrift stores, vintage dealers, and weekend markets, every pin a documented visit.</p>
     </header>
 
     <div class="map-toolbar">
@@ -655,6 +816,134 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
           No accounts, no tracking, no ads.
         </p>
       </aside>
+    </div>
+
+    <div class="map-content">
+      <section class="map-intro" aria-labelledby="map-intro-title">
+        <h2 id="map-intro-title" class="map-section-title">About this map of second hand shops in Phuket</h2>
+        <p class="map-intro-text">
+          Every pin on this map is a documented visit from the archive's own walks — real second hand shops,
+          thrift stores, and vintage dealers across Phuket, from the Phuket Town bowl up to Cherngtalay and the
+          north of the island. Where we've written a full review, the pin links straight to it: what to look for,
+          what it costs, and when to go. The map is free to use and the data behind it is open — reuse it, embed
+          it, or plan your own secondhand crawl around it. We keep adding pins as we visit more of the island.
+        </p>
+      </section>
+
+      <section class="map-shops" aria-labelledby="map-shops-title">
+        <h2 id="map-shops-title" class="map-section-title">Second hand &amp; thrift shops on the map</h2>
+        <div class="map-shop-list">
+
+          <a class="map-shop" href="../../blog/guide/waanwaal-phuket.html">
+            <span class="map-shop-name">Waanwaal</span>
+            <span class="map-shop-meta">Phuket Town · ฿100 – ฿1,000+</span>
+            <p class="map-shop-note">Curated vintage and secondhand clothing — a strong women's selection.</p>
+          </a>
+
+          <a class="map-shop" href="../../blog/guide/chatuchak-phuket-guide.html">
+            <span class="map-shop-name">Phuket Chatuchak</span>
+            <span class="map-shop-meta">Phuket Town · market</span>
+            <p class="map-shop-note">The biggest second-hand market in Phuket — five buildings of clothing and more.</p>
+          </a>
+
+          <a class="map-shop" href="../../blog/guide/owa-phuket.html">
+            <span class="map-shop-name">O-WA Second Hand</span>
+            <span class="map-shop-meta">Phuket Town · ฿low</span>
+            <p class="map-shop-note">A dense, well-stocked thrift shop best visited on weekday mornings.</p>
+          </a>
+
+          <div class="map-shop">
+            <span class="map-shop-name">222 Thrift and Selected Store</span>
+            <span class="map-shop-meta">Phuket Town · ฿high</span>
+            <p class="map-shop-note">High quality vintage clothing and accessories.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Shawtyboy Studio</span>
+            <span class="map-shop-meta">Phuket Town · ฿medium – high</span>
+            <p class="map-shop-note">Highly fashionable vintage clothes and accessories.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Jiahe Japanese Secondhand</span>
+            <span class="map-shop-meta">Phuket Town · ฿low – medium</span>
+            <p class="map-shop-note">Japanese antiques and more.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Ammerry Japanese Secondhand Cloth Warehouse</span>
+            <span class="map-shop-meta">Phuket Town · wholesale</span>
+            <p class="map-shop-note">Warehouse piles of secondhand clothes and shoes by the lot.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">66 Flex — Second-Hand Shoes</span>
+            <span class="map-shop-meta">Phuket Town · ฿low – medium</span>
+            <p class="map-shop-note">Shoes only — a dedicated secondhand footwear spot.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Good Shepherd Crafts &amp; Thrift Shop</span>
+            <span class="map-shop-meta">Bangjo · ฿medium</span>
+            <p class="map-shop-note">Clothes, books, board games, jewelry, hats, shoes, and CDs.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Jovintage Bangjo</span>
+            <span class="map-shop-meta">Bangjo · ฿low – high</span>
+            <p class="map-shop-note">Vintage clothes near the north of the island.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">TR Sneakers Secondhand</span>
+            <span class="map-shop-meta">North Phuket · ฿low – medium</span>
+            <p class="map-shop-note">Shoes only.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Kadee Secondhand Clothes, Ban Lipon</span>
+            <span class="map-shop-meta">Ban Lipon · ฿low</span>
+            <p class="map-shop-note">Low-grade but high volume of clothes.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Sampeng Daek, Cherngtalay</span>
+            <span class="map-shop-meta">Cherngtalay · ฿low</span>
+            <p class="map-shop-note">Interesting and very local shoes and clothes.</p>
+          </div>
+
+        </div>
+        <p class="map-shops-foot">Plus the interactive list in the panel beside the map, and more pins added as we visit.</p>
+      </section>
+
+      <section class="map-faq" aria-labelledby="map-faq-title">
+        <h2 id="map-faq-title" class="map-section-title">Second hand shopping in Phuket — questions, answered</h2>
+
+        <div class="faq-item">
+          <button type="button" class="faq-q">Where are the best second hand shops in Phuket?</button>
+          <div class="faq-a"><p>Phuket Town holds the densest cluster — Waanwaal, O-WA, 222 Thrift, and the Phuket Chatuchak market are all inside the town bowl. Every thrift pin on this map is a documented visit.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-q">Is there a map of second hand shops in Phuket?</button>
+          <div class="faq-a"><p>Yes — this page is exactly that. Every pin is a documented visit with a note, and shops with full reviews link straight to the <a href="../../blog/guide/">Phuket thrift guide</a>.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-q">Are second hand clothes in Phuket cheap?</button>
+          <div class="faq-a"><p>Usually. Tees and basic secondhand clothing run a few hundred baht, while curated Japanese imports can climb higher. Price ranges are listed per shop.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-q">When is the best time to visit Phuket's thrift shops?</button>
+          <div class="faq-a"><p>Weekday mornings — freshly stocked racks and no crowd at the densest second hand shops.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-q">Can I reuse this map of Phuket second hand shops?</button>
+          <div class="faq-a"><p>Yes. The map and its data are open and free to reuse — download the GeoJSON export right from the map and credit OpenStreetMap where you use it.</p></div>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -969,6 +1258,13 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
   </script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="../../js/map.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.map-faq .faq-q').forEach(btn => {
+        btn.addEventListener('click', () => btn.parentElement.classList.toggle('open'));
+      });
+    });
+  </script>
 
 <!-- @@NOTICE_SLOT@@ -->
 <div id="notice-privacy" role="status">
