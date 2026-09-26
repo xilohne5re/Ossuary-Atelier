@@ -72,9 +72,15 @@
   --ma-violet: #C9B8E8;
   --ma-bruise: #A184CD;
   --ma-thrift: #C9B8E8;
+  --ma-furniture: #B07E55;
   --ma-beach: #56CCF2;
   --ma-activity: #E8A020;
   --ma-gold: #E8C557;
+  /* map never renders shorter than 700px, but eases down on short viewports */
+  --ma-map-min-h: min(700px, 70vh);
+  /* NOTE: colorful Voyager tiles are served bright. Leaflet tile layers are
+     left unfiltered — a CSS filter on the tile pane blanks tiles in Chromium.
+     The page chrome around the map stays dark; the map itself is colorful. */
 }
 
 html, body { height: 100%; }
@@ -277,14 +283,21 @@ body {
 /* ── layout: map + list ───────────────────────── */
 .map-layout {
   flex: 1;
-  min-height: 0;
+  min-height: var(--ma-map-min-h);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(290px, 31vw);
   gap: 0.9rem;
   align-items: stretch;
 }
 
+.map-map {
+  position: relative;
+  min-height: var(--ma-map-min-h);
+  display: flex;
+}
+
 #map {
+  flex: 1;
   min-height: 0;
   border: 1px solid var(--ma-rule);
   background: #10101a;
@@ -337,6 +350,7 @@ body {
 }
 
 .map-row[data-cat="thrift"] { border-left-color: rgba(201, 184, 232, 0.55); }
+.map-row[data-cat="furniture"] { border-left-color: rgba(176, 126, 85, 0.55); }
 .map-row[data-cat="beach"]  { border-left-color: rgba(86, 204, 242, 0.55); }
 .map-row[data-cat="activity"] { border-left-color: rgba(232, 160, 32, 0.55); }
 .map-row.map-row--featured { border-left-color: var(--ma-gold); }
@@ -433,27 +447,64 @@ body {
 
 /* ── map popups ───────────────────────────────── */
 .leaflet-container { background: #10101a; font-family: inherit; }
+
 .leaflet-popup-content-wrapper {
   background: var(--ma-panel);
   color: var(--ma-text);
   border: 1px solid var(--ma-rule);
-  border-left: 3px solid var(--ma-bruise);
+  border-top: 3px solid var(--cat, var(--ma-bruise));
   border-radius: 0;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6);
 }
-.leaflet-popup-content { font-family: 'Cormorant Garamond', serif; margin: 14px 16px; line-height: 1.5; }
+.leaflet-popup-content { font-family: 'Cormorant Garamond', serif; margin: 14px 18px; line-height: 1.5; }
 .leaflet-popup-tip { background: var(--ma-panel); }
 a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
 .leaflet-popup-close-button:hover { background: none !important; }
 
+.map-popup--thrift   { --cat: var(--ma-thrift); }
+.map-popup--furniture{ --cat: var(--ma-furniture); }
+.map-popup--beach    { --cat: var(--ma-beach); }
+.map-popup--activity { --cat: var(--ma-activity); }
+
+.map-pop-chips {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+.map-pop-cat {
+  font-family: 'Cinzel', serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cat, var(--ma-violet));
+  border: 1px solid currentColor;
+  padding: 0.12rem 0.45rem;
+}
+.map-pop-area {
+  font-family: 'Cinzel', serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ma-muted);
+  border: 1px solid var(--ma-rule);
+  padding: 0.12rem 0.45rem;
+}
+.map-pop-dots { display: inline-flex; align-items: center; gap: 0.28rem; margin-left: auto; }
+.map-price-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; }
+.map-price-dot.low    { background: #7FB069; }
+.map-price-dot.medium { background: #E8C557; }
+.map-price-dot.high   { background: #E57F8B; }
+
 .map-pop-name {
   font-family: 'Cinzel', serif;
   font-weight: 700;
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--ma-violet);
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.25rem;
 }
 .map-pop-meta {
   font-family: 'Cinzel', serif;
@@ -464,9 +515,10 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
   margin-bottom: 0.4rem;
 }
 .map-pop-desc { font-size: 1.02rem; color: var(--ma-text); }
+.map-pop-links { display: flex; gap: 1.1rem; margin-top: 0.55rem; flex-wrap: wrap; }
+.map-pop-links .map-pop-link { margin-top: 0; }
 .map-pop-link {
   display: inline-block;
-  margin-top: 0.6rem;
   font-family: 'Cinzel', serif;
   font-size: 0.6rem;
   letter-spacing: 0.16em;
@@ -476,6 +528,22 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
   padding-bottom: 2px;
 }
 
+/* ── featured pin name labels (zoomed in) ─────── */
+.oa-tip {
+  background: var(--ma-panel);
+  border: 1px solid var(--ma-rule);
+  border-top: 2px solid var(--ma-gold);
+  color: var(--ma-violet);
+  border-radius: 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+}
+.oa-tip::before { display: none; }
+
 /* ── leaflet controls ─────────────────────────── */
 .leaflet-control-zoom a {
   background: var(--ma-panel) !important;
@@ -483,6 +551,18 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
   border-color: var(--ma-rule) !important;
 }
 .leaflet-control-zoom a:hover { background: #1c1830 !important; }
+.leaflet-control-scale-line {
+  background: rgba(13, 11, 20, 0.72);
+  color: var(--ma-muted);
+  border-color: var(--ma-violet);
+  font-family: 'Cinzel', serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  box-shadow: inset 0 1px 1px rgba(201, 184, 232, 0.12);
+}
+.leaflet-control-scale-line:not(:first-child) {
+  border-top: 1px solid var(--ma-violet);
+}
 .leaflet-control-attribution {
   background: rgba(13, 11, 20, 0.75) !important;
   color: var(--ma-muted) !important;
@@ -495,9 +575,21 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
   position: relative;
   width: 26px;
   height: 26px;
-  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.55));
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.65));
+  transition: transform 0.2s ease;
+  transform-origin: 50% 100%;
 }
 .oa-pin svg { display: block; width: 26px; height: 26px; }
+
+.oa-pin.is-hover { transform: scale(1.18); z-index: 500; }
+.oa-pin.is-active { animation: oa-pulse 1.15s ease-out 3; }
+
+@keyframes oa-pulse {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.22); }
+  60%  { transform: scale(1); }
+  100% { transform: scale(1); }
+}
 
 .oa-pin__star {
   position: absolute;
@@ -524,6 +616,40 @@ a.leaflet-popup-close-button { color: var(--ma-violet) !important; }
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 .oa-label svg { display: block; width: 24px; height: 24px; }
+
+/* ── legend overlay ───────────────────────────── */
+.map-legend {
+  position: absolute;
+  left: 9px;
+  bottom: 46px;
+  z-index: 500;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  max-width: calc(100% - 18px);
+  padding: 0.5rem 0.75rem;
+  background: rgba(13, 11, 20, 0.82);
+  border: 1px solid var(--ma-rule);
+  pointer-events: none;
+}
+.map-legend-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ma-muted);
+  white-space: nowrap;
+}
+.lg-swatch { width: 0.56rem; height: 0.56rem; display: inline-block; flex: none; }
+.lg-swatch.t { background: var(--ma-thrift); }
+.lg-swatch.f { background: var(--ma-furniture); }
+.lg-swatch.b { background: var(--ma-beach); }
+.lg-swatch.a { background: var(--ma-activity); }
+.lg-star { color: var(--ma-gold); font-size: 0.62rem; line-height: 0.56rem; flex: none; }
+.lg-ring { width: 0.56rem; height: 0.56rem; box-sizing: border-box; border: 0.14rem dashed var(--ma-muted); border-radius: 50%; flex: none; }
 
 /* ── footer extras ────────────────────────────── */
 .tools-back {
@@ -705,12 +831,14 @@ a.map-shop:hover {
 /* ── responsive ───────────────────────────────── */
 @media (max-width: 860px) {
   body { overflow: auto; }
-  .map-layout { grid-template-columns: 1fr; }
-  #map { height: 55vh; }
+  .map-layout { grid-template-columns: 1fr; min-height: 0; }
+  .map-map { min-height: 55vh; }
+  .map-map #map { height: 55vh; }
   .map-list-panel { flex: 0 1 auto; max-height: 42vh; }
   .map-tools-right { width: 100%; justify-content: flex-end; }
   .tools-sub, .tools-back, .tools-attrib { text-align: left; }
   .map-shop-list { grid-template-columns: 1fr; }
+  .map-legend { gap: 0.3rem 0.7rem; padding: 0.4rem 0.6rem; }
 }
   </style>
 
@@ -729,7 +857,7 @@ a.map-shop:hover {
     ]
   }
   </script>
-  
+
   <!-- @@SITE_JSONLD_BEGIN@@ -->
   <script type="application/ld+json">
 {
@@ -776,6 +904,7 @@ a.map-shop:hover {
       <div id="map-chips" class="map-chips" role="group" aria-label="Filter locations by category">
         <button type="button" class="map-chip is-active" data-cat="all">All <span class="chip-count"></span></button>
         <button type="button" class="map-chip" data-cat="thrift">Thrift <span class="chip-count"></span></button>
+        <button type="button" class="map-chip" data-cat="furniture">Furniture <span class="chip-count"></span></button>
         <button type="button" class="map-chip" data-cat="beach">Beach <span class="chip-count"></span></button>
         <button type="button" class="map-chip" data-cat="activity">Activity <span class="chip-count"></span></button>
       </div>
@@ -803,7 +932,17 @@ a.map-shop:hover {
     </div>
 
     <div class="map-layout">
-      <div id="map" role="application" aria-label="Interactive map of Phuket thrift spots"></div>
+      <div class="map-map">
+        <div id="map" role="application" aria-label="Interactive map of Phuket thrift spots"></div>
+        <div class="map-legend" aria-hidden="true">
+          <span class="map-legend-key"><i class="lg-swatch t"></i>Thrift</span>
+          <span class="map-legend-key"><i class="lg-swatch f"></i>Furniture</span>
+          <span class="map-legend-key"><i class="lg-swatch b"></i>Beach</span>
+          <span class="map-legend-key"><i class="lg-swatch a"></i>Activity</span>
+          <span class="map-legend-key"><i class="lg-star">★</i>Reviewed</span>
+          <span class="map-legend-key"><i class="lg-ring"></i>Starter</span>
+        </div>
+      </div>
       <aside class="map-side" aria-label="Location list">
         <div class="map-list-panel">
           <div class="map-list-status" id="map-list-status"></div>
@@ -812,7 +951,7 @@ a.map-shop:hover {
         <p class="tools-sub">Every pin is a documented visit from the archive's own walks. Filter by type, jump between map and list, or drop a pin on your own location.</p>
         <a href="../../guide/" class="tools-back">← Back to the Guide Hub</a>
         <p class="tools-attrib">
-          A tool from <a href="../../">Ossuary Atelier</a> — built with Leaflet on OpenStreetMap data (CARTO tiles).
+          A tool from <a href="../../">Ossuary Atelier</a> — built with Leaflet on OpenStreetMap data.
           No accounts, no tracking, no ads.
         </p>
       </aside>
@@ -848,7 +987,7 @@ a.map-shop:hover {
 
           <a class="map-shop" href="../../blog/guide/owa-phuket.html">
             <span class="map-shop-name">O-WA Second Hand</span>
-            <span class="map-shop-meta">Phuket Town · ฿low</span>
+            <span class="map-shop-meta">Rassada · ฿low</span>
             <p class="map-shop-note">A dense, well-stocked thrift shop best visited on weekday mornings.</p>
           </a>
 
@@ -912,6 +1051,60 @@ a.map-shop:hover {
             <p class="map-shop-note">Interesting and very local shoes and clothes.</p>
           </div>
 
+          <div class="map-shop">
+            <span class="map-shop-name">Patong Sneakers Secondhand</span>
+            <span class="map-shop-meta">Kathu · ฿medium</span>
+            <p class="map-shop-note">A smaller second hand shoe branch.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Nirmala Fancy Store</span>
+            <span class="map-shop-meta">Kathu · ฿medium – high</span>
+            <p class="map-shop-note">Custom suit tailor and vintage shirt shop.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Ran Ch Secondhand Clothes</span>
+            <span class="map-shop-meta">Rassada · ฿low</span>
+            <p class="map-shop-note">Cheap but full of great finds like security shirts.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">T&amp;M Secondhand Shoes</span>
+            <span class="map-shop-meta">North Phuket · ฿medium</span>
+            <p class="map-shop-note">Small second-hand shoe and boots store.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">100 An 1000 Yang Secondhand</span>
+            <span class="map-shop-meta">North Phuket · ฿medium</span>
+            <p class="map-shop-note">Furniture, materials, and construction second hand.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Pre Loved TOO</span>
+            <span class="map-shop-meta">Nai Harn · ฿medium</span>
+            <p class="map-shop-note">Cozy and art filled charity thrift.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Second Hand Shop</span>
+            <span class="map-shop-meta">Rawai · ฿low – medium</span>
+            <p class="map-shop-note">Furniture, homegoods, and other miscellaneous second hand.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Japan Life Center Phuket</span>
+            <span class="map-shop-meta">Chalong · ฿low – medium</span>
+            <p class="map-shop-note">Japanese homegoods with great price/quality ratio.</p>
+          </div>
+
+          <div class="map-shop">
+            <span class="map-shop-name">Keep Ko Kin Night Thrift</span>
+            <span class="map-shop-meta">Phuket Town · night</span>
+            <p class="map-shop-note">Local secret thrift open only at night.</p>
+          </div>
+
         </div>
         <p class="map-shops-foot">Plus the interactive list in the panel beside the map, and more pins added as we visit.</p>
       </section>
@@ -941,7 +1134,7 @@ a.map-shop:hover {
 
         <div class="faq-item">
           <button type="button" class="faq-q">Can I reuse this map of Phuket second hand shops?</button>
-          <div class="faq-a"><p>Yes. The map and its data are open and free to reuse — download the GeoJSON export right from the map and credit OpenStreetMap where you use it.</p></div>
+          <div class="faq-a"><p>Yes. The map and its data are open and free to reuse — download the GeoJSON export right from the map and credit OpenStreetMap and Ossuary Atelier where you use it.</p></div>
         </div>
       </section>
     </div>
@@ -976,8 +1169,8 @@ a.map-shop:hover {
     "name": "O-WA Second Hand",
     "thaiName": "โอ-ว่ะ เสื้อผ้ามือสอง ภูเก็ต",
     "category": "thrift",
-    "lat": 7.88,
-    "lng": 98.389,
+    "lat": 7.9070484,
+    "lng": 98.3691,
     "priceTags": [
       "low"
     ],
@@ -1184,6 +1377,182 @@ a.map-shop:hover {
     "pin": true
   },
   {
+    "id": "nirmala-fancy-store",
+    "name": "Nirmala Fancy Store",
+    "category": "thrift",
+    "lat": 7.8792743,
+    "lng": 98.2700105,
+    "note": "Custom suit tailor and vintage shirt shop.",
+    "tags": [
+      "vintage",
+      "custom"
+    ],
+    "priceTags": [
+      "medium",
+      "high"
+    ],
+    "featured": false,
+    "pin": true
+  },
+  {
+    "id": "patong-sneakers-secondhand",
+    "name": "Patong Sneakers Secondhand",
+    "thaiName": "รองเท้ามือสองป่าตอง",
+    "category": "thrift",
+    "lat": 7.8829797,
+    "lng": 98.280736,
+    "note": "A smaller second hand shoe branch.",
+    "tags": [
+      "shoes"
+    ],
+    "priceTags": [
+      "medium"
+    ],
+    "featured": false,
+    "pin": true
+  },
+  {
+    "id": "100an-1000yang-phuket",
+    "name": "100 An 1000 Yang Secondhand",
+    "thaiName": "ร้านมือสอง 100อัน 1000อย่าง ภูเก็ต",
+    "category": "furniture",
+    "lat": 8.0111677,
+    "lng": 98.3304228,
+    "note": "Furniture, materials, and construction second hand.",
+    "tags": [
+      "furniture"
+    ],
+    "priceTags": [
+      "medium"
+    ],
+    "featured": false,
+    "pin": true
+  },
+  {
+    "id": "tm-shoes-secondhand",
+    "name": "T&M Secondhand Shoes",
+    "thaiName": "รองเท้ามือสองราคาถูก By T&M",
+    "category": "thrift",
+    "lat": 8.0179117,
+    "lng": 98.3373477,
+    "note": "Small second-hand shoe and boots store.",
+    "tags": [
+      "shoes"
+    ],
+    "priceTags": [
+      "medium"
+    ],
+    "featured": false,
+    "pin": true
+  },
+  {
+    "id": "preloved-charity-store",
+    "name": "Preloved Charity Store",
+    "category": "thrift",
+    "lat": 7.9790911,
+    "lng": 98.3377678,
+    "note": "A sustainability and charity driven thrift.",
+    "tags": [
+      "charity",
+      "sustainable"
+    ],
+    "priceTags": [
+      "medium"
+    ],
+    "featured": false,
+    "pin": true
+  },
+  {
+    "id": "ran-ch-secondhand",
+    "name": "Ran Ch Secondhand Clothes",
+    "thaiName": "ร้าน ช เสื้อผ้ามือสอง",
+    "category": "thrift",
+    "lat": 7.9090345,
+    "lng": 98.3691011,
+    "note": "Cheap but full of great finds like security shirts.",
+    "tags": [
+      "budget",
+      "shirts"
+    ],
+    "priceTags": [
+      "low"
+    ],
+    "featured": false,
+    "pin": true
+  },
+  {
+    "id": "keep-ko-kin-night-thrift",
+    "name": "Keep Ko Kin Night Thrift",
+    "thaiName": "เก็บ เก่า กิน",
+    "category": "thrift",
+    "lat": 7.8770158,
+    "lng": 98.3862248,
+    "note": "Local secret thrift open only at night.",
+    "tags": [
+      "night",
+      "local"
+    ],
+    "priceTags": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "featured": false,
+    "pin": true
+  },
+  {
+    "id": "japan-life-center-phuket",
+    "name": "Japan Life Center Phuket",
+    "category": "furniture",
+    "lat": 7.8389954,
+    "lng": 98.3479747,
+    "note": "Japanese homegoods with great price/quality ratio.",
+    "tags": [
+      "homegoods",
+      "japanese"
+    ],
+    "priceTags": [
+      "low",
+      "medium"
+    ],
+    "featured": false,
+    "pin": true
+  },
+  {
+    "id": "pre-loved-too",
+    "name": "Pre Loved TOO",
+    "category": "thrift",
+    "lat": 7.788266,
+    "lng": 98.3159137,
+    "note": "Cozy and art filled charity thrift.",
+    "tags": [
+      "charity"
+    ],
+    "priceTags": [
+      "medium"
+    ],
+    "featured": false,
+    "pin": true
+  },
+  {
+    "id": "second-hand-shop",
+    "name": "Second Hand Shop",
+    "category": "furniture",
+    "lat": 7.8003193,
+    "lng": 98.335169,
+    "note": "Furniture, homegoods, and other miscellaneous second hand.",
+    "tags": [
+      "furniture",
+      "homegoods"
+    ],
+    "priceTags": [
+      "low",
+      "medium"
+    ],
+    "featured": false,
+    "pin": true
+  },
+  {
     "id": "patong-beach",
     "name": "Patong Beach",
     "category": "beach",
@@ -1235,20 +1604,6 @@ a.map-shop:hover {
     "tags": [
       "view",
       "sunset"
-    ],
-    "featured": false,
-    "pin": false
-  },
-  {
-    "id": "phuket-weekend-night-markets",
-    "name": "Phuket Weekend & Night Markets",
-    "category": "activity",
-    "lat": 7.8907,
-    "lng": 98.3929,
-    "note": "Stalls for clothes, snacks, and people-watching.",
-    "tags": [
-      "market",
-      "food"
     ],
     "featured": false,
     "pin": false
