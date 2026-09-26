@@ -1178,9 +1178,31 @@ a, button, .nav-links a, .nav-logo, .burger,
 }
 
 @media (max-width: 768px) {
-  #hero-headline { 
+  /* On mobile the centred headline and the bottom-pinned sub used to be two
+     independent absolute overlays, so their clearance depended entirely on the
+     text fitting the leftover height. Once the line wraps they collide. Give
+     the hero a real flex column instead: the two text blocks flow and are
+     separated by gap(), and the decorative eye is pulled out of the flow and
+     centred behind them. Two flex items in a column cannot overlap. */
+  #hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    gap: 2.5rem;
+  }
+  #hero-eye {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  #hero-eye.animated {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  #hero-headline {
+    position: relative;
+    top: auto; left: auto; right: auto;
+    transform: none;
+    width: 100%;
     padding: 0 5vw;
-    padding-bottom: 5rem; 
   }
   .hero-line-1 {
     letter-spacing: 0.08em;
@@ -1191,6 +1213,9 @@ a, button, .nav-links a, .nav-logo, .burger,
     font-size: clamp(1.15rem, 5vw, 1.6rem);
   }
   #hero-sub {
+    position: relative;
+    bottom: auto; left: auto; right: auto;
+    width: 100%;
     padding: 0 5vw;
   }
   .hero-tagline {
