@@ -981,14 +981,16 @@ function runJs(report) {
    Injects a small, auto-closing privacy notice on every page,
    anchored by a stacked marker so rebuilds are idempotent. The
    site uses no cookies and no analytics, so this is a transparency
-   notice (not a consent wall). The notice auto-dismisses after 4
-   seconds, can be closed manually, and honours prefers-reduced-motion. */
+   notice (not a consent wall). The notice shows once per browsing
+   session (sessionStorage), auto-dismisses after 4 seconds, can be
+   closed manually, and honours prefers-reduced-motion. */
 const NOTICE_MARKER = '<!-- @@NOTICE_SLOT@@ -->';
 const NOTICE_CSS = [
   '#notice-privacy{position:fixed;right:1rem;bottom:1rem;z-index:9900;max-width:20rem;',
   'background:rgba(8,8,16,.95);border:1px solid rgba(201,184,232,.18);border-left:3px solid #A184CD;',
   'color:#C9B8E8;font-size:.92rem;line-height:1.6;padding:.9rem 1.1rem;box-shadow:0 10px 30px rgba(0,0,0,.5);',
-  'opacity:1;transition:opacity .5s ease,transform .5s ease}',
+  'opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .5s ease,transform .5s ease}',
+  '#notice-privacy.on{opacity:1;transform:translateY(0);pointer-events:auto}',
   '#notice-privacy p{margin:0}',
   '#notice-privacy a{color:#C9B8E8;text-decoration:underline;text-underline-offset:2px}',
   '#notice-privacy button{margin-top:.6rem;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;',
@@ -1006,12 +1008,22 @@ function noticeSnippet(prefix) {
     `</div>\n` +
     `<script>\n` +
     `(function(){\n` +
+    `  var KEY='noticeSeen';\n` +
     `  var el=document.getElementById('notice-privacy');\n` +
     `  if(!el)return;\n` +
+    `  var seen=false;\n` +
+    `  try{ seen=sessionStorage.getItem(KEY)==='true'; }catch(_){}\n` +
+    `  if(seen){ el.remove(); return; }\n` +
     `  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.style.transition='none';}\n` +
+    `  function dismiss(){\n` +
+    `    el.classList.remove('on');\n` +
+    `    el.classList.add('off');\n` +
+    `  }\n` +
     `  var b=el.querySelector('.notice-dismiss');\n` +
-    `  if(b)b.addEventListener('click',function(){el.classList.add('off');});\n` +
-    `  setTimeout(function(){el.classList.add('off');},4000);\n` +
+    `  if(b)b.addEventListener('click',dismiss);\n` +
+    `  try{ sessionStorage.setItem(KEY,'true'); }catch(_){}\n` +
+    `  requestAnimationFrame(function(){ el.classList.add('on'); });\n` +
+    `  setTimeout(dismiss,4000);\n` +
     `})();\n` +
     `</script>`;
 }
