@@ -114,14 +114,18 @@ function rootPrefix(relPath) {
   return '../'.repeat(depth);
 }
 
+function homeHref(relPath) {
+  return rootPrefix(relPath) || './';
+}
+
 function journalHref(relPath) {
   const rel = posix.relative(posix.dirname(relPath), 'blog');
-  return (rel === '' ? './' : rel) + '/';
+  return rel === '' ? './' : rel + '/';
 }
 
 function guideHref(relPath) {
   const rel = posix.relative(posix.dirname(relPath), 'guide');
-  return (rel === '' ? './' : rel) + '/';
+  return rel === '' ? './' : rel + '/';
 }
 
 function findBalancedDiv(content, openPattern) {
@@ -210,6 +214,7 @@ function runPartials(report) {
     const original = readFileSync(abs, 'utf8');
     let html = original;
     const root = rootPrefix(relPath);
+    const home = homeHref(relPath);
     const journal = journalHref(relPath);
     const guide = guideHref(relPath);
 
@@ -221,10 +226,10 @@ function runPartials(report) {
     for (const slot of slots) {
       let rendered = '';
       if (slot === 'NAV') {
-        rendered = renderPartial('nav', { ROOT: root, JOURNAL: journal, GUIDE: guide });
+        rendered = renderPartial('nav', { ROOT: root, HOME: home, JOURNAL: journal, GUIDE: guide });
       } else if (slot === 'TOPBAR') {
         const backOrId = topbarBackOrId(html, relPath);
-        rendered = renderPartial('topbar', { ROOT: root, BACK_OR_ID: backOrId });
+        rendered = renderPartial('topbar', { ROOT: root, HOME: home, BACK_OR_ID: backOrId });
       } else if (slot === 'FOOTER') {
         const itemFooter = /class="footer-back"/.test(html);
         const name = itemFooter ? 'footer-item' : 'footer';
