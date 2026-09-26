@@ -16,9 +16,38 @@
   const DATA = window.OA_MAP_LOCATIONS;
   const CATS = {
     thrift:   { label: 'Thrift',   color: '#C9B8E8' },
+    furniture:{ label: 'Furniture',color: '#B07E55' },
     beach:    { label: 'Beach',    color: '#56CCF2' },
     activity: { label: 'Activity', color: '#E8A020' },
   };
+
+  const AREA = {
+    waanwaal: 'Phuket Town',
+    owa: 'Rassada',
+    'phuket-chatuchak': 'Phuket Town',
+    'jiahe-japanese-secondhand': 'Phuket Town',
+    'ammerry-cloth-warehouse': 'Phuket Town',
+    '222-thrift-selected': 'Phuket Town',
+    '66-flex-second-hand-shoes': 'Phuket Town',
+    'jovintage-bangjo': 'Bangjo',
+    'shawtyboy-studio': 'Phuket Town',
+    'sampeng-daek-cherngtalay': 'Cherngtalay',
+    'kadee-secondhand-ban-lipon': 'Ban Lipon',
+    'tr-sneakers-secondhand': 'North Phuket',
+    'good-shepherd-crafts-thrift': 'Bangjo',
+    'nirmala-fancy-store': 'Kathu',
+    'patong-sneakers-secondhand': 'Kathu',
+    '100an-1000yang-phuket': 'North Phuket',
+    'tm-shoes-secondhand': 'North Phuket',
+    'preloved-charity-store': 'Bangjo',
+    'ran-ch-secondhand': 'Rassada',
+    'keep-ko-kin-night-thrift': 'Phuket Town',
+    'japan-life-center-phuket': 'Chalong',
+    'pre-loved-too': 'Nai Harn',
+    'second-hand-shop': 'Rawai',
+  };
+
+  const PRICE_COLOR = { low: '#7FB069', medium: '#E8C557', high: '#E57F8B' };
   const GOLD = '#E8C557';
   const STAR_GLYPH =
     '<svg viewBox="0 0 12 12" aria-hidden="true">' +
@@ -52,14 +81,26 @@
     return key;
   })();
 
-  const map = L.map('map', { zoomControl: true }).setView([7.88, 98.34], 11);
-  L.tileLayer(`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`, {
+  const map = L.map('map', { zoomControl: true });
+  L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`, {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: 'abcd',
+    className: 'oa-tiles',
     maxZoom: 18,
   }).addTo(map);
+  L.control.scale({ metric: true, imperial: false, position: 'bottomleft' }).addTo(map);
+
+  const fitAll = () => {
+    if (!DATA.length) return;
+    const bounds = DATA.reduce(
+      (b, l) => b.extend([l.lat, l.lng]),
+      L.latLngBounds([DATA[0].lat, DATA[0].lng])
+    );
+    map.fitBounds(bounds, { padding: [28, 28], maxZoom: 12 });
+  };
 
   const markers = new Map();
+  const featuredTips = [];
   const markerLayer = L.layerGroup().addTo(map);
   let userPos = null;
   let userMarker = null;
@@ -90,12 +131,14 @@
   };
 
   /* ── markers ─────────────────────────────────── */
-  function pinIcon(category, featured, hasGuide) {
+  function pinIcon(category, featured, hasGuide, ring) {
     const c = CATS[category] || CATS.activity;
     const fill = featured ? GOLD : c.color;
     const glyphs = {
       thrift:
         '<ellipse cx="12" cy="12" rx="5.4" ry="3.6"/><circle cx="12" cy="12" r="1.5" fill="#0d0b14"/>',
+      furniture:
+        '<path d="M7 7.5h10M7 10.5h10M7 13.5h10M7 16.5h10M8.5 18.5v1M15.5 18.5v1"/>',
       beach:
         '<path d="M5.8 12.6c1.6 0 1.6-1.7 3.2-1.7s1.6 1.7 3.2 1.7 1.6-1.7 3.2-1.7 1.6 1.7 3.2 1.7"/>' +
         '<path d="M5.8 16.4c1.6 0 1.6-1.7 3.2-1.7s1.6 1.7 3.2 1.7 1.6-1.7 3.2-1.7 1.6 1.7 3.2 1.7"/>',
@@ -106,6 +149,7 @@
     const glyph = glyphs[category] || glyphs.activity;
     const svg =
       `<svg viewBox="0 0 24 24" aria-hidden="true">` +
+      `${ring ? `<circle cx="12" cy="12" r="10.4" fill="none" stroke="${ring}" stroke-width="2.4" opacity="0.95"/>` : ''}` +
       `<path d="M12 1.8C7.7 1.8 4.2 5.2 4.2 9.5c0 5.9 7.8 12.7 7.8 12.7s7.8-6.8 7.8-12.7C19.8 5.2 16.3 1.8 12 1.8z" fill="${fill}"/>` +
       `<g stroke="#0d0b14" stroke-width="1.5" stroke-linecap="round" fill="none">${glyph}</g>` +
       `</svg>`;
@@ -136,18 +180,44 @@
     });
   }
 
+  const priceDots = l => {
+    const tags = (Array.isArray(l.priceTags) ? l.priceTags : [])
+      .filter(t => TIER[t]).sort((a, b) => TIER[a] - TIER[b]);
+    if (!tags.length) return '';
+    return `<span class="map-pop-dots" aria-hidden="true">` +
+      tags.map(t => `<span class="map-price-dot ${esc(t)}" title="${esc(t)}"></span>`).join('') +
+      `</span>`;
+  };
+
+  const priceRing = l => {
+    const tags = (Array.isArray(l.priceTags) ? l.priceTags : []).filter(t => TIER[t]);
+    if (!tags.length) return null;
+    let top = null;
+    tags.forEach(t => { if (!top || TIER[t] > TIER[top]) top = t; });
+    return top;
+  };
+
+  const popupClass = l => 'map-popup ' + 'map-popup--' + (CATS[l.category] ? l.category : 'activity');
+
   function popupHtml(l) {
-    const meta = metaLine(l);
     const guide = l.guideSlug
       ? `<a class="map-pop-link" href="../../${esc(l.guideSlug)}">Read the full guide →</a>`
       : '';
+    const dir = `<a class="map-pop-link" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lng}">Directions ↗</a>`;
+    const chips = `<span class="map-pop-chips">` +
+      `<span class="map-pop-cat">${esc(CATS[l.category] ? CATS[l.category].label : l.category)}</span>` +
+      (AREA[l.id] ? `<span class="map-pop-area">${esc(AREA[l.id])}</span>` : '') +
+      priceDots(l) +
+      `</span>`;
+    const tags = (l.tags || []).map(esc).join(' · ');
     return (
       `<div class="map-pop">` +
+      chips +
       `<div class="map-pop-name">${displayName(l)}</div>` +
-      (meta ? `<div class="map-pop-meta">${esc(meta)}</div>` : '') +
+      (tags ? `<div class="map-pop-meta">${tags}</div>` : '') +
       (l.note ? `<div class="map-pop-desc">${esc(l.note)}</div>` : '') +
       (l.address ? `<div class="map-pop-desc">${esc(l.address)}</div>` : '') +
-      guide +
+      `<div class="map-pop-links">${dir}${guide}</div>` +
       `</div>`
     );
   }
@@ -180,6 +250,10 @@
   function highlightRow(id) {
     document.querySelectorAll('.map-row').forEach(r =>
       r.classList.toggle('is-active', r.dataset.id === id));
+    markers.forEach((m, mid) => {
+      const el = m.getElement();
+      if (el) el.classList.toggle('is-active', mid === id);
+    });
     const row = listEl.querySelector(`.map-row[data-id="${esc(id)}"]`);
     if (row) revealInList(row);
   }
@@ -240,15 +314,18 @@
     markers.clear();
     items.forEach(l => {
       const icon = l.pin
-        ? pinIcon(l.category, !!l.featured, !!l.guideSlug)
+        ? pinIcon(l.category, !!l.featured, !!l.guideSlug, l.featured ? GOLD : (PRICE_COLOR[priceRing(l)] || null))
         : labelIcon(l.category);
       const m = L.marker([l.lat, l.lng], {
         icon,
         title: l.name,
         alt: l.name,
       }).addTo(markerLayer);
-      m.bindPopup(popupHtml(l));
+      m.bindPopup(popupHtml(l), { className: popupClass(l) });
       m.on('click', () => highlightRow(l.id));
+      if (l.featured && l.pin) {
+        featuredTips.push(m.bindTooltip(l.name, { direction: 'top', offset: [0, -16], className: 'oa-tip' }));
+      }
       markers.set(l.id, m);
     });
 
@@ -271,6 +348,8 @@
     });
 
     updateStatus();
+    // filtering changes the map container height (list ↔ --ma-map-min-h floor)
+    map.invalidateSize({ animate: false });
   }
 
   function updateStatus() {
@@ -364,6 +443,19 @@
     focusRow(row.dataset.id);
   });
 
+  listEl.addEventListener('mouseover', e => {
+    const row = e.target.closest('.map-row');
+    if (!row) return;
+    const m = markers.get(row.dataset.id);
+    if (m && m.getElement()) m.getElement().classList.add('is-hover');
+  });
+  listEl.addEventListener('mouseout', e => {
+    const row = e.target.closest('.map-row');
+    if (!row) return;
+    const m = markers.get(row.dataset.id);
+    if (m && m.getElement()) m.getElement().classList.remove('is-hover');
+  });
+
   const qCat = new URLSearchParams(window.location.search).get('category');
   if (qCat && CATS[qCat]) setCat(qCat);
 
@@ -403,7 +495,11 @@
   /* ── boot ────────────────────────────────────── */
   renderAll();
   const sizeFix = () => map.invalidateSize();
-  setTimeout(sizeFix, 200);
-  window.addEventListener('load', sizeFix);
+  setTimeout(() => { sizeFix(); fitAll(); }, 200);
+  window.addEventListener('load', () => { sizeFix(); fitAll(); });
   window.addEventListener('resize', sizeFix);
+  map.on('zoomend', () => {
+    const show = map.getZoom() >= 14;
+    featuredTips.forEach(m => (show ? m.openTooltip() : m.closeTooltip()));
+  });
 })();

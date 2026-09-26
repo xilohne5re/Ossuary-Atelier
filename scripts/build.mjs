@@ -515,7 +515,7 @@ function runShops() {
    downloadable phuket.geojson export (documented pins only;
    starter labels are kept out of the map markers). */
 const MAP_BOX = { minLat: 7.0, maxLat: 8.5, minLng: 97.8, maxLng: 98.8 };
-const MAP_CATS = new Set(['thrift', 'beach', 'activity']);
+const MAP_CATS = new Set(['thrift', 'furniture', 'beach', 'activity']);
 const PRICE_TIERS = ['low', 'medium', 'high'];
 function normalizePriceTags(raw) {
   if (!Array.isArray(raw)) return undefined;

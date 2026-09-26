@@ -156,6 +156,147 @@
       "pin": true
     },
     {
+      "id": "nirmala-fancy-store",
+      "name": "Nirmala Fancy Store",
+      "category": "thrift",
+      "lat": 7.8792743,
+      "lng": 98.2700105,
+      "note": "Custom suit tailor and vintage shirt shop.",
+      "tags": [
+        "vintage",
+        "custom"
+      ],
+      "price_tags": ["medium", "high"],
+      "pin": true
+    },
+    {
+      "id": "patong-sneakers-secondhand",
+      "name": "Patong Sneakers Secondhand",
+      "thaiName": "รองเท้ามือสองป่าตอง",
+      "category": "thrift",
+      "lat": 7.8829797,
+      "lng": 98.280736,
+      "note": "A smaller second hand shoe branch.",
+      "tags": [
+        "shoes"
+      ],
+      "price_tags": ["medium"],
+      "pin": true
+    },
+    {
+      "id": "100an-1000yang-phuket",
+      "name": "100 An 1000 Yang Secondhand",
+      "thaiName": "ร้านมือสอง 100อัน 1000อย่าง ภูเก็ต",
+      "category": "furniture",
+      "lat": 8.0111677,
+      "lng": 98.3304228,
+      "note": "Furniture, materials, and construction second hand.",
+      "tags": [
+        "furniture"
+      ],
+      "price_tags": ["medium"],
+      "pin": true
+    },
+    {
+      "id": "tm-shoes-secondhand",
+      "name": "T&M Secondhand Shoes",
+      "thaiName": "รองเท้ามือสองราคาถูก By T&M",
+      "category": "thrift",
+      "lat": 8.0179117,
+      "lng": 98.3373477,
+      "note": "Small second-hand shoe and boots store.",
+      "tags": [
+        "shoes"
+      ],
+      "price_tags": ["medium"],
+      "pin": true
+    },
+    {
+      "id": "preloved-charity-store",
+      "name": "Preloved Charity Store",
+      "category": "thrift",
+      "lat": 7.9790911,
+      "lng": 98.3377678,
+      "note": "A sustainability and charity driven thrift.",
+      "tags": [
+        "charity",
+        "sustainable"
+      ],
+      "price_tags": ["medium"],
+      "pin": true
+    },
+    {
+      "id": "ran-ch-secondhand",
+      "name": "Ran Ch Secondhand Clothes",
+      "thaiName": "ร้าน ช เสื้อผ้ามือสอง",
+      "category": "thrift",
+      "lat": 7.9090345,
+      "lng": 98.3691011,
+      "note": "Cheap but full of great finds like security shirts.",
+      "tags": [
+        "budget",
+        "shirts"
+      ],
+      "price_tags": ["low"],
+      "pin": true
+    },
+    {
+      "id": "keep-ko-kin-night-thrift",
+      "name": "Keep Ko Kin Night Thrift",
+      "thaiName": "เก็บ เก่า กิน",
+      "category": "thrift",
+      "lat": 7.8770158,
+      "lng": 98.3862248,
+      "note": "Local secret thrift open only at night.",
+      "tags": [
+        "night",
+        "local"
+      ],
+      "price_tags": ["low", "medium", "high"],
+      "pin": true
+    },
+    {
+      "id": "japan-life-center-phuket",
+      "name": "Japan Life Center Phuket",
+      "category": "furniture",
+      "lat": 7.8389954,
+      "lng": 98.3479747,
+      "note": "Japanese homegoods with great price/quality ratio.",
+      "tags": [
+        "homegoods",
+        "japanese"
+      ],
+      "price_tags": ["low", "medium"],
+      "pin": true
+    },
+    {
+      "id": "pre-loved-too",
+      "name": "Pre Loved TOO",
+      "category": "thrift",
+      "lat": 7.788266,
+      "lng": 98.3159137,
+      "note": "Cozy and art filled charity thrift.",
+      "tags": [
+        "charity"
+      ],
+      "price_tags": ["medium"],
+      "pin": true
+    },
+    {
+      "id": "second-hand-shop",
+      "name": "Second Hand Shop",
+      "category": "furniture",
+      "lat": 7.8003193,
+      "lng": 98.335169,
+      "note": "Furniture, homegoods, and other miscellaneous second hand.",
+      "tags": [
+        "furniture",
+        "homegoods"
+      ],
+      "price_tags": ["low", "medium"],
+      "pin": true
+    },
+    {
       "id": "patong-beach",
       "name": "Patong Beach",
       "category": "beach",
@@ -205,20 +346,7 @@
         "view",
         "sunset"
       ],
-      "pin": false
-    },
-    {
-      "id": "phuket-weekend-night-markets",
-      "name": "Phuket Weekend & Night Markets",
-      "category": "activity",
-      "lat": 7.8907,
-      "lng": 98.3929,
-      "note": "Stalls for clothes, snacks, and people-watching.",
-      "tags": [
-        "market",
-        "food"
-      ],
-      "pin": false
+"pin": false
     }
   ]
 }

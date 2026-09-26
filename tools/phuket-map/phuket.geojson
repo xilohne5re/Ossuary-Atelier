@@ -27,8 +27,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          98.389,
-          7.88
+          98.3691,
+          7.9070484
         ]
       }
     },
@@ -195,6 +195,156 @@
         "coordinates": [
           98.3293531,
           7.9796879
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Nirmala Fancy Store",
+        "category": "thrift",
+        "description": "Custom suit tailor and vintage shirt shop."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.2700105,
+          7.8792743
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Patong Sneakers Secondhand (รองเท้ามือสองป่าตอง)",
+        "category": "thrift",
+        "description": "A smaller second hand shoe branch."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.280736,
+          7.8829797
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "100 An 1000 Yang Secondhand (ร้านมือสอง 100อัน 1000อย่าง ภูเก็ต)",
+        "category": "furniture",
+        "description": "Furniture, materials, and construction second hand."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3304228,
+          8.0111677
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "T&M Secondhand Shoes (รองเท้ามือสองราคาถูก By T&M)",
+        "category": "thrift",
+        "description": "Small second-hand shoe and boots store."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3373477,
+          8.0179117
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Preloved Charity Store",
+        "category": "thrift",
+        "description": "A sustainability and charity driven thrift."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3377678,
+          7.9790911
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ran Ch Secondhand Clothes (ร้าน ช เสื้อผ้ามือสอง)",
+        "category": "thrift",
+        "description": "Cheap but full of great finds like security shirts."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3691011,
+          7.9090345
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Keep Ko Kin Night Thrift (เก็บ เก่า กิน)",
+        "category": "thrift",
+        "description": "Local secret thrift open only at night."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3862248,
+          7.8770158
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Japan Life Center Phuket",
+        "category": "furniture",
+        "description": "Japanese homegoods with great price/quality ratio."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3479747,
+          7.8389954
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pre Loved TOO",
+        "category": "thrift",
+        "description": "Cozy and art filled charity thrift."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3159137,
+          7.788266
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Second Hand Shop",
+        "category": "furniture",
+        "description": "Furniture, homegoods, and other miscellaneous second hand."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.335169,
+          7.8003193
         ]
       }
     }
