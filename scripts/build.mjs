@@ -747,9 +747,15 @@ function deserializeCssFiles(str) {
   });
 }
 
-function renderInlineCss(pairs) {
+/* Inlined <style> resolves url() against the *document*, not against css/.
+   The source sheets author their font paths relative to css/ ('../assets/…'),
+   which only holds while the file is served as a stylesheet. Rebase them to
+   the page's own depth so the fonts resolve at any nesting level. */
+function renderInlineCss(pairs, rel) {
+  const prefix = rootPrefix(rel);
   return pairs.map(p => {
-    const css = cssContent(p.file);
+    const css = cssContent(p.file)
+      .replace(/url\((['"])(?:\.\.\/)+assets\/fonts\//g, `url($1${prefix}assets/fonts/`);
     return p.media ? `@media ${p.media} {\n${css}\n}` : css;
   }).join('\n');
 }
@@ -805,7 +811,7 @@ function runSeo(report) {
     html = html.replace(CSS_FILES_MARKER, '');
     html = html.replace(CSS_CSS_LINK_RE, '\n');
     const cssInline = cssPairs.length
-      ? `  <!-- @@CSS_FILES:${serializeCssFiles(cssPairs)}@@ -->\n  <style>\n${renderInlineCss(cssPairs)}\n  </style>\n`
+      ? `  <!-- @@CSS_FILES:${serializeCssFiles(cssPairs)}@@ -->\n  <style>\n${renderInlineCss(cssPairs, rel)}\n  </style>\n`
       : '';
 
     const titleMatch = /<title>([\s\S]*?)<\/title>/i.exec(html);
