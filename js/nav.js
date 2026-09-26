@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.getElementById('page-transition');
 
   // Fade in on load
-  overlay.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
 
   // Intercept nav links for transition
   document.querySelectorAll('a[href]').forEach(link => {
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     link.addEventListener('click', e => {
       e.preventDefault();
-      overlay.classList.add('active');
+      if (overlay) overlay.classList.add('active');
       setTimeout(() => {
         window.location.href = href;
       }, 380);
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // On page load, fade out
   window.addEventListener('load', () => {
-    setTimeout(() => overlay.classList.remove('active'), 50);
+    if (overlay) setTimeout(() => overlay.classList.remove('active'), 50);
   });
 
   /* ── NAV SCROLL BEHAVIOUR ───────────────────── */
@@ -121,11 +121,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 600);
 
   /* ── ACTIVE LINK ────────────────────────────── */
-  const here = window.location.pathname;
+  const normPath = p => p.replace(/index\.html$/, '');
+  const here = normPath(window.location.pathname);
   document.querySelectorAll('.nav-links a, #nav-overlay a').forEach(link => {
     const href = link.getAttribute('href');
     if (!href || href.startsWith('#') || href.startsWith('http')) return;
-    if (new URL(href, window.location.href).pathname === here) {
+    if (normPath(new URL(href, window.location.href).pathname) === here) {
       link.classList.add('active');
     }
   });
