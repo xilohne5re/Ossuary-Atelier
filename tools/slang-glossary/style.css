@@ -276,6 +276,23 @@ a { color: var(--violet); }
 .gl-toggle:hover { color: var(--violet); }
 
 /* ── grid ── */
+/* Section heading for the results region. The cards are <h3>, so without this
+   the rendered order is h1 -> h3 -> h2, which skips a level and leaves 50 card
+   headings with no parent section. Visually hidden because the search box and
+   tabs above already say what this region is. */
+.gl-sr-h {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* No align-items here on purpose: the default stretch is what makes every card
    in a row the same height. .gl-card-foot's margin-top:auto then pins it to the
    bottom, so the cards line up instead of ending ragged. */

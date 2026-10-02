@@ -6,7 +6,9 @@
     "build": "node scripts/build.mjs",
     "build:report": "node scripts/build.mjs --report",
     "links": "node scripts/build.mjs --steps=links",
-    "links:strict": "node scripts/build.mjs --steps=links --strict"
+    "links:strict": "node scripts/build.mjs --steps=links --strict",
+    "verify": "node scripts/verify-glossary.mjs",
+    "verify:quiet": "node scripts/verify-glossary.mjs --quiet"
   },
   "dependencies": {
     "marked": "^15.0.0",

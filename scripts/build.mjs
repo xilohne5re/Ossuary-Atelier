@@ -8,6 +8,8 @@
 
 import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, mkdirSync, unlinkSync } from 'node:fs';
 import { join, resolve, dirname, relative, posix } from 'node:path';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -712,6 +714,43 @@ const GLOSSARY_DATA_SLOT = '<!-- @@GLOSSARY_DATA_SLOT@@ -->';
 const GLOSSARY_DATA_END = '/* @@GLOSSARY_DATA_END@@ */';
 const GLOSSARY_NOSCRIPT_SLOT = '<!-- @@GLOSSARY_NOSCRIPT_SLOT@@ -->';
 const GLOSSARY_NOSCRIPT_END = '<!-- @@GLOSSARY_NOSCRIPT_END@@ -->';
+const GLOSSARY_SETLD_BEGIN = '<!-- @@GLOSSARY_SETLD_BEGIN@@ -->';
+const GLOSSARY_SETLD_END = '<!-- @@GLOSSARY_SETLD_END@@ -->';
+
+/* One definition of each glossary URL, shared by the index's DefinedTermSet
+   and the per-term DefinedTerm pages, so `hasDefinedTerm` resolves to exactly
+   the `@id` each term page declares. */
+const glossarySetUrl = () => `${SITE_BASE}/${GLOSSARY_SET_PATH}`;
+const glossaryTermUrl = (id) => `${SITE_BASE}/${GLOSSARY_TERMS_DIR}/${id}.html`;
+const glossaryTermId = (id) => `${glossaryTermUrl(id)}#term`;
+
+/* GitHub Pages serves every file with `Cache-Control: max-age=600`, so a
+   browser can hold the previous build's CSS/JS against the new HTML for ten
+   minutes after a deploy. These files are hand-authored and no build step
+   rewrites them, so hashing them once at startup is always accurate.
+
+   The term-page template below has to emit the query itself: a later pass that
+   added it to the generated files would fight the generator forever, since each
+   run would regenerate the pages without it. runCacheBust covers the pages that
+   are edited in place rather than generated. */
+const GLOSSARY_ASSETS = ['style.css', 'script.js', 'speak.js'];
+let _glossaryHashes = null;
+function glossaryAssetHashes() {
+  if (!_glossaryHashes) {
+    _glossaryHashes = new Map();
+    for (const name of GLOSSARY_ASSETS) {
+      const abs = join(ROOT, 'tools', 'slang-glossary', name);
+      if (!existsSync(abs)) continue;
+      _glossaryHashes.set(name,
+        createHash('sha256').update(readFileSync(abs)).digest('hex').slice(0, 8));
+    }
+  }
+  return _glossaryHashes;
+}
+const bust = (name) => {
+  const h = glossaryAssetHashes().get(name);
+  return h ? `${name}?v=${h}` : name;
+};
 
 function loadGlossary() {
   const file = join(DATA_DIR, 'glossary.json');
@@ -854,30 +893,89 @@ function runGlossary() {
   let page = readFileSync(pageFile, 'utf8');
   page = replaceSlotRegion(page, GLOSSARY_DATA_SLOT, GLOSSARY_DATA_END, dataBlock, '</script>');
   page = replaceSlotRegion(page, GLOSSARY_NOSCRIPT_SLOT, GLOSSARY_NOSCRIPT_END, noscriptBlock);
+  page = replaceSlotRegion(page, GLOSSARY_SETLD_BEGIN, GLOSSARY_SETLD_END,
+    glossarySetLdBlock(entries));
   const stats = { written: 0, unchanged: 0 };
   writeIfChanged(pageFile, page, stats);
 
   log(`[glossary] ${GLOSSARY_PAGE}: ${entries.length} entries inlined + noscript index ` +
-    `(${stats.written} rewritten, ${stats.unchanged} unchanged)`);
+    `+ DefinedTermSet (${stats.written} rewritten, ${stats.unchanged} unchanged)`);
+}
+
+/* The set node every term page points at via `inDefinedTermSet`. Without it
+   those 50 references dangle, so the index has to declare the set it owns. */
+function glossarySetLdBlock(entries) {
+  const setUrl = glossarySetUrl();
+  const graph = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'DefinedTermSet',
+        '@id': `${setUrl}#definedtermset`,
+        url: setUrl,
+        name: 'Ossuary Atelier Thai Slang Glossary',
+        description: SEO_DESC[GLOSSARY_PAGE],
+        inLanguage: 'en',
+        hasDefinedTerm: entries.map((e) => glossaryTermId(e.id)),
+      },
+      {
+        '@type': 'ItemList',
+        '@id': `${setUrl}#terms`,
+        name: 'All terms in the Ossuary Atelier Thai Slang Glossary',
+        numberOfItems: entries.length,
+        itemListOrder: 'https://schema.org/ItemListUnordered',
+        itemListElement: entries.map((e, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: e.term,
+          url: glossaryTermUrl(e.id),
+        })),
+      },
+    ],
+  };
+  return (
+    `${GLOSSARY_SETLD_BEGIN}\n` +
+    `  <script type="application/ld+json">\n` +
+    `${JSON.stringify(graph, null, 2)}\n` +
+    `  </script>\n` +
+    `  ${GLOSSARY_SETLD_END}`
+  );
 }
 
 /* static per-term page (SEO surface area — not the browse UI) */
 function glossaryTermPage(e, byId) {
   const root = rootPrefix(`${GLOSSARY_TERMS_DIR}/${e.id}.html`);
-  const setUrl = `${SITE_BASE}/${GLOSSARY_SET_PATH}`;
+  const setUrl = glossarySetUrl();
   // This page lives in terms/, so sibling term pages are bare filenames.
   const setHref = '../';
   const catLabel = GLOSSARY_CAT_LABELS[e.category] || e.category;
 
-  const alternateNames = [e.thai_script, e.alt_thai, ...(e.alt_terms || [])].filter(Boolean);
+  // alternateName must not restate name, and must not repeat itself: "555"
+  // has Thai script "555" (its own name) and song tem sip lists "2/10" as both
+  // its Thai script and an alt term. Order follows the source.
+  const altKey = (s) => String(s).trim().replace(/[\s.]+$/, '').toLowerCase();
+  const seenAlt = new Set([altKey(e.term)]);
+  const alternateNames = [e.thai_script, e.alt_thai, ...(e.alt_terms || [])]
+    .filter(Boolean)
+    .filter((s) => {
+      const k = altKey(s);
+      if (seenAlt.has(k)) return false;
+      seenAlt.add(k);
+      return true;
+    });
+
   const jsonld = {
     '@context': 'https://schema.org',
     '@type': 'DefinedTerm',
+    '@id': glossaryTermId(e.id),
+    url: glossaryTermUrl(e.id),
     name: e.term,
-    alternateName: alternateNames,
-    description: e.actual_meaning,
     inDefinedTermSet: setUrl,
+    // The term itself is Thai; the surrounding page copy is English.
+    inLanguage: 'th',
+    description: e.actual_meaning,
   };
+  if (alternateNames.length) jsonld.alternateName = alternateNames;
 
   const dots = (n) => Array.from({ length: 5 }, (_, i) =>
     `<span class="dot${i < n ? ' on' : ''}"></span>`).join('');
@@ -937,8 +1035,8 @@ function glossaryTermPage(e, byId) {
   <script type="application/ld+json">
 ${JSON.stringify(jsonld, null, 2)}
   </script>
-  <link rel="stylesheet" href="../style.css">
-  <script src="../speak.js" defer></script>
+  <link rel="stylesheet" href="../${bust('style.css')}">
+  <script src="../${bust('speak.js')}" defer></script>
 </head>
 <body>
 
@@ -1224,9 +1322,10 @@ function runSeo(report) {
     if (!desc) desc = 'Ossuary Atelier \u2014 secondhand fashion with verified stories.';
 
     const root = rootPrefix(rel);
-    const preloads = FONT_FILES.map(f =>
-      `  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="${root}assets/fonts/${f}.woff2">\n`
-    ).join('');
+    const preloads = fontPreloadsFor(rel, termMatch && glossaryById.get(termMatch[1]))
+      .map((f) =>
+        `  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="${root}assets/fonts/${f}.woff2">\n`
+      ).join('');
     // Canonical === the literal URL GitHub Pages serves (sitemap agrees):
     // - root index.html  -> SITE_BASE/            (directory form)
     // - */index.html     -> SITE_BASE/<dir>/      (directory form, matches GH's /path -> /path/ redirect)
@@ -1300,8 +1399,25 @@ function runSeo(report) {
    Removes the Google Fonts chain (preconnects + css2 stylesheet),
    which was the render-blocking bottleneck. Font preloads for the
    self-hosted variable fonts are injected by the seo step (inside
-   the SEO slot, so ordering is deterministic and idempotent). */
+   the SEO slot, so ordering is deterministic and idempotent).
+
+   A preload competes for the same bandwidth as the LCP font, so only
+   preloading italic where the first viewport actually renders italic
+   is worth its 38 KB. */
 const FONT_FILES = ['cinzel', 'cormorant', 'cormorant-italic'];
+const FONT_PRELOAD_BASE = ['cinzel', 'cormorant'];
+
+/* Every non-glossary page keeps the italic preload: ~30 of them use italic
+   body copy. Inside the glossary it is different — the browse UI only sets
+   italic on card and example text (below the fold), and a term page only
+   renders it in the hero for entries that carry alternate spellings. */
+function fontPreloadsFor(rel, entry) {
+  const isGlossary = rel === GLOSSARY_PAGE || rel.startsWith(`${GLOSSARY_TERMS_DIR}/`);
+  if (!isGlossary) return FONT_FILES;
+  if (!entry) return FONT_PRELOAD_BASE;            // the browse UI page
+  const heroItalic = Boolean(entry.alt_terms?.length || entry.alt_thai);
+  return heroItalic ? FONT_FILES : FONT_PRELOAD_BASE;
+}
 
 function stripGoogleFontLinks(html) {
   return html.replace(/[ \t]*\r?\n?\s*<link[^>]*fonts\.(?:googleapis|gstatic)\.com[^>]*>\s*/gi, '\n');
@@ -1500,44 +1616,61 @@ function runPreferred(report) {
   log(`[preferred] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 preferred-sources script injected`);
 }
 
+/* lastmod from the commit that last touched each file, not from its mtime.
+   A fresh clone gives every file the checkout timestamp, so an mtime-derived
+   sitemap claims all 70 URLs changed on every machine that builds it — which
+   is exactly the kind of lastmod Google is documented to ignore. Commit dates
+   are also stable across runs, so they keep the generated sitemap idempotent.
+
+   Files not yet committed (a freshly generated term page) fall back to mtime,
+   so their date settles once they are committed and the next build picks it
+   up. Renames keep their new path out of the map and fall back to mtime too. */
+function gitLastmodMap() {
+  let out;
+  try {
+    out = execFileSync('git', ['log', '--name-only', '--format=%x1e%cs'], {
+      cwd: ROOT,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      maxBuffer: 32 * 1024 * 1024,
+    });
+  } catch {
+    return new Map(); // git missing, or not a repo: callers fall back to mtime
+  }
+
+  const map = new Map();
+  // Newest commit first, so the first sighting of a path is its latest date.
+  for (const chunk of out.split('\x1e')) {
+    const nl = chunk.indexOf('\n');
+    if (nl === -1) continue;
+    const date = chunk.slice(0, nl).trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+    for (const line of chunk.slice(nl + 1).split('\n')) {
+      const p = line.trim();
+      if (p && !map.has(p)) map.set(p, date);
+    }
+  }
+  return map;
+}
+
 function runSitemap() {
   gate('sitemap');
   const EXCLUDE = new Set(['item-template.html', 'internal-dm-scripts.html', '404.html', 'craft.html', 'drops.html', 'googlecf73118a74657205.html']);
   const files = walkHtml(ROOT).filter(abs => !EXCLUDE.has(relOf(abs)));
-  const priorities = {
-    'index.html': '1.0',
-    'guide/index.html': '1.0',
-    'shop.html': '0.9',
-    'blog/index.html': '0.9',
-    'blog/guide/index.html': '0.9',
-    'tools/phuket-map/index.html': '0.8',
-    'tools/fretboard-trainer/index.html': '0.8',
-    'tools/slang-glossary/index.html': '0.8',
-    'contact.html': '0.7',
-    'about.html': '0.7',
-  };
-  const changefreqs = {
-    'index.html': 'weekly',
-    'guide/index.html': 'weekly',
-    'shop.html': 'weekly',
-    'blog/index.html': 'weekly',
-    'blog/guide/index.html': 'weekly',
-    'tools/phuket-map/index.html': 'monthly',
-    'tools/fretboard-trainer/index.html': 'monthly',
-    'about.html': 'monthly',
-  };
+  const lastmods = gitLastmodMap();
 
+  // No <changefreq> and no <priority>: Google has ignored both since 2015 and
+  // treats a stale changefreq as a signal to crawl less. <lastmod> is the only
+  // hint here, so it is worth getting right (see gitLastmodMap).
   const urls = files
     .map(abs => {
       const rel = relOf(abs);
-      const lastmod = new Date(statSync(abs).mtime).toISOString().slice(0, 10);
+      const lastmod = lastmods.get(rel) || new Date(statSync(abs).mtime).toISOString().slice(0, 10);
       let loc;
       if (rel === 'index.html') loc = `${SITE_BASE}/`;
       else if (/\/index\.html$/.test(rel)) loc = `${SITE_BASE}/${rel.replace(/\/index\.html$/, '')}/`;
       else loc = `${SITE_BASE}/${rel}`;
-      const pri = priorities[rel] || (rel.startsWith('blog/') ? '0.8' : rel.startsWith('ITEM-') ? '0.7' : rel.startsWith('tools/slang-glossary/terms/') ? '0.6' : '0.5');
-      const freq = changefreqs[rel] || 'monthly';
-      return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${freq}</changefreq>\n    <priority>${pri}</priority>\n  </url>`;
+      return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </url>`;
     })
     .join('\n');
 
@@ -1549,6 +1682,61 @@ function runSitemap() {
   const robots = `User-agent: *\nAllow: /\n\nSitemap: ${SITE_BASE}/sitemap.xml\n`;
   writeFileSync(join(ROOT, 'robots.txt'), robots, 'utf8');
   log('[sitemap] robots.txt written');
+}
+
+/* ── cache-bust step ───────────────────────────────────────────
+   GitHub Pages answers with `Cache-Control: max-age=600` for every file, so
+   right after a deploy a browser can hold yesterday's CSS/JS against today's
+   HTML. A content hash in the query string changes the URL exactly when the
+   bytes change, which turns that ten-minute window into a hard bust.
+
+   Applies the glossary hashes to the pages that are edited in place rather
+   than generated (the browse UI page, mainly). Generated term pages already
+   carry the query from their template; this pass is a no-op for them, which is
+   what keeps it idempotent. Keyed by resolved path, not filename, because the
+   fretboard trainer ships its own style.css and script.js. */
+function runCacheBust(report) {
+  gate('cachebust');
+  const byAbs = new Map();
+  for (const [name, hash] of glossaryAssetHashes()) {
+    byAbs.set(resolve(ROOT, 'tools', 'slang-glossary', name), hash);
+  }
+  if (!byAbs.size) {
+    log('[cachebust] no glossary assets found, nothing to bust');
+    return;
+  }
+
+  // Matches any dir prefix, any existing query, any fragment, so index.html
+  // (`style.css`) and terms/*.html (`../style.css`) both hit and a re-run
+  // replaces the old ?v= instead of stacking another one.
+  const re = new RegExp(
+    `\\b(href|src)="((?:[^"?#]*\\/)?)(${GLOSSARY_ASSETS.join('|')})` +
+    `(?:\\?[^"#]*)?(#[^"]*)?"`,
+    'g'
+  );
+
+  let changed = 0;
+  let tagged = 0;
+  for (const abs of walkHtml(ROOT)) {
+    const rel = relOf(abs);
+    const original = readFileSync(abs, 'utf8');
+    const baseDir = dirname(abs);
+    let hits = 0;
+    const html = original.replace(re, (m, attr, dir, name, frag) => {
+      const hash = byAbs.get(resolve(baseDir, dir + name));
+      if (!hash) return m;
+      hits++;
+      return `${attr}="${dir}${name}?v=${hash}${frag || ''}"`;
+    });
+    if (!hits || html === original) continue;
+    tagged += hits;
+    changed++;
+    if (report) log(`  [cachebust] ${rel} — would rewrite (${hits})`);
+    else writeFileSync(abs, html, 'utf8');
+  }
+  const summary = [...byAbs.values()].join(' ');
+  log(`[cachebust] ${summary} — ${changed} file(s) ` +
+    `${report ? 'would be rewritten' : 'rewritten'}, ${tagged} reference(s)`);
 }
 
 /* ── runner ───────────────────────────────────────────────── */
@@ -1566,10 +1754,11 @@ const STEPS = {
   js: runJs,
   preferred: runPreferred,
   legal: runLegalNotice,
+  cachebust: runCacheBust,
   sitemap: runSitemap,
 };
 
-const stepOrder = ['items', 'shops', 'map', 'posts', 'glossary', 'glossary-pages', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'links', 'sitemap'];
+const stepOrder = ['items', 'shops', 'map', 'posts', 'glossary', 'glossary-pages', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'cachebust', 'links', 'sitemap'];
 const toRun = opts.steps
   ? opts.steps
   : (opts.enableContent ? stepOrder : ['partials', 'links']);
