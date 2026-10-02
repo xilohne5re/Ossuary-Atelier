@@ -1,0 +1,675 @@
+/* ═══════════════════════════════════════════════
+   OSSUARY ATELIER — tools/slang-glossary/style.css
+   Self-contained tool stylesheet. Fonts resolve
+   against this file's own location (tools/slang-glossary/),
+   so the same sheet serves both the dictionary page and
+   every generated terms/<id>.html page.
+   ═══════════════════════════════════════════════ */
+
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('../../assets/fonts/cinzel.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../../assets/fonts/cormorant.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../../assets/fonts/cormorant-italic.woff2') format('woff2');
+}
+
+:root {
+  --void: #080810;
+  --void-deep: #04040a;
+  --violet: #C9B8E8;
+  --violet-dim: #a693c0;
+  --bruise: #4B2D7A;
+  --bruise-mid: #A184CD;
+  --midnight: #1C1828;
+  --faint: #2A2440;
+
+  --card: rgba(28, 24, 40, 0.62);
+  --card-solid: #16121f;
+  --rule: rgba(201, 184, 232, 0.13);
+  --rule-lit: rgba(201, 184, 232, 0.34);
+
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Cormorant Garamond', Georgia, serif;
+  --thai: 'Leelawadee UI', 'Noto Sans Thai', 'Tahoma', var(--font-body);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.62;
+  color: var(--violet);
+  background:
+    radial-gradient(1100px 620px at 50% -8%, rgba(75, 45, 122, 0.34), transparent 68%),
+    linear-gradient(168deg, var(--void) 0%, var(--void-deep) 100%) fixed;
+  padding-bottom: 4rem;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; line-height: 1.2; }
+p { margin: 0 0 0.7rem; }
+a { color: var(--violet); }
+
+.wrap { width: min(1180px, 100% - 2.5rem); margin-inline: auto; }
+
+/* ── focus ── */
+:focus-visible {
+  outline: 2px solid var(--bruise-mid);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── top bar ── */
+.gl-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.gl-back { text-decoration: none; color: var(--violet-dim); }
+.gl-back:hover { color: var(--violet); }
+.gl-attrib { color: rgba(166, 147, 192, 0.6); letter-spacing: 0.2em; }
+
+/* ── brand header ── */
+.gl-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 2.6rem 0 1.6rem;
+}
+.gl-brand { display: flex; align-items: center; gap: 1.1rem; }
+/* The Ossuary eye — same anatomy as eyeSVG() in js/nav.js and EYE_SVG in
+   scripts/build.mjs — inverted to this tool's dark-on-violet chip, with a Thai
+   letter standing in for the pupil. The colour split is deliberate: violet
+   appears ONLY inside the dark lens, and every stroke that reaches past the
+   lens is dark, because pale violet on a violet chip disappears. The letter is
+   HTML text rather than SVG <text> so it uses the existing --thai stack instead
+   of adding a font dependency the way the fretboard trainer does. */
+.gl-brand-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  background: var(--violet);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(201, 184, 232, 0.35), 0 10px 34px rgba(0, 0, 0, 0.45);
+}
+.gl-brand-eye { display: block; width: 100%; height: 100%; }
+.gl-brand-eye .lens { fill: var(--midnight); }
+.gl-brand-eye .iris { stroke: var(--violet); }
+.gl-brand-eye .lashes { stroke: var(--midnight); }
+.gl-brand-thai {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--thai);
+  font-size: 21px;
+  line-height: 1;
+  color: var(--violet);
+}
+.gl-brand h1 { font-size: clamp(1.6rem, 4.2vw, 2.5rem); letter-spacing: 0.08em; }
+.gl-tagline {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--violet-dim);
+}
+.gl-chips { display: flex; gap: 0.55rem; flex-wrap: wrap; }
+.chip {
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--violet-dim);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.42rem 0.9rem;
+  white-space: nowrap;
+}
+
+/* ── word of the day ── */
+.gl-sotd {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  padding: 1.15rem 1.4rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(120deg, rgba(75, 45, 122, 0.4), rgba(28, 24, 40, 0.55));
+  border: 1px solid var(--rule-lit);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+}
+.gl-sotd:hover { border-color: var(--bruise-mid); background: linear-gradient(120deg, rgba(75, 45, 122, 0.6), rgba(38, 32, 56, 0.7)); }
+.gl-sotd:hover .gl-sotd-term { color: #fff; }
+.gl-sotd-label {
+  flex: 0 0 auto;
+  font-size: 0.66rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--bruise-mid);
+}
+.gl-sotd-body { min-width: 0; }
+.gl-sotd-term { font-family: var(--font-display); font-size: 1.2rem; transition: color 0.3s; }
+.gl-sotd-term .th { font-family: var(--thai); margin-left: 0.55rem; color: var(--violet-dim); }
+.gl-sotd-def { font-size: 0.95rem; color: var(--violet-dim); margin: 0; }
+
+/* Empty anchor stretched over the banner, so the whole strip is clickable. */
+.gl-sotd-link::after { content: ''; position: absolute; inset: 0; }
+
+/* ── controls ── */
+.gl-controls {
+  display: grid;
+  gap: 1rem;
+  padding: 1.35rem 1.4rem;
+  margin-bottom: 1.7rem;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(8px);
+}
+.gl-search { display: flex; align-items: center; gap: 0.7rem; }
+.gl-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  color: var(--violet);
+  background: rgba(8, 8, 16, 0.55);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0.7rem 0.9rem;
+}
+.gl-search input::placeholder { color: rgba(166, 147, 192, 0.5); }
+.gl-search input:focus { border-color: var(--rule-lit); outline: none; }
+
+.gl-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.gl-tab {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--violet-dim);
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.45rem 0.95rem;
+  cursor: pointer;
+  transition: color 0.25s, border-color 0.25s, background 0.25s;
+}
+.gl-tab:hover { color: var(--violet); border-color: var(--rule-lit); }
+.gl-tab.active { color: var(--midnight); background: var(--violet); border-color: var(--violet); }
+.gl-tab .n { opacity: 0.55; margin-left: 0.3rem; font-size: 0.9em; }
+
+.gl-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.gl-sort { display: flex; align-items: center; gap: 0.6rem; }
+.gl-sort label { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--violet-dim); }
+.gl-sort select {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--violet);
+  background: rgba(8, 8, 16, 0.55);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0.45rem 0.6rem;
+}
+.gl-toggles { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+.gl-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--violet-dim);
+  cursor: pointer;
+  user-select: none;
+}
+.gl-toggle input { accent-color: var(--bruise-mid); width: 15px; height: 15px; cursor: pointer; }
+.gl-toggle:hover { color: var(--violet); }
+
+/* ── grid ── */
+/* No align-items here on purpose: the default stretch is what makes every card
+   in a row the same height. .gl-card-foot's margin-top:auto then pins it to the
+   bottom, so the cards line up instead of ending ragged. */
+.gl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.15rem;
+}
+
+/* ── card ── */
+.gl-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.3rem 1.35rem;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  scroll-margin-top: 12rem;
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+  animation: gl-in 0.4s var(--ease-out) both;
+}
+.gl-card:hover { border-color: var(--rule-lit); background: rgba(38, 32, 56, 0.7); }
+.gl-card:hover .gl-term-name { color: #fff; }
+.gl-card.known { opacity: 0.52; }
+.gl-card.known:hover { opacity: 0.85; }
+.gl-card:target { border-color: var(--bruise-mid); box-shadow: 0 0 0 1px var(--bruise-mid); }
+
+/* Whole-card link. The anchor wraps only the term name so its accessible name
+   is the term (no aria-label, no duplicate heading); ::after stretches the hit
+   area over the entire card. Anything interactive inside the card sits above
+   the overlay via z-index, so the speaker button, see-also links and the
+   "I know this" checkbox keep working. */
+.gl-card-link { color: inherit; text-decoration: none; }
+.gl-card-link::after { content: ''; position: absolute; inset: 0; }
+.gl-card-tools, .gl-see, .gl-card-foot { position: relative; z-index: 1; }
+
+@keyframes gl-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+
+.gl-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.8rem; }
+.gl-term { min-width: 0; }
+.gl-term-name { font-size: 1.22rem; word-break: break-word; transition: color 0.3s; }
+.gl-term-alt {
+  font-size: 0.82rem;
+  color: rgba(166, 147, 192, 0.75);
+  font-style: italic;
+}
+.gl-term-thai { display: block; font-family: var(--thai); font-size: 1.18rem; margin-top: 0.2rem; }
+.gl-term-altthai { display: block; font-family: var(--thai); font-size: 0.9rem; color: var(--violet-dim); }
+
+.gl-card-tools { display: flex; gap: 0.35rem; flex: 0 0 auto; }
+.gl-iconbtn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--violet-dim);
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.25s, border-color 0.25s;
+}
+.gl-iconbtn:hover { color: var(--violet); border-color: var(--rule-lit); }
+/* Without a Thai voice the speaker stays put but is visibly inert — speak.js
+   disables it and sets the tooltip explaining why. Hiding it outright left
+   visitors wondering where the button went. */
+.gl-iconbtn:disabled { opacity: 0.35; cursor: not-allowed; }
+.gl-iconbtn:disabled:hover { color: var(--violet-dim); border-color: var(--rule); }
+
+.gl-meta { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.gl-cat {
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.24rem 0.6rem;
+  border: 1px solid var(--rule-lit);
+  border-radius: 999px;
+  color: var(--violet-dim);
+  white-space: nowrap;
+}
+.gl-cat--etiquette { color: #d8c9a0; border-color: rgba(216, 201, 160, 0.4); }
+.gl-cat--general-slang { color: var(--bruise-mid); border-color: rgba(161, 132, 205, 0.45); }
+.gl-cat--thrift-market { color: #9fd0b4; border-color: rgba(159, 208, 180, 0.4); }
+.gl-cat--skate { color: #e0a3a3; border-color: rgba(224, 163, 163, 0.4); }
+
+.gl-score { display: flex; align-items: center; gap: 0.4rem; }
+.gl-score-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(166, 147, 192, 0.72);
+}
+.dots { display: inline-flex; gap: 3px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; border: 1px solid rgba(166, 147, 192, 0.55); }
+.dot.on { background: var(--violet); border-color: var(--violet); }
+
+.gl-literal {
+  font-size: 0.86rem;
+  font-style: italic;
+  color: rgba(166, 147, 192, 0.8);
+  margin: 0;
+}
+.gl-axis-note {
+  font-size: 0.88rem;
+  color: rgba(166, 147, 192, 0.8);
+  margin: 0.6rem 0 0;
+}
+.gl-meaning { margin: 0; }
+
+.gl-example {
+  padding: 0.7rem 0.85rem;
+  background: rgba(8, 8, 16, 0.4);
+  border-left: 2px solid var(--bruise);
+  border-radius: 2px;
+}
+.gl-example p { margin: 0; }
+.gl-ex-th { font-family: var(--thai); font-size: 1.05rem; }
+.gl-ex-rom { font-style: italic; color: var(--violet-dim); font-size: 0.92rem; }
+.gl-ex-en { font-size: 0.92rem; color: rgba(201, 184, 232, 0.9); }
+
+.gl-note { font-size: 0.9rem; color: var(--violet-dim); margin: 0; }
+
+.gl-see { font-size: 0.85rem; margin: 0; }
+.gl-see-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(166, 147, 192, 0.72); }
+.gl-see a { text-decoration: none; border-bottom: 1px dotted var(--rule-lit); }
+.gl-see a:hover { color: #fff; }
+
+.gl-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: auto;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--rule);
+}
+
+/* ── states ── */
+.gl-empty, .gl-fail {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--violet-dim);
+  border: 1px dashed var(--rule-lit);
+  border-radius: 4px;
+}
+.gl-noscript {
+  padding: 1.2rem 1.4rem;
+  border: 1px dashed var(--rule-lit);
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+.gl-noscript ul { columns: 2; column-gap: 2rem; margin: 0.8rem 0 0; padding-left: 1.1rem; }
+.gl-noscript li { margin-bottom: 0.3rem; }
+.th { font-family: var(--thai); }
+.gl-noscript .th { margin-left: 0.4rem; color: var(--violet-dim); font-size: 0.9em; }
+
+/* ── axes explainer ── */
+.gl-axes {
+  margin-top: 3rem;
+  padding: 1.6rem 1.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: rgba(8, 8, 16, 0.35);
+}
+.gl-axes h2 { font-size: 1.05rem; letter-spacing: 0.1em; margin-bottom: 0.9rem; }
+.gl-axes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.4rem; }
+.gl-axes h3 { font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--bruise-mid); margin-bottom: 0.3rem; }
+.gl-axes p { font-size: 0.93rem; color: var(--violet-dim); margin: 0; }
+
+/* ── submit form ── */
+.gl-submit { margin-top: 3rem; }
+.gl-submit h2 { font-size: 1.05rem; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.gl-submit-intro { font-size: 0.95rem; color: var(--violet-dim); max-width: 60ch; }
+.gl-form { display: grid; gap: 0.8rem; margin-top: 1.2rem; max-width: 46rem; }
+.gl-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.gl-form input, .gl-form textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--violet);
+  background: rgba(8, 8, 16, 0.55);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0.7rem 0.9rem;
+}
+.gl-form input::placeholder, .gl-form textarea::placeholder { color: rgba(166, 147, 192, 0.5); }
+.gl-form button {
+  justify-self: start;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--violet);
+  background: none;
+  border: 1px solid var(--rule-lit);
+  border-radius: 999px;
+  padding: 0.7rem 1.7rem;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+.gl-form button:hover { background: var(--violet); color: var(--midnight); }
+
+/* ── footer ── */
+.gl-foot {
+  margin-top: 3.5rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(166, 147, 192, 0.7);
+}
+.gl-foot a { text-decoration: none; }
+.gl-foot a:hover { color: var(--violet); }
+
+/* ── term page (generated) ── */
+.gl-term-page { padding: 2.5rem 0 1rem; }
+.gl-term-hero { padding-bottom: 1.8rem; border-bottom: 1px solid var(--rule); margin-bottom: 2.4rem; }
+.gl-term-hero h1 { font-size: clamp(2.2rem, 5.5vw, 3.4rem); letter-spacing: 0.06em; }
+.gl-term-hero .th { display: block; font-family: var(--thai); font-size: 2.1rem; color: var(--violet-dim); margin-top: 0.4rem; }
+.gl-term-hero .alt { display: block; font-size: 1rem; color: rgba(166, 147, 192, 0.75); font-style: italic; margin-top: 0.3rem; }
+.gl-term-hero .gl-cat { display: inline-block; margin-top: 0.9rem; }
+
+/* Main column + sticky rail. The rail absorbs the scores, the axis explainer
+   and See also, which is what used to leave the right half of the page empty. */
+.gl-term-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 3.2rem;
+  align-items: start;
+}
+/* No ch cap here on purpose. The track is ~829px on desktop and a 68ch limit
+   left ~280px of dead space before the rail; dropping the cap lets the column
+   fill its track at every viewport, so the gap cannot reopen. Readability is
+   held by the larger type below (~62ch for the meaning line), not by a width. */
+.gl-term-main { min-width: 0; }
+
+.gl-term-rail {
+  position: sticky;
+  top: 1.6rem;
+  padding: 1.3rem 1.4rem;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+.gl-rail-block + .gl-rail-block { margin-top: 1.4rem; padding-top: 1.3rem; border-top: 1px solid var(--rule); }
+.gl-rail-h {
+  font-size: 0.78rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--bruise-mid);
+  margin-bottom: 0.8rem;
+}
+.gl-term-rail .gl-score { margin-bottom: 0.55rem; }
+.gl-term-rail .gl-score-label { display: block; margin-bottom: 0.3rem; }
+.gl-term-rail .gl-axis-note { margin-top: 0.9rem; }
+.gl-term-rail .gl-see-list { list-style: none; padding: 0; margin: 0; }
+.gl-term-rail .gl-see-list li { padding: 0.45rem 0; border-bottom: 1px solid var(--rule); }
+.gl-term-rail .gl-see-list li:last-child { border-bottom: none; padding-bottom: 0; }
+.gl-term-rail .gl-see-list a { text-decoration: none; font-family: var(--font-display); font-size: 1rem; }
+.gl-term-rail .gl-see-list a:hover { color: #fff; }
+.gl-term-rail .gl-see-list .th { display: block; font-size: 0.95rem; color: var(--violet-dim); margin: 0.15rem 0 0; }
+
+.gl-term-main h2 {
+  font-size: 0.88rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--bruise-mid);
+  margin: 0 0 0.6rem;
+}
+.gl-term-main h2:not(:first-child) { margin-top: 1.9rem; }
+.gl-term-main .gl-meaning { font-size: 1.5rem; line-height: 1.5; }
+.gl-term-main .gl-example { margin-top: 0.5rem; }
+.gl-term-main .gl-example p { margin: 0; }
+.gl-term-main .gl-ex-th { font-family: var(--thai); font-size: 1.6rem; line-height: 1.5; }
+.gl-term-main .gl-ex-rom { font-style: italic; color: var(--violet-dim); font-size: 1.3rem; }
+.gl-term-main .gl-ex-en { font-size: 1.25rem; color: rgba(201, 184, 232, 0.9); }
+.gl-term-main .gl-literal { font-size: 1.25rem; line-height: 1.6; }
+.gl-term-main .gl-note { font-size: 1.2rem; line-height: 1.7; }
+
+/* Wraps a section heading and its speak button on one line. The heading is no
+   longer a direct child of .gl-term-main, so the h2:not(:first-child) rule no
+   longer reaches it and the section spacing moves here instead. */
+.gl-sec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.9rem;
+}
+.gl-sec-head h2 { margin: 0; }
+
+/* ── speak buttons (shared: dictionary cards + generated term pages) ── */
+.gl-say {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--violet);
+  background: none;
+  border: 1px solid var(--rule-lit);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.gl-say:hover:not(:disabled) { color: #fff; border-color: var(--violet); background: rgba(161, 132, 205, 0.12); }
+.gl-say:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+.gl-say:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.gl-say--lg { width: 3rem; height: 3rem; font-size: 1.35rem; }
+.gl-say--sm { width: 1.8rem; height: 1.8rem; font-size: 0.85rem; }
+
+.gl-hero-say { display: flex; align-items: center; gap: 0.7rem; margin-top: 1.1rem; }
+.gl-say-cap {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bruise-mid);
+}
+body.no-tts .gl-say-cap { display: none; }
+
+/* The card's stretched link covers the whole card, so every control inside it
+   needs to sit above the overlay to stay clickable. */
+.gl-card .gl-speak,
+.gl-card .gl-speak-ex { position: relative; z-index: 2; }
+.gl-card .gl-speak-ex {
+  display: inline-grid;
+  vertical-align: -0.3em;
+  margin-left: 0.35rem;
+  width: 1.55rem;
+  height: 1.55rem;
+  font-size: 0.7rem;
+}
+
+.gl-term-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 3rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.gl-term-nav a { text-decoration: none; color: var(--violet-dim); }
+.gl-term-nav a:hover { color: var(--violet); }
+
+/* ── responsive ── */
+@media (max-width: 900px) {
+  .gl-controls { position: static; }
+  .gl-card { scroll-margin-top: 1rem; }
+  .gl-term-cols { grid-template-columns: 1fr; gap: 2.2rem; }
+  .gl-term-rail { position: static; }
+}
+
+@media (max-width: 620px) {
+  body { font-size: 17px; }
+  .gl-header { padding: 1.9rem 0 1.2rem; }
+  .gl-brand-mark { width: 52px; height: 52px; }
+  .gl-brand-thai { font-size: 17px; }
+  .gl-grid { grid-template-columns: 1fr; }
+  .gl-form-row { grid-template-columns: 1fr; }
+  .gl-noscript ul { columns: 1; }
+  .gl-top { font-size: 0.66rem; letter-spacing: 0.2em; }
+  .gl-attrib { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .gl-controls, .gl-sotd, .gl-submit, .gl-card-tools, .gl-foot,
+  .gl-say, .gl-say-cap, .gl-speak-ex { display: none; }
+}
