@@ -6,7 +6,7 @@
    --enable-content until the review gate is cleared.
    ═══════════════════════════════════════════════════════════ */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, mkdirSync, unlinkSync } from 'node:fs';
 import { join, resolve, dirname, relative, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -46,6 +46,19 @@ const warn = (msg) => console.warn(`  ⚠ ${msg}`);
 
 function esc(s) {
   return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/* Reverse of esc(). Text lifted out of <title>/<meta> is already escaped, so
+   re-running esc() on it produced doubled entities like `&amp;amp;` in the
+   og:/twitter: tags. `&amp;` is decoded last so `&amp;lt;` survives intact. */
+function unesc(s) {
+  return String(s ?? '')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
 }
 
 const EYE_SVG = `<svg viewBox="-90 -58 180 116" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
@@ -665,6 +678,361 @@ function runPosts() {
   // Phase 3: render _content/posts/*.md into blog pages.
 }
 
+/* ── glossary steps ──────────────────────────────────────────
+   _data/glossary.json is the single source of truth for the
+   Thai slang dictionary. Two build steps consume it:
+
+   1. glossary  — inlines the dataset into the dictionary page
+      as window.OA_GLOSSARY (the same slot-injection pattern the
+      map step uses, so there is no runtime fetch) and emits a
+      static <noscript> index so the page is never content-free.
+   2. glossary-pages — writes one static HTML page per entry to
+      tools/slang-glossary/terms/<id>.html for crawlers and
+      direct links, and prunes pages for entries that no longer
+      exist so a deleted term cannot leave a stale indexed URL.
+
+   Both steps overwrite rather than append, because GitHub Pages
+   deploys the repository as-is and never runs this build: the
+   output is committed and must be stable across re-runs.
+
+   `meta` and `sources` are developer-facing metadata. They are
+   validated here but never ship to the client or the rendered
+   pages — nothing visitor-facing cites them.                  */
+const GLOSSARY_PAGE = 'tools/slang-glossary/index.html';
+const GLOSSARY_TERMS_DIR = 'tools/slang-glossary/terms';
+const GLOSSARY_SET_PATH = 'tools/slang-glossary/';
+const GLOSSARY_CATS = new Set(['etiquette', 'general-slang', 'thrift-market', 'skate']);
+const GLOSSARY_CAT_LABELS = {
+  'etiquette': 'Etiquette',
+  'general-slang': 'General slang',
+  'thrift-market': 'Thrift market',
+  'skate': 'Skate',
+};
+const GLOSSARY_DATA_SLOT = '<!-- @@GLOSSARY_DATA_SLOT@@ -->';
+const GLOSSARY_DATA_END = '/* @@GLOSSARY_DATA_END@@ */';
+const GLOSSARY_NOSCRIPT_SLOT = '<!-- @@GLOSSARY_NOSCRIPT_SLOT@@ -->';
+const GLOSSARY_NOSCRIPT_END = '<!-- @@GLOSSARY_NOSCRIPT_END@@ -->';
+
+function loadGlossary() {
+  const file = join(DATA_DIR, 'glossary.json');
+  if (!existsSync(file)) throw new Error('[glossary] _data/glossary.json missing');
+  const data = JSON.parse(readFileSync(file, 'utf8'));
+  const sources = data.sources || {};
+  const entries = data.entries || [];
+  if (!entries.length) throw new Error('[glossary] _data/glossary.json has no entries');
+
+  const ids = new Set();
+  for (const e of entries) {
+    const at = `"${e.id || '<no id>'}"`;
+    if (!e.id) throw new Error('[glossary] entry missing "id"');
+    if (ids.has(e.id)) throw new Error(`[glossary] duplicate id "${e.id}"`);
+    ids.add(e.id);
+    if (!/^[a-z0-9-]+$/.test(e.id)) throw new Error(`[glossary] ${at} is not a kebab-case slug`);
+
+    for (const field of ['term', 'thai_script', 'actual_meaning', 'category',
+      'example_th', 'example_romanized', 'example_en']) {
+      if (!e[field]) throw new Error(`[glossary] ${at} missing "${field}"`);
+    }
+    if (!GLOSSARY_CATS.has(e.category)) {
+      throw new Error(`[glossary] ${at} has unknown category "${e.category}" ` +
+        `(want: ${[...GLOSSARY_CATS].join(', ')})`);
+    }
+    for (const axis of ['usefulness', 'slanginess']) {
+      const v = e[axis];
+      if (!Number.isInteger(v) || v < 1 || v > 5) {
+        throw new Error(`[glossary] ${at} has invalid ${axis} ${JSON.stringify(v)} (want an integer 1-5)`);
+      }
+    }
+    if (e.alt_terms !== undefined && !Array.isArray(e.alt_terms)) {
+      throw new Error(`[glossary] ${at} has a non-array "alt_terms"`);
+    }
+
+    // Sources never render, but a key that does not resolve is still a data
+    // bug — fail the build rather than let it sit undetected in the JSON.
+    const keys = Array.isArray(e.source) ? e.source : [e.source];
+    if (!keys.length || keys.some((k) => !k || !(k in sources))) {
+      throw new Error(`[glossary] ${at} has unresolved source key(s): ${JSON.stringify(e.source)}`);
+    }
+  }
+
+  // Second pass: `related` may only name entries that exist.
+  for (const e of entries) {
+    for (const r of e.related || []) {
+      if (!ids.has(r)) throw new Error(`[glossary] "${e.id}" relates to unknown id "${r}"`);
+    }
+  }
+
+  return { meta: data.meta || {}, sources, entries };
+}
+
+/* Replace everything from `slot` through `endMark`, or the bare slot comment on
+   first run. The block must itself contain both markers to stay idempotent.
+   When the block also emits a closing tag, pass `closeTag` so the replaced
+   region extends through the existing one — otherwise every run appends
+   another copy of it. */
+function replaceSlotRegion(html, slot, endMark, block, closeTag) {
+  const start = html.indexOf(slot);
+  if (start === -1) throw new Error(`missing slot ${slot}`);
+  const endAt = html.indexOf(endMark, start);
+  if (endAt !== -1) {
+    let end = endAt + endMark.length;
+    if (closeTag) {
+      const close = html.indexOf(closeTag, end);
+      if (close !== -1) end = close + closeTag.length;
+    }
+    return html.slice(0, start) + block + html.slice(end);
+  }
+  return html.slice(0, start) + block + html.slice(start + slot.length);
+}
+
+/* Write only when the bytes actually change. Pages output is committed and the
+   sitemap derives <lastmod> from mtime, so an unconditional rewrite would
+   produce a 50-file diff plus every lastmod bumped on every single run. */
+function writeIfChanged(abs, content, stats) {
+  if (existsSync(abs) && readFileSync(abs, 'utf8') === content) {
+    if (stats) stats.unchanged++;
+    return false;
+  }
+  writeFileSync(abs, content, 'utf8');
+  if (stats) stats.written++;
+  return true;
+}
+
+/* Generated pages are post-processed by the seo and legal steps, so the file on
+   disk never byte-matches this step's output even when nothing changed. Strip
+   those artifacts back out — mirroring each step's own insertion exactly —
+   otherwise every run rewrites all 50 pages and bumps every <lastmod> in
+   sitemap.xml for no reason. */
+function stripBuildArtifacts(html) {
+  return html
+    // seo: '</title>' -> '</title>\n\n  ' + block(SEO_SLOT..SEO_END)
+    .replace(/\n\n {2}<!-- @@SEO_SLOT@@ -->[\s\S]*?<!-- @@SEO_END@@ -->/, '')
+    // seo: '</head>' -> '\n  ' + block(SITE_JSONLD_BEGIN..END) + '\n  </head>'
+    .replace(
+      /\n[ \t]*\n {2}<!-- @@SITE_JSONLD_BEGIN@@ -->[\s\S]*?<!-- @@SITE_JSONLD_END@@ -->\n {2}<\/head>/,
+      '\n</head>'
+    )
+    // legal: '</body>\n</html>' -> '\n' + snippet(NOTICE_SLOT..</script>) + '\n</body>\n</html>'
+    .replace(/\n\s*<!-- @@NOTICE_SLOT@@ -->[\s\S]*?<\/script>\n<\/body>\n<\/html>/, '\n\n</body>\n</html>');
+}
+
+function runGlossary() {
+  gate('glossary');
+  const { meta, entries } = loadGlossary();
+  const pageFile = join(ROOT, GLOSSARY_PAGE);
+  if (!existsSync(pageFile)) throw new Error(`[glossary] ${GLOSSARY_PAGE} missing`);
+
+  // `meta.note` is a working note that points at /sources, so it stays behind.
+  const clientMeta = { ...meta };
+  delete clientMeta.note;
+
+  // meta/sources stay behind: nothing visitor-facing cites them, so the client
+  // payload is a projection of each entry with the source key removed.
+  const clientEntries = entries.map(({ source, ...rest }) => rest);
+
+  const dataBlock =
+    `${GLOSSARY_DATA_SLOT}\n` +
+    `  <script>\n` +
+    `  window.OA_GLOSSARY = /* @@GLOSSARY_DATA_BEGIN@@ */\n` +
+    `${JSON.stringify({ meta: clientMeta, entries: clientEntries }, null, 2)}\n` +
+    `  ${GLOSSARY_DATA_END}\n` +
+    `  </script>`;
+
+  const items = entries
+    .map((e) => `        <li><a href="terms/${esc(e.id)}.html">${esc(e.term)}</a>` +
+      `<span class="th" lang="th">${esc(e.thai_script)}</span></li>`)
+    .join('\n');
+  const noscriptBlock =
+    `${GLOSSARY_NOSCRIPT_SLOT}\n` +
+    `    <div class="gl-noscript">\n` +
+    `      <strong>${entries.length} terms in the OA Slang Glossary.</strong>\n` +
+    `      <span>Search and filtering need JavaScript. Every term also has its own page.</span>\n` +
+    `      <ul>\n${items}\n      </ul>\n` +
+    `    </div>\n` +
+    `    ${GLOSSARY_NOSCRIPT_END}`;
+
+  let page = readFileSync(pageFile, 'utf8');
+  page = replaceSlotRegion(page, GLOSSARY_DATA_SLOT, GLOSSARY_DATA_END, dataBlock, '</script>');
+  page = replaceSlotRegion(page, GLOSSARY_NOSCRIPT_SLOT, GLOSSARY_NOSCRIPT_END, noscriptBlock);
+  const stats = { written: 0, unchanged: 0 };
+  writeIfChanged(pageFile, page, stats);
+
+  log(`[glossary] ${GLOSSARY_PAGE}: ${entries.length} entries inlined + noscript index ` +
+    `(${stats.written} rewritten, ${stats.unchanged} unchanged)`);
+}
+
+/* static per-term page (SEO surface area — not the browse UI) */
+function glossaryTermPage(e, byId) {
+  const root = rootPrefix(`${GLOSSARY_TERMS_DIR}/${e.id}.html`);
+  const setUrl = `${SITE_BASE}/${GLOSSARY_SET_PATH}`;
+  // This page lives in terms/, so sibling term pages are bare filenames.
+  const setHref = '../';
+  const catLabel = GLOSSARY_CAT_LABELS[e.category] || e.category;
+
+  const alternateNames = [e.thai_script, e.alt_thai, ...(e.alt_terms || [])].filter(Boolean);
+  const jsonld = {
+    '@context': 'https://schema.org',
+    '@type': 'DefinedTerm',
+    name: e.term,
+    alternateName: alternateNames,
+    description: e.actual_meaning,
+    inDefinedTermSet: setUrl,
+  };
+
+  const dots = (n) => Array.from({ length: 5 }, (_, i) =>
+    `<span class="dot${i < n ? ' on' : ''}"></span>`).join('');
+
+  const altLine = [
+    e.alt_terms && e.alt_terms.length ? `also ${esc(e.alt_terms.join(', '))}` : '',
+    e.alt_thai ? `<span lang="th">${esc(e.alt_thai)}</span>` : '',
+  ].filter(Boolean).join(' &middot; ');
+
+  // Speak buttons ship disabled and stay that way unless speak.js finds a real
+  // th-* voice, so a device without one shows a disabled control that explains
+  // itself rather than one that silently does nothing.
+  // speak_text wins over thai_script (e.g. "555" is voiced as its Thai spelling).
+  const heroSpeak = e.speak_text || e.thai_script || '';
+
+  const heroSayBtn =
+    `      <div class="gl-hero-say">\n` +
+    `        <button type="button" class="gl-say gl-say--lg" data-speak="${esc(heroSpeak)}"` +
+    ` aria-label="Hear ${esc(e.term)} pronounced" disabled>&#128266;</button>\n` +
+    `        <span class="gl-say-cap">hear the word</span>\n` +
+    `      </div>`;
+
+  const exampleSayBtn = e.example_th
+    ? `        <div class="gl-sec-head">\n` +
+      `          <h2>In a sentence</h2>\n` +
+      `          <button type="button" class="gl-say gl-say--sm" data-speak="${esc(e.example_th)}"` +
+      ` aria-label="Hear the example sentence" disabled>&#128266;</button>\n` +
+      `        </div>`
+    : '        <h2>In a sentence</h2>';
+
+  const related = (e.related || [])
+    .map((r) => byId.get(r))
+    .filter(Boolean)
+    .map((r) => `<li><a href="${esc(r.id)}.html">${esc(r.term)}</a>` +
+      `<span class="th" lang="th">${esc(r.thai_script)}</span></li>`)
+    .join('\n            ');
+
+  const literal = (e.literal_meaning && e.literal_meaning !== '\u2014')
+    ? `        <p class="gl-literal">Literally: ${esc(e.literal_meaning)}</p>\n` : '';
+
+  const note = e.usage_note
+    ? `        <h2>How it&rsquo;s used</h2>\n        <p class="gl-note">${esc(e.usage_note)}</p>\n` : '';
+
+  const seeAlso = related
+    ? `\n\n        <div class="gl-rail-block">\n` +
+      `          <h2 class="gl-rail-h">See also</h2>\n` +
+      `          <ul class="gl-see-list">\n            ${related}\n          </ul>\n` +
+      `        </div>`
+    : '';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${esc(e.term)} (${esc(e.thai_script)}) \u2014 Thai Slang Glossary | Ossuary Atelier</title>
+  <script type="application/ld+json">
+${JSON.stringify(jsonld, null, 2)}
+  </script>
+  <link rel="stylesheet" href="../style.css">
+  <script src="../speak.js" defer></script>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="gl-top">
+    <a href="${setHref}" class="gl-back">&larr; Back to the Glossary</a>
+    <span class="gl-attrib">free tool &middot; built by Ossuary Atelier</span>
+  </header>
+
+  <article class="gl-term-page">
+
+    <header class="gl-term-hero">
+      <h1>${esc(e.term)}<span class="th" lang="th">${esc(e.thai_script)}</span></h1>
+${heroSayBtn}
+      ${altLine ? `<span class="alt">${altLine}</span>\n      ` : ''}<span class="gl-cat gl-cat--${esc(e.category)}">${esc(catLabel)}</span>
+    </header>
+
+    <div class="gl-term-cols">
+      <div class="gl-term-main">
+        <h2>Meaning</h2>
+        <p class="gl-meaning">${esc(e.actual_meaning)}</p>
+${literal}${exampleSayBtn}
+        <div class="gl-example">
+          <p class="gl-ex-th" lang="th">${esc(e.example_th)}</p>
+          <p class="gl-ex-rom">${esc(e.example_romanized)}</p>
+          <p class="gl-ex-en">${esc(e.example_en)}</p>
+        </div>
+${note}      </div>
+
+      <aside class="gl-term-rail">
+        <div class="gl-rail-block">
+          <h2 class="gl-rail-h">The scores</h2>
+          <p class="gl-score"><span class="gl-score-label">usefulness</span> <span class="dots" role="img" aria-label="Usefulness ${e.usefulness} of 5">${dots(e.usefulness)}</span></p>
+          <p class="gl-score"><span class="gl-score-label">slanginess</span> <span class="dots" role="img" aria-label="Slanginess ${e.slanginess} of 5">${dots(e.slanginess)}</span></p>
+          <p class="gl-axis-note">Usefulness runs from &ldquo;rarely needed, mostly colour&rdquo; to &ldquo;essential, daily use&rdquo;. Slanginess runs from a plain standard word up to deep-cut insider slang.</p>
+        </div>${seeAlso}
+      </aside>
+    </div>
+
+    <nav class="gl-term-nav">
+      <a href="${setHref}">&larr; All terms</a>
+      <a href="${root}guide/">The Guide Hub</a>
+    </nav>
+
+  </article>
+
+  <footer class="gl-foot">
+    <span>&copy; 2026 Ossuary Atelier</span>
+    <span><a href="${root}privacy.html">Privacy</a> &middot; <a href="${root}tos.html">Terms</a></span>
+  </footer>
+
+</div>
+
+</body>
+</html>
+`;
+}
+
+function runGlossaryPages() {
+  gate('glossary');
+  const { entries } = loadGlossary();
+  const dir = join(ROOT, GLOSSARY_TERMS_DIR);
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+
+  const byId = new Map(entries.map((e) => [e.id, e]));
+  const stats = { written: 0, unchanged: 0 };
+  for (const e of entries) {
+    const abs = join(dir, `${e.id}.html`);
+    const next = glossaryTermPage(e, byId);
+    const current = existsSync(abs) ? stripBuildArtifacts(readFileSync(abs, 'utf8')) : null;
+    if (current === next) {
+      stats.unchanged++;
+      continue;
+    }
+    writeFileSync(abs, next, 'utf8');
+    stats.written++;
+  }
+
+  // A term removed from the JSON must not leave a stale indexed page behind.
+  let pruned = 0;
+  for (const name of readdirSync(dir)) {
+    if (!name.endsWith('.html')) continue;
+    if (!byId.has(name.slice(0, -'.html'.length))) {
+      unlinkSync(join(dir, name));
+      pruned++;
+    }
+  }
+
+  log(`[glossary-pages] ${entries.length} term page(s) in ${GLOSSARY_TERMS_DIR}/ ` +
+    `(${stats.written} rewritten, ${stats.unchanged} unchanged)` +
+    (pruned ? `, ${pruned} stale page(s) pruned` : ''));
+}
+
 /* ── seo step ──────────────────────────────────────────────── */
 const SEO_SKIP = new Set(['404.html', 'googlecf73118a74657205.html']);
 
@@ -687,6 +1055,7 @@ const SEO_DESC = {
   'blog/field-notes/chatuchak-nov-24.html': 'Four hours in and nothing. Then a face-down Glad News hoodie on a folding table between sections 5 and 6.',
   'tools/phuket-map/index.html': 'Interactive map of second hand shops in Phuket \u2014 thrift stores, vintage dealers, and weekend markets with real reviews, price ranges, and addresses. Free to use.',
   'tools/fretboard-trainer/index.html': 'A free multi-tuning fretboard trainer for DAEAC#E open tuning \u2014 explore scales, modes, chord voicings, and progressions with live audio.',
+  'tools/slang-glossary/index.html': 'A free Thai slang and etiquette glossary \u2014 search 50 everyday, market, and deep-cut Thai terms with pronunciation, examples, and plain-English meanings.',
 };
 
 function stripSeoTags(html) {
@@ -767,6 +1136,30 @@ function runSeo(report) {
     ? JSON.parse(readFileSync(join(DATA_DIR, 'items.json'), 'utf8')).items
     : [];
   const itemById = new Map(items.map(i => [i.id, i]));
+
+  // Glossary entries drive per-term page descriptions. Loaded leniently: a
+  // malformed dataset must not take the whole site build down with it.
+  const glossaryById = new Map();
+  const glossaryFile = join(DATA_DIR, 'glossary.json');
+  if (existsSync(glossaryFile)) {
+    try {
+      for (const g of JSON.parse(readFileSync(glossaryFile, 'utf8')).entries || []) {
+        glossaryById.set(g.id, g);
+      }
+    } catch (err) {
+      warn(`[seo] could not read glossary descriptions: ${err.message}`);
+    }
+  }
+
+  const GLOSSARY_TERM_RE = /^tools\/slang-glossary\/terms\/(.+)\.html$/;
+  const trimEnd = (s) => String(s || '').replace(/[\s.]+$/, '');
+  function glossaryDesc(g) {
+    const meaning = trimEnd(g.actual_meaning);
+    const eg = trimEnd(g.example_en);
+    let d = `${g.term} (${g.thai_script}) is Thai for ${meaning.toLowerCase()}`;
+    if (eg) d += ` \u2014 in a sentence, "${eg}"`;
+    return d.length > 158 ? `${d.slice(0, 155).replace(/\s+\S*$/, '')}\u2026` : `${d}.`;
+  }
   let changed = 0;
 
   const siteJsonLd = `<!-- @@SITE_JSONLD_BEGIN@@ -->\n  <script type="application/ld+json">\n${JSON.stringify({
@@ -815,13 +1208,18 @@ function runSeo(report) {
       : '';
 
     const titleMatch = /<title>([\s\S]*?)<\/title>/i.exec(html);
-    const title = titleMatch ? titleMatch[1].trim() : rel;
+    // unesc() so re-escaping below can't double-encode entities.
+    const title = titleMatch ? unesc(titleMatch[1].trim()) : rel;
 
     let desc = SEO_DESC[rel];
     const idMatch = /^(ITEM-\d+)\.html$/.exec(rel);
     if (idMatch && itemById.has(idMatch[1])) {
       const it = itemById.get(idMatch[1]);
       desc = `${it.name} (${it.era}). Found at ${it.source_shop || 'a local market'}. ${it.price} \u2014 available at Ossuary Atelier.`;
+    }
+    const termMatch = GLOSSARY_TERM_RE.exec(rel);
+    if (termMatch && glossaryById.has(termMatch[1])) {
+      desc = glossaryDesc(glossaryById.get(termMatch[1]));
     }
     if (!desc) desc = 'Ossuary Atelier \u2014 secondhand fashion with verified stories.';
 
@@ -1070,7 +1468,13 @@ const PREF_EXCLUDE = new Set([
   'googlecf73118a74657205.html',
   'tools/phuket-map/index.html',
   'tools/fretboard-trainer/index.html',
+  'tools/slang-glossary/index.html',
 ]);
+/* Prefixes cover the generated per-term pages (50+ paths) that must stay
+   script-free alongside their parent tool page. */
+const PREF_EXCLUDE_PREFIXES = ['tools/slang-glossary/terms/'];
+const prefExcluded = (rel) =>
+  PREF_EXCLUDE.has(rel) || PREF_EXCLUDE_PREFIXES.some((p) => rel.startsWith(p));
 const PREF_SCRIPT = `<script async src="https://news.google.com/swg/js/v1/publisher.js"><\/script>`;
 
 function runPreferred(report) {
@@ -1080,7 +1484,7 @@ function runPreferred(report) {
 
   for (const abs of files) {
     const rel = relOf(abs);
-    if (PREF_EXCLUDE.has(rel)) continue;
+    if (prefExcluded(rel)) continue;
     const original = readFileSync(abs, 'utf8');
     if (original.includes('news.google.com/swg/js/v1/publisher.js')) continue;
     const html = original.replace(/<\/head>/i, `\n${PREF_SCRIPT}\n</head>`);
@@ -1108,6 +1512,7 @@ function runSitemap() {
     'blog/guide/index.html': '0.9',
     'tools/phuket-map/index.html': '0.8',
     'tools/fretboard-trainer/index.html': '0.8',
+    'tools/slang-glossary/index.html': '0.8',
     'contact.html': '0.7',
     'about.html': '0.7',
   };
@@ -1130,7 +1535,7 @@ function runSitemap() {
       if (rel === 'index.html') loc = `${SITE_BASE}/`;
       else if (/\/index\.html$/.test(rel)) loc = `${SITE_BASE}/${rel.replace(/\/index\.html$/, '')}/`;
       else loc = `${SITE_BASE}/${rel}`;
-      const pri = priorities[rel] || (rel.startsWith('blog/') ? '0.8' : rel.startsWith('ITEM-') ? '0.7' : '0.5');
+      const pri = priorities[rel] || (rel.startsWith('blog/') ? '0.8' : rel.startsWith('ITEM-') ? '0.7' : rel.startsWith('tools/slang-glossary/terms/') ? '0.6' : '0.5');
       const freq = changefreqs[rel] || 'monthly';
       return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${freq}</changefreq>\n    <priority>${pri}</priority>\n  </url>`;
     })
@@ -1154,6 +1559,8 @@ const STEPS = {
   shops: runShops,
   map: runMap,
   posts: runPosts,
+  glossary: runGlossary,
+  'glossary-pages': runGlossaryPages,
   seo: runSeo,
   fonts: runFonts,
   js: runJs,
@@ -1162,7 +1569,7 @@ const STEPS = {
   sitemap: runSitemap,
 };
 
-const stepOrder = ['items', 'shops', 'map', 'posts', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'links', 'sitemap'];
+const stepOrder = ['items', 'shops', 'map', 'posts', 'glossary', 'glossary-pages', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'links', 'sitemap'];
 const toRun = opts.steps
   ? opts.steps
   : (opts.enableContent ? stepOrder : ['partials', 'links']);
