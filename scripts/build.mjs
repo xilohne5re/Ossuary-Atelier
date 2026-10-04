@@ -1694,7 +1694,11 @@ function runSitemap() {
    than generated (the browse UI page, mainly). Generated term pages already
    carry the query from their template; this pass is a no-op for them, which is
    what keeps it idempotent. Keyed by resolved path, not filename, because the
-   fretboard trainer ships its own style.css and script.js. */
+   fretboard trainer ships its own style.css and script.js.
+
+   Ordering: this must stay after any step that rewrites the hashed files. None
+   do today — they are hand-authored — so the hashes stay valid wherever it
+   runs. Adding one would mean reordering stepOrder, not just adding a step. */
 function runCacheBust(report) {
   gate('cachebust');
   const byAbs = new Map();
