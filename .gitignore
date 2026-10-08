@@ -15,6 +15,7 @@ Thumbs.db
 # Private working docs — never committed
 DOMAIN-SWITCH.md
 README.md
+secret-thrift.md
 OA_BLOG_BUILD_GUIDE.txt
 oa-about-page-content.md
 oa-implementation-plan.md
@@ -25,3 +26,13 @@ map-locations-list.md
 chatuchak-phuket-market-jj-phuket-thrift-guide.md
 chatuchak entrance.jpg
 probe-state.ps1
+
+# Guess-the-beach scraper internals — page + server publish only
+build_photo_db.py
+candidates.txt
+tools/guess-the-beach/contact-sheet.html
+tools/guess-the-beach/exclude.txt
+tools/guess-the-beach/pinned.txt
+tools/guess-the-beach/trusted.txt
+tools/guess-the-beach/rejects.json
+tools/guess-the-beach/review.json

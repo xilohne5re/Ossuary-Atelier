@@ -78,6 +78,11 @@
 
   --font-display: 'Cinzel', serif;
   --font-body:    'Cormorant Garamond', serif;
+  /* Cinzel and Cormorant carry no Thai glyphs. System stack, zero bytes:
+     Win (Leelawadee UI / Tahoma / Segoe UI Thai), Android/Linux (Noto Sans
+     Thai / Sarabun), macOS (Thonburi). Used by every [lang="th"] run. */
+  --font-thai:    'Leelawadee UI', 'Leelawadee', Tahoma, 'Noto Sans Thai',
+                  'Sarabun', 'Segoe UI Thai', 'Thonburi', sans-serif;
 
   --nav-height: 64px;
   --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
@@ -112,6 +117,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
+}
+
+/* Thai runs (glossary entries, Thai names and quotes in reviews) get a
+   Thai-capable face instead of the generic serif fallback. */
+[lang="th"] {
+  font-family: var(--font-thai);
 }
 
 /* ── INTERACTIVE BACKGROUND CANVAS ── */

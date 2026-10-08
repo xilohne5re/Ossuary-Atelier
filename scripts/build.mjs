@@ -281,7 +281,9 @@ function runPartials(report) {
 const ATTR_RE = /(?:href|src|action)="([^"]+)"/g;
 // item-template.html holds placeholder asset paths (with onerror
 // fallbacks) and is excluded from SEO + sitemap — never checked.
-const LINKS_SKIP = new Set(['item-template.html']);
+// contact-sheet.html is a generated triage artifact that references
+// old photos by design (the user's vetoed links); it is not a page.
+const LINKS_SKIP = new Set(['item-template.html', 'tools/guess-the-beach/contact-sheet.html']);
 
 function runLinks(strict) {
   const files = walkHtml(ROOT);
@@ -942,6 +944,52 @@ function glossarySetLdBlock(entries) {
   );
 }
 
+/* ── guess-the-beach step ─────────────────────────────────
+   Inlines the curated Phuket beach photo set into the game page
+   as window.OA_BEACH_PHOTOS (the same projection the client reads),
+   so the game works over file:// with zero runtime fetches — the
+   same pattern as glossary. Records point at committed files in
+   tools/guess-the-beach/images, and scraper-internal fields are
+   stripped; photos that lost their image file are skipped.          */
+const BEACH_PAGE = 'tools/guess-the-beach/index.html';
+const BEACH_PAGE_DIR = 'tools/guess-the-beach';
+const BEACH_JSON = 'tools/guess-the-beach/photos.json';
+const BEACH_DATA_SLOT = '<!-- @@BEACH_DATA_SLOT@@ -->';
+const BEACH_DATA_END = '/* @@BEACH_DATA_END@@ */';
+const BEACH_CLIENT_FIELDS = [
+  'id', 'answer', 'kind', 'hard', 'region', 'year',
+  'author', 'license', 'credit', 'image', 'w', 'h', 'aliases',
+];
+
+function runBeachGame() {
+  gate('beachgame');
+  const pageFile = join(ROOT, BEACH_PAGE);
+  if (!existsSync(pageFile)) throw new Error(`[beachgame] ${BEACH_PAGE} missing`);
+  const src = join(ROOT, BEACH_JSON);
+  if (!existsSync(src)) throw new Error(`[beachgame] ${BEACH_JSON} missing`);
+
+  const records = JSON.parse(readFileSync(src, 'utf8'))
+    .filter((r) => existsSync(join(ROOT, BEACH_PAGE_DIR, r.image)))
+    .map((r) => BEACH_CLIENT_FIELDS.reduce((o, k) => { o[k] = r[k]; return o; }, {}));
+
+  const dataBlock =
+    `${BEACH_DATA_SLOT}\n` +
+    `  <script>\n` +
+    `  window.OA_BEACH_PHOTOS = /* @@BEACH_DATA_BEGIN@@ */\n` +
+    `${JSON.stringify(records)}\n` +
+    `  ${BEACH_DATA_END}\n` +
+    `  </script>`;
+
+  let page = readFileSync(pageFile, 'utf8');
+  page = replaceSlotRegion(page, BEACH_DATA_SLOT, BEACH_DATA_END, dataBlock, '</script>');
+  const stats = { written: 0, unchanged: 0 };
+  writeIfChanged(pageFile, page, stats);
+
+  const answers = new Set(records.map((r) => r.answer));
+  log(`[beachgame] ${BEACH_PAGE}: ${records.length} photos, ` +
+    `${answers.size} answers (${stats.written} rewritten, ${stats.unchanged} unchanged)`);
+}
+
 /* static per-term page (SEO surface area — not the browse UI) */
 function glossaryTermPage(e, byId) {
   const root = rootPrefix(`${GLOSSARY_TERMS_DIR}/${e.id}.html`);
@@ -1132,7 +1180,7 @@ function runGlossaryPages() {
 }
 
 /* ── seo step ──────────────────────────────────────────────── */
-const SEO_SKIP = new Set(['404.html', 'googlecf73118a74657205.html']);
+const SEO_SKIP = new Set(['404.html', 'googlecf73118a74657205.html', 'tools/guess-the-beach/contact-sheet.html']);
 
 const SEO_NOINDEX = new Set(['internal-dm-scripts.html', 'item-template.html', 'craft.html', 'drops.html']);
 
@@ -1150,10 +1198,12 @@ const SEO_DESC = {
   'blog/guide/waanwaal-phuket.html': '317 Saensook Soi 2, Phuket Town. Curated vintage and thrifted clothing with a strong women\u2019s selection.',
   'blog/guide/chatuchak-phuket-guide.html': "Phuket's actual Chatuchak market \u2014 a 25-year secondhand institution with five buildings, plus the Vintage Market Phuket 77 weekend layer next door.",
   'blog/guide/owa-phuket.html': 'O-WA Second Hand, Phuket \u2014 a dense, well-stocked thrift shop worth visiting on weekday mornings. Source of the Michiko Koshino dress.',
+  'blog/guide/secretthrift.html': "A review of Secret Thrift, a late-night Phuket thrift shop with 30-year-old bottles, rare metal tees and Thai amulets. Here's how to visit the right way.",
   'blog/field-notes/chatuchak-nov-24.html': 'Four hours in and nothing. Then a face-down Glad News hoodie on a folding table between sections 5 and 6.',
   'tools/phuket-map/index.html': 'Interactive map of second hand shops in Phuket \u2014 thrift stores, vintage dealers, and weekend markets with real reviews, price ranges, and addresses. Free to use.',
   'tools/fretboard-trainer/index.html': 'A free multi-tuning fretboard trainer for DAEAC#E open tuning \u2014 explore scales, modes, chord voicings, and progressions with live audio.',
   'tools/slang-glossary/index.html': 'A free Thai slang and etiquette glossary \u2014 search 50 everyday, market, and deep-cut Thai terms with pronunciation, examples, and plain-English meanings.',
+  'tools/guess-the-beach/index.html': 'A free daily Phuket beach-guessing game \u2014 five photos, three tries each, a hint after your first wrong guess, and a shareable score grid.',
 };
 
 function stripSeoTags(html) {
@@ -1585,6 +1635,7 @@ const PREF_EXCLUDE = new Set([
   'tools/phuket-map/index.html',
   'tools/fretboard-trainer/index.html',
   'tools/slang-glossary/index.html',
+  'tools/guess-the-beach/index.html',
 ]);
 /* Prefixes cover the generated per-term pages (50+ paths) that must stay
    script-free alongside their parent tool page. */
@@ -1618,7 +1669,7 @@ function runPreferred(report) {
 
 /* lastmod from the commit that last touched each file, not from its mtime.
    A fresh clone gives every file the checkout timestamp, so an mtime-derived
-   sitemap claims all 70 URLs changed on every machine that builds it — which
+   sitemap claims all 71 URLs changed on every machine that builds it — which
    is exactly the kind of lastmod Google is documented to ignore. Commit dates
    are also stable across runs, so they keep the generated sitemap idempotent.
 
@@ -1655,7 +1706,7 @@ function gitLastmodMap() {
 
 function runSitemap() {
   gate('sitemap');
-  const EXCLUDE = new Set(['item-template.html', 'internal-dm-scripts.html', '404.html', 'craft.html', 'drops.html', 'googlecf73118a74657205.html']);
+  const EXCLUDE = new Set(['item-template.html', 'internal-dm-scripts.html', '404.html', 'craft.html', 'drops.html', 'googlecf73118a74657205.html', 'tools/guess-the-beach/contact-sheet.html']);
   const files = walkHtml(ROOT).filter(abs => !EXCLUDE.has(relOf(abs)));
   const lastmods = gitLastmodMap();
 
@@ -1753,6 +1804,7 @@ const STEPS = {
   posts: runPosts,
   glossary: runGlossary,
   'glossary-pages': runGlossaryPages,
+  beachgame: runBeachGame,
   seo: runSeo,
   fonts: runFonts,
   js: runJs,
@@ -1762,7 +1814,7 @@ const STEPS = {
   sitemap: runSitemap,
 };
 
-const stepOrder = ['items', 'shops', 'map', 'posts', 'glossary', 'glossary-pages', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'cachebust', 'links', 'sitemap'];
+const stepOrder = ['items', 'shops', 'map', 'posts', 'glossary', 'glossary-pages', 'beachgame', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'cachebust', 'links', 'sitemap'];
 const toRun = opts.steps
   ? opts.steps
   : (opts.enableContent ? stepOrder : ['partials', 'links']);
