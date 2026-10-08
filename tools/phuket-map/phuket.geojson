@@ -291,21 +291,6 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Keep Ko Kin Night Thrift (เก็บ เก่า กิน)",
-        "category": "thrift",
-        "description": "Local secret thrift open only at night."
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          98.3862248,
-          7.8770158
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "name": "Japan Life Center Phuket",
         "category": "furniture",
         "description": "Japanese homegoods with great price/quality ratio."

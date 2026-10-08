@@ -241,21 +241,6 @@
       "pin": true
     },
     {
-      "id": "keep-ko-kin-night-thrift",
-      "name": "Keep Ko Kin Night Thrift",
-      "thaiName": "เก็บ เก่า กิน",
-      "category": "thrift",
-      "lat": 7.8770158,
-      "lng": 98.3862248,
-      "note": "Local secret thrift open only at night.",
-      "tags": [
-        "night",
-        "local"
-      ],
-      "price_tags": ["low", "medium", "high"],
-      "pin": true
-    },
-    {
       "id": "japan-life-center-phuket",
       "name": "Japan Life Center Phuket",
       "category": "furniture",

@@ -41,7 +41,6 @@
     'tm-shoes-secondhand': 'North Phuket',
     'preloved-charity-store': 'Bangjo',
     'ran-ch-secondhand': 'Rassada',
-    'keep-ko-kin-night-thrift': 'Phuket Town',
     'japan-life-center-phuket': 'Chalong',
     'pre-loved-too': 'Nai Harn',
     'second-hand-shop': 'Rawai',

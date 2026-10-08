@@ -78,6 +78,11 @@
 
   --font-display: 'Cinzel', serif;
   --font-body:    'Cormorant Garamond', serif;
+  /* Cinzel and Cormorant carry no Thai glyphs. System stack, zero bytes:
+     Win (Leelawadee UI / Tahoma / Segoe UI Thai), Android/Linux (Noto Sans
+     Thai / Sarabun), macOS (Thonburi). Used by every [lang="th"] run. */
+  --font-thai:    'Leelawadee UI', 'Leelawadee', Tahoma, 'Noto Sans Thai',
+                  'Sarabun', 'Segoe UI Thai', 'Thonburi', sans-serif;
 
   --nav-height: 64px;
   --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
@@ -112,6 +117,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
+}
+
+/* Thai runs (glossary entries, Thai names and quotes in reviews) get a
+   Thai-capable face instead of the generic serif fallback. */
+[lang="th"] {
+  font-family: var(--font-thai);
 }
 
 /* ── INTERACTIVE BACKGROUND CANVAS ── */
@@ -1121,6 +1132,20 @@ button {
         <span class="hub-branch-title">Slang Glossary</span>
         <span class="hub-branch-desc">Search 50 Thai slang, etiquette and market words — with pronunciation and plain-English meanings.</span>
         <span class="hub-branch-meta">Open the glossary</span>
+      </a>
+
+      <a href="../tools/guess-the-beach/" class="hub-branch live reveal">
+        <span class="hub-branch-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12c2-4.5 5-6.9 9-6.9s7 2.4 9 6.9c-2 4.5-5 6.9-9 6.9s-7-2.4-9-6.9Z"/>
+            <path d="M8.5 9.6c1 .9 1.7 2 1.9 3.4M14 10c1.2.2 2.3.8 3.2 1.7"/>
+            <path d="M8 16.4c3 .4 7 .2 10-1.6"/>
+          </svg>
+        </span>
+        <span class="hub-branch-title">Guess the Phuket Beach</span>
+        <span class="hub-branch-desc">Five beach photos, one guess each, new daily — with near-miss hints and a shareable score grid.</span>
+        <span class="hub-branch-meta">Play today's round</span>
       </a>
     </div>
   </section>
