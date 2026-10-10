@@ -18,6 +18,11 @@ class InteractiveBackground {
     this.maxDots = this.isLowPerformance ? 40 : 70;
     this.MAX_EXPLOSION_DOTS = this.isLowPerformance ? 40 : 120;
     this.visible = true;
+    this.modalOpen = false;
+    // On low-end/touch devices cap the loop to ~30fps so the fixed
+    // canvas does not monopolise the GPU while scrolling.
+    this.frameInterval = this.isLowPerformance ? 1000 / 30 : 0;
+    this.lastFrame = 0;
 
     this.setupCanvas();
     this.generateRandomDots();
@@ -108,7 +113,11 @@ class InteractiveBackground {
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           if (mutation.attributeName === 'class') {
-            if (modal.classList.contains('open') && isMobile()) {
+            const isOpen = modal.classList.contains('open');
+            // Stop painting the canvas while the modal is open: the
+            // rAF redraw underneath was the main source of jank.
+            this.modalOpen = isOpen;
+            if (isOpen && isMobile()) {
               hideButton();
             } else if (isMobile()) {
               showButton();
@@ -351,6 +360,9 @@ class InteractiveBackground {
   drawConnections() {
     // Skip if toggle is off, tab hidden, or particle budget exhausted.
     if (this.animationsEnabled === false || this.tabVisible === false) return;
+    // The connection pass is O(n^2); skip it entirely on low-end devices
+    // where the frame budget is already tight.
+    if (this.isLowPerformance) return;
     if (this.dots.length > 180) return;
 
     const connectionDistFactor = 0.9;
@@ -447,8 +459,11 @@ class InteractiveBackground {
     this.drawDot(dot);
   }
 
-  animate() {
-    if (this.tabVisible && this.animationsEnabled) {
+  animate(now) {
+    const shouldDraw = this.tabVisible && this.animationsEnabled && !this.modalOpen;
+    const due = !this.frameInterval || !now || now - this.lastFrame >= this.frameInterval;
+    if (shouldDraw && due) {
+      this.lastFrame = now || 0;
       this.ctx.fillStyle = '#080810';
       this.ctx.fillRect(0, 0, this.canvas.width / this.devicePixelRatio, this.canvas.height / this.devicePixelRatio);
 
@@ -488,7 +503,7 @@ class InteractiveBackground {
 
       this.time++;
     }
-    this.animationId = requestAnimationFrame(() => this.animate());
+    this.animationId = requestAnimationFrame((t) => this.animate(t));
   }
 
   destroy() {

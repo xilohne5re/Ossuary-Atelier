@@ -10,6 +10,7 @@ import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, mkdirSy
 import { join, resolve, dirname, relative, posix } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -88,6 +89,9 @@ const IMAGE_DIMS = {
   'assets/images/ITEM-005 MODEL.webp':   [848, 1264],
   'assets/images/ITEM-006.webp':         [992, 1085],
   'assets/images/ITEM-006 MODEL.webp':   [848, 1264],
+  'assets/images/ITEM-013.jpg':          [896, 896],
+  'assets/images/ITEM-013 back.jpg':     [896, 896],
+  'assets/images/ITEM-014.jpg':          [896, 1195],
 };
 
 function imgDims(path) {
@@ -427,7 +431,9 @@ function runItems() {
       document.getElementById('modal-name-el').textContent = card.querySelector('.item-name')?.textContent || '';
       document.getElementById('modal-desc-el').textContent = card.dataset.desc || '';
       document.getElementById('modal-meas-el').textContent = card.dataset.size || '';
-      document.getElementById('modal-price-el').textContent = card.querySelector('.item-price')?.textContent || '';
+      const isSold = card.classList.contains('sold');
+      document.getElementById('modal-price-el').textContent = isSold ? 'Claimed' : (card.querySelector('.item-price')?.textContent || '');
+      document.getElementById('modal-dm-btn').style.display = isSold ? 'none' : 'flex';
       const url = card.dataset.storyUrl;
       document.getElementById('modal-story-btn').href = url || '#';
       document.getElementById('modal-story-btn').style.display = url ? 'flex' : 'none';
@@ -441,9 +447,7 @@ function runItems() {
     }
 
     cards.forEach(card => {
-      if (!card.classList.contains('sold')) {
-        card.addEventListener('click', () => openModal(card));
-      }
+      card.addEventListener('click', () => openModal(card));
     });
 
     document.getElementById('modal-close-btn').addEventListener('click', closeModal);
@@ -1270,11 +1274,44 @@ function deserializeCssFiles(str) {
    The source sheets author their font paths relative to css/ ('../assets/…'),
    which only holds while the file is served as a stylesheet. Rebase them to
    the page's own depth so the fonts resolve at any nesting level. */
+
+/* Optional minification of the inlined CSS. clean-css is loaded lazily and
+   falls back to un-minified output when the dependency is not installed, so
+   the build keeps working from a bare checkout (the source css/*.css stay
+   readable; only the inlined copy is minified). */
+let _cleanCssCtor;
+let _cleanCssTried = false;
+let _cleanCssInstance = null;
+function cleanCss() {
+  if (!_cleanCssTried) {
+    _cleanCssTried = true;
+    try {
+      const require = createRequire(import.meta.url);
+      _cleanCssCtor = require('clean-css');
+    } catch {
+      _cleanCssCtor = null;
+    }
+  }
+  return _cleanCssCtor;
+}
+function minifyCss(css) {
+  const Ctor = cleanCss();
+  if (!Ctor) return css;
+  if (!_cleanCssInstance) _cleanCssInstance = new Ctor({ level: 1 });
+  try {
+    const out = _cleanCssInstance.minify(css);
+    if (out.errors && out.errors.length) return css;
+    return out.styles || css;
+  } catch {
+    return css;
+  }
+}
+
 function renderInlineCss(pairs, rel) {
   const prefix = rootPrefix(rel);
   return pairs.map(p => {
-    const css = cssContent(p.file)
-      .replace(/url\((['"])(?:\.\.\/)+assets\/fonts\//g, `url($1${prefix}assets/fonts/`);
+    const css = minifyCss(cssContent(p.file)
+      .replace(/url\((['"])(?:\.\.\/)+assets\/fonts\//g, `url($1${prefix}assets/fonts/`));
     return p.media ? `@media ${p.media} {\n${css}\n}` : css;
   }).join('\n');
 }
@@ -1365,7 +1402,10 @@ function runSeo(report) {
     const idMatch = /^(ITEM-\d+)\.html$/.exec(rel);
     if (idMatch && itemById.has(idMatch[1])) {
       const it = itemById.get(idMatch[1]);
-      desc = `${it.name} (${it.era}). Found at ${it.source_shop || 'a local market'}. ${it.price} \u2014 available at Ossuary Atelier.`;
+      const statusNote = it.status === 'sold'
+        ? 'Sold.'
+        : `${it.price} \u2014 available at Ossuary Atelier.`;
+      desc = `${it.name} (${it.era}). Found at ${it.source_shop || 'a local market'}. ${statusNote}`;
     }
     const termMatch = GLOSSARY_TERM_RE.exec(rel);
     if (termMatch && glossaryById.has(termMatch[1])) {
@@ -1623,28 +1663,14 @@ function runLegalNotice(report) {
   log(`[legal] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 privacy notice injected`);
 }
 
-/* ── preferred-sources step ─────────────────────────────────
-   Injects Google's "Add to preferred sources" library into the
-   head of every page that presents the shared footer button.
-   Only the article/promotional pages keep the script; internal
-   and utility pages (craft/drops/internal scripts, the map and
-   the verification file) are skipped since they carry no button. */
-const PREF_EXCLUDE = new Set([
-  'craft.html',
-  'drops.html',
-  'internal-dm-scripts.html',
-  'googlecf73118a74657205.html',
-  'tools/phuket-map/index.html',
-  'tools/fretboard-trainer/index.html',
-  'tools/slang-glossary/index.html',
-  'tools/guess-the-beach/index.html',
-]);
-/* Prefixes cover the generated per-term pages (50+ paths) that must stay
-   script-free alongside their parent tool page. */
-const PREF_EXCLUDE_PREFIXES = ['tools/slang-glossary/terms/'];
-const prefExcluded = (rel) =>
-  PREF_EXCLUDE.has(rel) || PREF_EXCLUDE_PREFIXES.some((p) => rel.startsWith(p));
-const PREF_SCRIPT = `<script async src="https://news.google.com/swg/js/v1/publisher.js"><\/script>`;
+/* ── preferred-sources cleanup step ──────────────────────────
+   Removes Google's Subscribe-with-Google library
+   (news.google.com/swg/js/v1/publisher.js) from every page.
+   That script loaded ~92 KB of unused gstatic module bundles and
+   cost mobile performance; the site has no SWG subscription UI.
+   Kept as a step (not deleted) so already-built pages are cleaned
+   on the next build, and the transform is idempotent. */
+const PREF_SCRIPT_RE = /[ \t]*<script[^>]*news\.google\.com\/swg\/js\/v1\/publisher\.js[^>]*>\s*<\/script>\r?\n?/gi;
 
 function runPreferred(report) {
   gate('preferred');
@@ -1652,21 +1678,17 @@ function runPreferred(report) {
   let changed = 0;
 
   for (const abs of files) {
-    const rel = relOf(abs);
-    if (prefExcluded(rel)) continue;
     const original = readFileSync(abs, 'utf8');
-    if (original.includes('news.google.com/swg/js/v1/publisher.js')) continue;
-    const html = original.replace(/<\/head>/i, `\n${PREF_SCRIPT}\n</head>`);
-    if (html !== original) {
-      changed++;
-      if (report) {
-        log(`  [preferred] ${rel} \u2014 would rewrite`);
-      } else {
-        writeFileSync(abs, html, 'utf8');
-      }
+    const html = original.replace(PREF_SCRIPT_RE, '');
+    if (html === original) continue;
+    changed++;
+    if (report) {
+      log(`  [preferred] ${relOf(abs)} \u2014 would rewrite`);
+    } else {
+      writeFileSync(abs, html, 'utf8');
     }
   }
-  log(`[preferred] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 preferred-sources script injected`);
+  log(`[preferred] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 Subscribe-with-Google script removed`);
 }
 
 /* lastmod from the commit that last touched each file, not from its mtime.

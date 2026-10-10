@@ -160,7 +160,7 @@ for (const f of termFiles) {
 const sitemap = read(join(ROOT, 'sitemap.xml'));
 const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 const lastmods = [...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((m) => m[1]);
-ok(locs.length === 72, `sitemap: ${locs.length} urls, want 72`);
+ok(locs.length === 74, `sitemap: ${locs.length} urls, want 74`);
 ok(lastmods.length === locs.length, 'sitemap: every url needs a lastmod');
 ok(!/<changefreq>/.test(sitemap), 'sitemap: changefreq present (Google ignores it)');
 ok(!/<priority>/.test(sitemap), 'sitemap: priority present (Google ignores it)');
