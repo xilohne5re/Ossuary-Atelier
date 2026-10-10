@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ossuaryphuket.me/Ossuary-Atelier/sitemap.xml
+Sitemap: https://ossuaryphuket.me/sitemap.xml

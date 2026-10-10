@@ -24,8 +24,9 @@ const CONTENT_DIR = join(ROOT, '_content');
    robots.txt. Change this ONE value when the domain switches.
    RETIRED_BASES are previous live bases scrubbed from pages on
    every SEO rewrite so no stale host ever survives a switch. */
-const SITE_BASE = 'https://ossuaryphuket.me/Ossuary-Atelier';
+const SITE_BASE = 'https://ossuaryphuket.me';
 const RETIRED_BASES = [
+  'https://ossuaryphuket.me/Ossuary-Atelier',
   'https://ossuaryatelier.github.io',
   'https://xilohne5re.github.io/Ossuary-Atelier',
 ];

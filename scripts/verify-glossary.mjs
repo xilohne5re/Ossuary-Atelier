@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = join(ROOT, 'tools', 'slang-glossary');
 const TERMS = join(DIR, 'terms');
-const SITE = 'https://ossuaryphuket.me/Ossuary-Atelier';
+const SITE = 'https://ossuaryphuket.me';
 const quiet = process.argv.includes('--quiet');
 
 let pass = 0;
@@ -160,7 +160,7 @@ for (const f of termFiles) {
 const sitemap = read(join(ROOT, 'sitemap.xml'));
 const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 const lastmods = [...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((m) => m[1]);
-ok(locs.length === 71, `sitemap: ${locs.length} urls, want 71`);
+ok(locs.length === 72, `sitemap: ${locs.length} urls, want 72`);
 ok(lastmods.length === locs.length, 'sitemap: every url needs a lastmod');
 ok(!/<changefreq>/.test(sitemap), 'sitemap: changefreq present (Google ignores it)');
 ok(!/<priority>/.test(sitemap), 'sitemap: priority present (Google ignores it)');
