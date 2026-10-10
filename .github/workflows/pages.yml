@@ -25,6 +25,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Prune internal files before publish
+        run: |
+          rm -rf _content _partials _data scripts .github
+          find . -maxdepth 1 -name '*.md' -delete
+          rm -f OA_BLOG_BUILD_GUIDE.txt package.json package-lock.json
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
