@@ -11,6 +11,7 @@
     "verify:quiet": "node scripts/verify-glossary.mjs --quiet"
   },
   "dependencies": {
+    "clean-css": "^5.3.3",
     "marked": "^15.0.0",
     "gray-matter": "^4.0.3"
   }
