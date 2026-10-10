@@ -472,7 +472,8 @@ function runShops() {
   const cards = shops.map((shop, idx) => {
     const isLive = shop.status === 'live';
     const link = isLive ? `${shop.id}-phuket.html` : '#'; // review page per live shop
-    const location = [shop.address, ['Phuket', 'Thailand'].filter(Boolean).join(', ')]
+    const region = shop.address && /phuket/i.test(shop.address) ? '' : 'Phuket, Thailand';
+    const location = [shop.address, region]
       .filter(Boolean).join(' · ');
     const cls = ['shop-card', isLive ? '' : 'coming-soon'].filter(Boolean).join(' ');
     const linkLabel = isLive ? 'Read the review' : 'Coming soon';

@@ -22,7 +22,8 @@
       "type": "Feature",
       "properties": {
         "name": "O-WA Second Hand (โอ-ว่ะ เสื้อผ้ามือสอง ภูเก็ต)",
-        "category": "thrift"
+        "category": "thrift",
+        "url": "blog/guide/owa-phuket.html"
       },
       "geometry": {
         "type": "Point",
