@@ -551,7 +551,7 @@ return picks.map(function (a) {
       tokens + '\n\n' +
       'Exact \u00b7 smart \uD83D\uDCA1 \u00b7 sunk \u2B1C\n' +
       hypeLine() + '\n' +
-      'https://ossuaryphuket.me/Ossuary-Atelier/tools/guess-the-beach/';
+      'https://ossuaryphuket.me/tools/guess-the-beach/';
   }
 
   function renderResults() {
@@ -623,7 +623,7 @@ return picks.map(function (a) {
       navigator.share({
         title: 'Guess the Phuket Beach',
         text: text,
-        url: 'https://ossuaryphuket.me/Ossuary-Atelier/tools/guess-the-beach/'
+        url: 'https://ossuaryphuket.me/tools/guess-the-beach/'
       }).catch(function () {});
     }
   }

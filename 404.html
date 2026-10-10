@@ -4,9 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
-    if (location.hostname === 'ossuaryphuket.me' && !location.pathname.startsWith('/Ossuary-Atelier/')) {
-      location.replace('/Ossuary-Atelier/');
-    }
+    (function () {
+      var prefix = '/Ossuary-Atelier';
+      if (location.pathname.indexOf(prefix + '/') === 0 || location.pathname === prefix) {
+        var rest = location.pathname.slice(prefix.length);
+        location.replace((rest || '/') + location.search + location.hash);
+      }
+    })();
   </script>
   <title>404 — Not Found · Ossuary Atelier</title>
   <meta name="robots" content="noindex, nofollow">
@@ -248,7 +252,7 @@
     <h1 class="error-heading">This piece isn't here</h1>
     <p class="error-sub">Sold, moved, or never existed — whatever the case, the page you're looking for is gone.</p>
     <div class="error-actions">
-      <a href="/Ossuary-Atelier/" class="ea-primary">Return Home</a>
+      <a href="/" class="ea-primary">Return Home</a>
       <a href="shop.html" class="ea-secondary">Browse the Shop</a>
     </div>
   </main>
