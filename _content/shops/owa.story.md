@@ -1,11 +1,11 @@
 ---
 shop_id: owa
-status: draft
+status: live
 title: O-WA Second Hand — Phuket
 ---
 
-<!-- Shop review prose for O-WA Second Hand. Currently listed on the guide hub as
-     a "coming soon" card (blog/guide/index.html). Status draft: publish when the
-     review is written. Related item: ITEM-001 (Michiko Koshino Knit Dress). -->
+<!-- Shop review prose for O-WA Second Hand. Published at
+     blog/guide/owa-phuket.html. Related item: ITEM-001 (Michiko Koshino Knit Dress). -->
 
-Placeholder — full review pending.
+We found ITEM-001 here in January 2026 — a Michiko Koshino knit dress, still stiff, barely worn.
+O-WA is dense, well-stocked, and best visited on weekday mornings, before the crowd picks the racks clean.

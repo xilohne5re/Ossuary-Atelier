@@ -13,7 +13,7 @@
       "related_item_url": "ITEM-005.html",
       "status": "live",
       "found_date": "2025-12-23",
-      "image": null,
+      "image": "assets/blog/waanwaal/shop.jpg",
       "lat": 7.875223,
       "lng": 98.393876,
       "guide_slug": "blog/guide/waanwaal-phuket.html",
@@ -26,10 +26,10 @@
       "name": "O-WA Second Hand",
       "city": "Phuket",
       "tags": ["Secondhand", "Clothing"],
-      "price_range": null,
-      "address": null,
+      "price_range": "฿50 – ฿400",
+      "address": "W94C+R2 Ratsada, Mueang Phuket District, Phuket",
       "instagram": null,
-      "facebook": null,
+      "facebook": "https://www.facebook.com/RaiDaiShop",
       "related_item_id": "ITEM-001",
       "related_item_url": "ITEM-001.html",
       "status": "live",
@@ -38,9 +38,10 @@
       "lat": 7.9070484,
       "lng": 98.3691,
       "thai_name": "โอ-ว่ะ เสื้อผ้ามือสอง ภูเก็ต",
-      "price_tags": ["low"],
+      "price_tags": ["low", "medium"],
+      "guide_slug": "blog/guide/owa-phuket.html",
       "story_file": "shops/owa.story.md",
-      "story_status": "draft"
+      "story_status": "live"
     }
   ]
 }
