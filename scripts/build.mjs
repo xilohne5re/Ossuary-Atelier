@@ -1329,7 +1329,7 @@ const SEO_SKIP = new Set(['404.html', 'googlecf73118a74657205.html', 'tools/gues
 const SEO_NOINDEX = new Set(['internal-dm-scripts.html', 'item-template.html', 'craft.html', 'drops.html']);
 
 const SEO_DESC = {
-  'index.html': "A Phuket guide to secondhand style, underground culture, art and skate \u2014 plus a curated thrift shop, an interactive map, and free tools. More than a shop: a place to find what's actually good here.",
+  'index.html': "A Phuket thrift guide with real shop reviews, an interactive map, free tools, and reclaimed pieces with documented stories \u2014 find what's worth keeping.",
   'guide/index.html': "The Phuket Thrift Guide — a living directory of secondhand shops, sourcing notes, and recovery tips across Phuket, plus maps, tools, and the Ossuary Atelier archive.",
   'shop.html': 'Shop curated secondhand clothing from Phuket, sourced piece by piece from local thrift shops. Every item carries a written story of where it\u2019s been.',
   'about.html': 'The story of Ossuary Atelier \u2014 a Phuket secondhand and culture project that grew into a thrift guide, an interactive map, and a growing record of the island\u2019s underground.',
@@ -1530,6 +1530,14 @@ function runSeo(report) {
           'Thai slang',
         ],
         sameAs: ['https://www.instagram.com/ossuary.atelier/'],
+        email: 'mailto:6630612019psu@gmail.com',
+        contactPoint: {
+          '@type': 'ContactPoint',
+          contactType: 'customer service',
+          email: 'mailto:6630612019psu@gmail.com',
+          availableLanguage: ['English'],
+          areaServed: 'Worldwide',
+        },
       },
     ],
   }, null, 2)}\n  </script>\n<!-- @@SITE_JSONLD_END@@ -->`;
