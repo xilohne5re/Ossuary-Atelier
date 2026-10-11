@@ -1763,10 +1763,12 @@ function runJs(report) {
 /* ── legal notice step ────────────────────────────────────────
    Injects a small, auto-closing privacy notice on every page,
    anchored by a stacked marker so rebuilds are idempotent. The
-   site uses no cookies and no analytics, so this is a transparency
-   notice (not a consent wall). The notice shows once per browsing
-   session (sessionStorage), auto-dismisses after 4 seconds, can be
-   closed manually, and honours prefers-reduced-motion. */
+   site uses no cookies and collects no personal data (page views
+   are counted with cookie-free Cloudflare Web Analytics), so this
+   is a transparency notice (not a consent wall). The notice shows
+   once per browsing session (sessionStorage), auto-dismisses after
+   4 seconds, can be closed manually, and honours
+   prefers-reduced-motion. */
 const NOTICE_MARKER = '<!-- @@NOTICE_SLOT@@ -->';
 const NOTICE_CSS = [
   '#notice-privacy{position:fixed;right:1rem;bottom:1rem;z-index:9900;max-width:20rem;',
@@ -1786,7 +1788,7 @@ function noticeSnippet(prefix) {
   return `${NOTICE_MARKER}\n` +
     `<div id="notice-privacy" role="status">\n` +
     `  <style>${NOTICE_CSS}</style>\n` +
-    `  <p>This site uses <strong>no tracking cookies</strong> and no analytics. Read our <a href="${prefix}privacy.html">privacy policy</a>.</p>\n` +
+    `  <p>This site uses <strong>no tracking cookies</strong> and collects no personal data. Usage stats are cookie-free and anonymous. Read our <a href="${prefix}privacy.html">privacy policy</a>.</p>\n` +
     `  <button type="button" class="notice-dismiss">Got it</button>\n` +
     `</div>\n` +
     `<script>\n` +
@@ -1937,7 +1939,7 @@ function runSitemap() {
 > browser tools, and this record of the island's underground — art, skate, and
 > the things worth keeping. We are not against new technology; we are exploring
 > how to use it in healthy, creative, human ways. No tracking cookies, no
-> analytics, no cart — every sale is a conversation.
+> personal data collection, no cart — every sale is a conversation.
 
 ## Core pages
 

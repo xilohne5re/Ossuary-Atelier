@@ -393,7 +393,7 @@ Curated secondhand from Phuket — plus the thrift guide, map, tools and stories
       </details>
       <details class="faq-item">
         <summary>Is the Phuket Thrift Guide really free?</summary>
-        <p>Yes. The <a href="guide/">guide</a>, the <a href="tools/phuket-map/">map</a> and the <a href="tools/slang-glossary/">tools</a> are free and ad-free, with no tracking cookies and no analytics. If you want to keep them that way, see <a href="support.html">Support</a>.</p>
+        <p>Yes. The <a href="guide/">guide</a>, the <a href="tools/phuket-map/">map</a> and the <a href="tools/slang-glossary/">tools</a> are free and ad-free, with no tracking cookies and no personal data collection. If you want to keep them that way, see <a href="support.html">Support</a>.</p>
       </details>
       <details class="faq-item">
         <summary>Do you use AI?</summary>
@@ -457,7 +457,7 @@ Curated secondhand from Phuket — plus the thrift guide, map, tools and stories
         {
           "@type": "Question",
           "name": "Is the Phuket Thrift Guide really free?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes. The guide, the map and the tools are free and ad-free, with no tracking cookies and no analytics." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. The guide, the map and the tools are free and ad-free, with no tracking cookies and no personal data collection." }
         },
         {
           "@type": "Question",
@@ -551,20 +551,32 @@ Curated secondhand from Phuket — plus the thrift guide, map, tools and stories
   <script src="js/index.js?v=7c8ed007" defer></script>
 
 
+
+
 <!-- @@NOTICE_SLOT@@ -->
 <div id="notice-privacy" role="status">
-  <style>#notice-privacy{position:fixed;right:1rem;bottom:1rem;z-index:9900;max-width:20rem;background:rgba(8,8,16,.95);border:1px solid rgba(201,184,232,.18);border-left:3px solid #A184CD;color:#C9B8E8;font-size:.92rem;line-height:1.6;padding:.9rem 1.1rem;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:1;transition:opacity .5s ease,transform .5s ease}#notice-privacy p{margin:0}#notice-privacy a{color:#C9B8E8;text-decoration:underline;text-underline-offset:2px}#notice-privacy button{margin-top:.6rem;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:#C9B8E8;background:none;border:1px solid rgba(201,184,232,.25);padding:.45rem 1rem;cursor:pointer}#notice-privacy.off{opacity:0;transform:translateY(6px);pointer-events:none}@media(max-width:768px){#notice-privacy{right:.75rem;left:.75rem;bottom:.75rem;max-width:none}}</style>
-  <p>This site uses <strong>no tracking cookies</strong> and no analytics. Read our <a href="privacy.html">privacy policy</a>.</p>
+  <style>#notice-privacy{position:fixed;right:1rem;bottom:1rem;z-index:9900;max-width:20rem;background:rgba(8,8,16,.95);border:1px solid rgba(201,184,232,.18);border-left:3px solid #A184CD;color:#C9B8E8;font-size:.92rem;line-height:1.6;padding:.9rem 1.1rem;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .5s ease,transform .5s ease}#notice-privacy.on{opacity:1;transform:translateY(0);pointer-events:auto}#notice-privacy p{margin:0}#notice-privacy a{color:#C9B8E8;text-decoration:underline;text-underline-offset:2px}#notice-privacy button{margin-top:.6rem;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:#C9B8E8;background:none;border:1px solid rgba(201,184,232,.25);padding:.45rem 1rem;cursor:pointer}#notice-privacy.off{opacity:0;transform:translateY(6px);pointer-events:none}@media(max-width:768px){#notice-privacy{right:.75rem;left:.75rem;bottom:.75rem;max-width:none}}</style>
+  <p>This site uses <strong>no tracking cookies</strong> and collects no personal data. Usage stats are cookie-free and anonymous. Read our <a href="privacy.html">privacy policy</a>.</p>
   <button type="button" class="notice-dismiss">Got it</button>
 </div>
 <script>
 (function(){
+  var KEY='noticeSeen';
   var el=document.getElementById('notice-privacy');
   if(!el)return;
+  var seen=false;
+  try{ seen=sessionStorage.getItem(KEY)==='true'; }catch(_){}
+  if(seen){ el.remove(); return; }
   if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.style.transition='none';}
+  function dismiss(){
+    el.classList.remove('on');
+    el.classList.add('off');
+  }
   var b=el.querySelector('.notice-dismiss');
-  if(b)b.addEventListener('click',function(){el.classList.add('off');});
-  setTimeout(function(){el.classList.add('off');},4000);
+  if(b)b.addEventListener('click',dismiss);
+  try{ sessionStorage.setItem(KEY,'true'); }catch(_){}
+  requestAnimationFrame(function(){ el.classList.add('on'); });
+  setTimeout(dismiss,4000);
 })();
 </script>
 </body>
