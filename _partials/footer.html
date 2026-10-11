@@ -1,19 +1,51 @@
-<footer id="footer">
-  <span class="footer-copy">Ossuary Atelier © 2026</span>
-  <div class="footer-links">
-    <a href="@ROOT@privacy.html">Privacy</a>
-    <a href="@ROOT@tos.html">TOS</a>
+<style>
+#footer.footer-expanded{display:block;padding:3rem 3rem 2rem;text-align:left;}
+#footer.footer-expanded .footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:2.5rem;max-width:1100px;margin:0 auto;}
+#footer.footer-expanded .footer-brand .footer-copy{display:block;margin-bottom:0.9rem;}
+#footer.footer-expanded .footer-tag{font-family:var(--font-body);font-style:italic;font-size:1.05rem;color:var(--violet-dim);line-height:1.7;max-width:320px;}
+#footer.footer-expanded .footer-col-title{font-family:var(--font-display);font-weight:600;font-size:0.62rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--bruise-mid);margin-bottom:1rem;}
+#footer.footer-expanded .footer-col a{display:block;font-family:var(--font-display);font-size:0.68rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--violet-dim);padding:0.35rem 0;transition:color 0.3s;}
+#footer.footer-expanded .footer-col a:hover{color:var(--violet);}
+#footer.footer-expanded .footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-top:1px solid var(--violet-faint);margin:2.5rem auto 0;padding-top:1.5rem;max-width:1100px;}
+@media(max-width:768px){#footer.footer-expanded .footer-grid{grid-template-columns:1fr 1fr;gap:2rem;}#footer.footer-expanded .footer-brand{grid-column:1 / -1;}}
+</style>
+<footer id="footer" class="footer-expanded">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="footer-copy">Ossuary Atelier © 2026</span>
+      <p class="footer-tag">A Phuket guide to secondhand style, underground culture, art, and the things worth keeping.</p>
+    </div>
+    <nav class="footer-col" aria-label="Explore">
+      <h2 class="footer-col-title">Explore</h2>
+      <a href="@ROOT@guide/">Thrift Guide</a>
+      <a href="@ROOT@shop.html">Shop</a>
+      <a href="@ROOT@blog/">Journal</a>
+      <a href="@ROOT@tools/phuket-map/">Phuket Map</a>
+    </nav>
+    <nav class="footer-col" aria-label="About the project">
+      <h2 class="footer-col-title">About</h2>
+      <a href="@ROOT@about.html">About</a>
+      <a href="@ROOT@how-it-works.html">How It Works</a>
+      <a href="@ROOT@support.html">Support</a>
+      <a href="@ROOT@contact.html">Contact</a>
+    </nav>
+    <nav class="footer-col" aria-label="Legal">
+      <h2 class="footer-col-title">Legal</h2>
+      <a href="@ROOT@privacy.html">Privacy</a>
+      <a href="@ROOT@tos.html">TOS</a>
+    </nav>
   </div>
-  <a href="https://www.instagram.com/ossuary.atelier/"
-     target="_blank" rel="noopener"
-     class="footer-ig" aria-label="Instagram">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-         stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-      <circle cx="12" cy="12" r="4"/>
-      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-    </svg>
-    @ossuaryatelier
-  </a>
-  <div class="footer-pref" google-add-preferred-source-btn data-theme="dark" data-lang="en"></div>
+  <div class="footer-bottom">
+    <a href="https://www.instagram.com/ossuary.atelier/"
+       target="_blank" rel="noopener"
+       class="footer-ig" aria-label="Instagram">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      @ossuaryatelier
+    </a>
+  </div>
 </footer>
