@@ -12,7 +12,10 @@
   },
   "dependencies": {
     "clean-css": "^5.3.3",
-    "marked": "^15.0.0",
-    "gray-matter": "^4.0.3"
+    "gray-matter": "^4.0.3",
+    "marked": "^15.0.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5"
   }
 }

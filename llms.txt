@@ -1,0 +1,32 @@
+# Ossuary Atelier
+
+> Ossuary Atelier is a Phuket-based secondhand and culture project. It began as a
+> curated thrift clothing archive and grew into a local guide: a directory of
+> Phuket secondhand shops, an interactive map, a Thai slang glossary, small
+> browser tools, and this record of the island's underground — art, skate, and
+> the things worth keeping. We are not against new technology; we are exploring
+> how to use it in healthy, creative, human ways. No tracking cookies, no
+> analytics, no cart — every sale is a conversation.
+
+## Core pages
+
+- [Home](https://ossuaryphuket.me/): what Ossuary Atelier is and where to start.
+- [Phuket Thrift Guide](https://ossuaryphuket.me/guide/): the live hub — shops, notes, map and tools.
+- [Thrift Directory](https://ossuaryphuket.me/blog/guide/): honest reviews of Phuket secondhand shops.
+- [Shop](https://ossuaryphuket.me/shop.html): current and archived pieces, each with a written story.
+- [The Osteology](https://ossuaryphuket.me/blog/): the journal — piece stories, shop reviews and field notes.
+- [About](https://ossuaryphuket.me/about.html): the story, philosophy and where it is going.
+- [How It Works](https://ossuaryphuket.me/how-it-works.html): sourcing, research and documentation.
+- [Contact](https://ossuaryphuket.me/contact.html): claim a piece or get in touch.
+
+## Tools
+
+- [Phuket Map](https://ossuaryphuket.me/tools/phuket-map/): open, downloadable map of thrift spots and beaches.
+- [Thai Slang Glossary](https://ossuaryphuket.me/tools/slang-glossary/): 50 everyday and deep-cut Thai terms.
+- [Fretboard Trainer](https://ossuaryphuket.me/tools/fretboard-trainer/): a free multi-tuning guitar trainer.
+- [Guess the Beach](https://ossuaryphuket.me/tools/guess-the-beach/): a daily Phuket beach-guessing game.
+
+## Optional
+
+- [Privacy](https://ossuaryphuket.me/privacy.html): cookie-free policy.
+- [Terms](https://ossuaryphuket.me/tos.html): purchase terms.

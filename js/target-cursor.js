@@ -18,6 +18,7 @@
   };
 
   if (isMobile()) return;
+  if (typeof gsap === 'undefined') return;
 
   const cursorWrap = document.createElement('div');
   cursorWrap.className = 'target-cursor-wrapper';

@@ -7,7 +7,7 @@
    ═══════════════════════════════════════════════════════════ */
 
 import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, mkdirSync, unlinkSync } from 'node:fs';
-import { join, resolve, dirname, relative, posix } from 'node:path';
+import { join, resolve, dirname, relative, extname, posix } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
@@ -383,12 +383,17 @@ function runItems() {
     ].filter(Boolean).join('\n');
   }).join('\n');
 
+  // The cards embed relative hero-image paths. Fingerprint them here (same
+  // shared pass the cache-bust step uses) so regenerating the region does not
+  // strip the ?v= query and force a rewrite on every run.
+  const fingerprintedCards = fingerprintAssetRefs(cards, ROOT).html;
+
   shop = shop.replace(
     /<!-- DROPS_CARDS_BEGIN -->[\s\S]*?<!-- DROPS_CARDS_END -->/,
-    `<!-- DROPS_CARDS_BEGIN -->\n${cards}\n<!-- DROPS_CARDS_END -->`
+    `<!-- DROPS_CARDS_BEGIN -->\n${fingerprintedCards}\n<!-- DROPS_CARDS_END -->`
   );
   if (!shop.includes('<!-- DROPS_CARDS_BEGIN -->')) {
-    shop = shop.replace('<!-- Cards injected by JS -->', `<!-- DROPS_CARDS_BEGIN -->\n${cards}\n<!-- DROPS_CARDS_END -->`);
+    shop = shop.replace('<!-- Cards injected by JS -->', `<!-- DROPS_CARDS_BEGIN -->\n${fingerprintedCards}\n<!-- DROPS_CARDS_END -->`);
   }
 
   const available = items.filter(i => i.status === 'available').length;
@@ -460,6 +465,56 @@ function runItems() {
 
   writeFileSync(shopFile, shop, 'utf8');
   log(`[items] shop.html: ${items.length} item card(s) generated`);
+
+  // Product JSON-LD on the hand-authored story pages, kept in sync from
+  // items.json. Marker-anchored so rebuilds are idempotent.
+  const priceN = (s) => String(s || '').replace(/[^\d.]/g, '');
+  const itemLd = (item) => [
+    `<!-- @@ITEM_JSONLD@@ -->`,
+    `  <script type="application/ld+json">`,
+    JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: item.name,
+      description: item.desc || '',
+      image: item.images?.hero ? `${SITE_BASE}/${item.images.hero}` : undefined,
+      url: `${SITE_BASE}/${item.id}.html`,
+      category: 'Secondhand clothing',
+      brand: { '@type': 'Brand', name: 'Ossuary Atelier' },
+      additionalProperty: [
+        { '@type': 'PropertyValue', name: 'Item ID', value: item.id },
+        { '@type': 'PropertyValue', name: 'Era', value: item.era || 'Unknown' },
+        { '@type': 'PropertyValue', name: 'Origin', value: item.origin || 'Unknown' },
+        { '@type': 'PropertyValue', name: 'Fabric', value: item.fabric || 'Unknown' },
+      ].filter(p => p.value),
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'THB',
+        price: priceN(item.price) || 0,
+        availability: item.status === 'sold'
+          ? 'https://schema.org/SoldOut'
+          : 'https://schema.org/InStock',
+      },
+      audience: item.size_label
+        ? { '@type': 'PeopleAudience', suggestedSize: item.size_label }
+        : undefined,
+    }, null, 2),
+    `  </script>`,
+    `<!-- @@ITEM_JSONLD_END@@ -->`,
+  ].filter(l => l !== undefined).join('\n');
+  for (const item of items) {
+    const page = join(ROOT, `${item.id}.html`);
+    if (!existsSync(page)) continue;
+    let html = readFileSync(page, 'utf8');
+    const block = itemLd(item);
+    if (html.includes('<!-- @@ITEM_JSONLD@@ -->')) {
+      html = html.replace(/<!-- @@ITEM_JSONLD@@ -->[\s\S]*?<!-- @@ITEM_JSONLD_END@@ -->/, block);
+    } else {
+      html = html.replace(/<\/body>/i, `\n${block}\n</body>`);
+    }
+    writeFileSync(page, html, 'utf8');
+  }
+  log('[items] item story-page JSON-LD written');
 }
 
 function runShops() {
@@ -759,6 +814,89 @@ const bust = (name) => {
   const h = glossaryAssetHashes().get(name);
   return h ? `${name}?v=${h}` : name;
 };
+
+/* ── asset fingerprinting ──────────────────────────────────────
+   Content hashes for every cacheable asset, keyed by absolute path. The
+   cache-bust step rewrites each HTML reference to carry `?v=<hash>`, so a
+   long-lived, immutable edge/browser TTL (set at the CDN) is safe: the URL
+   changes exactly when the bytes do. Uses the same sha256/8 hash as the
+   glossary helper, so glossary term pages — which stamp their own query from
+   the template — stay consistent with what the cache-bust pass computes. */
+const FINGERPRINT_EXTS = new Set([
+  '.css', '.js', '.woff2', '.woff', '.ttf', '.otf', '.eot',
+  '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.ico', '.avif',
+  '.mp4', '.webm', '.mov', '.mp3', '.m4a', '.ogg', '.wav', '.pdf',
+]);
+let _assetHashes = null;
+function assetHashes() {
+  if (!_assetHashes) {
+    _assetHashes = new Map();
+    const files = [];
+    (function walk(dir) {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        if (IGNORE_DIRS.has(entry.name)) continue;
+        const full = join(dir, entry.name);
+        if (entry.isDirectory()) walk(full);
+        else if (FINGERPRINT_EXTS.has(extname(entry.name).toLowerCase())) files.push(full);
+      }
+    })(ROOT);
+    for (const abs of files) {
+      _assetHashes.set(resolve(abs),
+        createHash('sha256').update(readFileSync(abs)).digest('hex').slice(0, 8));
+    }
+  }
+  return _assetHashes;
+}
+
+/* Returns the fingerprinted form of a single asset reference, or null when it
+   is external, a fragment, a data URI, carries a foreign query, or is simply
+   not a hashed asset (so page-to-page links are left alone). */
+function fingerprintValue(value, baseDir) {
+  if (!value || /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(value)) return null;
+  let rest = value;
+  let frag = '';
+  const hi = rest.indexOf('#');
+  if (hi >= 0) { frag = rest.slice(hi); rest = rest.slice(0, hi); }
+  let query = '';
+  const qi = rest.indexOf('?');
+  if (qi >= 0) { query = rest.slice(qi + 1); rest = rest.slice(0, qi); }
+  if (!rest) return null;
+  if (query && !/^v=[0-9a-f]{8}$/.test(query)) return null;
+  let abs;
+  try {
+    abs = rest.startsWith('/')
+      ? resolve(ROOT, decodeURI(rest.slice(1)))
+      : resolve(baseDir, decodeURI(rest));
+  } catch { return null; }
+  const hash = assetHashes().get(abs);
+  if (!hash) return null;
+  return `${rest}?v=${hash}${frag}`;
+}
+
+/* Rewrites every asset reference in an HTML fragment: `href`/`src`/`poster`
+   attributes and inlined-CSS `url(...)` values, preserving the quote style so a
+   `src='...'` inside an onclick handler is not broken. Returns the new HTML plus
+   a hit count. Shared by the seo step (which regenerates the <head> that carries
+   the font preloads + inlined @font-face URLs) and the cache-bust step, so both
+   produce identical output and neither churns the other. */
+function fingerprintAssetRefs(html, baseDir) {
+  const attrRe = /\b(href|src|poster)=(["'])([^"']+)\2/g;
+  const urlRe = /url\((['"]?)([^'")]+)\1\)/g;
+  let hits = 0;
+  const withAttrs = html.replace(attrRe, (m, attr, q, value) => {
+    const next = fingerprintValue(value, baseDir);
+    if (next === null) return m;
+    hits++;
+    return `${attr}=${q}${next}${q}`;
+  });
+  const out = withAttrs.replace(urlRe, (m, q, value) => {
+    const next = fingerprintValue(value, baseDir);
+    if (next === null) return m;
+    hits++;
+    return `url(${q}${next}${q})`;
+  });
+  return { html: out, hits };
+}
 
 function loadGlossary() {
   const file = join(DATA_DIR, 'glossary.json');
@@ -1191,15 +1329,17 @@ const SEO_SKIP = new Set(['404.html', 'googlecf73118a74657205.html', 'tools/gues
 const SEO_NOINDEX = new Set(['internal-dm-scripts.html', 'item-template.html', 'craft.html', 'drops.html']);
 
 const SEO_DESC = {
-  'index.html': "Curated secondhand fashion from Phuket, with QR-verified provenance on every piece \u2014 plus a growing Phuket thrift guide and interactive map.",
+  'index.html': "A Phuket guide to secondhand style, underground culture, art and skate \u2014 plus a curated thrift shop, an interactive map, and free tools. More than a shop: a place to find what's actually good here.",
   'guide/index.html': "The Phuket Thrift Guide — a living directory of secondhand shops, sourcing notes, and recovery tips across Phuket, plus maps, tools, and the Ossuary Atelier archive.",
-  'shop.html': 'Shop curated secondhand clothing from Phuket, sourced piece by piece from local thrift shops. Every item carries a QR-verified story of where it\'s been.',
-  'about.html': 'The story of Ossuary Atelier \u2014 a Phuket secondhand clothing brand that grew into a thrift guide, an interactive map, and a growing record of Phuket\u2019s secondhand culture.',
-  'contact.html': 'Contact Ossuary Atelier \u2014 DM to claim a piece, ask about provenance, or begin a collaboration.',
+  'shop.html': 'Shop curated secondhand clothing from Phuket, sourced piece by piece from local thrift shops. Every item carries a written story of where it\u2019s been.',
+  'about.html': 'The story of Ossuary Atelier \u2014 a Phuket secondhand and culture project that grew into a thrift guide, an interactive map, and a growing record of the island\u2019s underground.',
+  'contact.html': 'Contact Ossuary Atelier \u2014 claim a piece, ask about a garment\u2019s origin, pitch a collaboration, or just say hello.',
+  'how-it-works.html': 'How Ossuary Atelier works \u2014 how pieces are sourced, researched and documented in Phuket, and how the guide and tools fit together. No cart, no algorithm.',
+  'support.html': 'Support Ossuary Atelier \u2014 the free ways to help keep the Phuket thrift guide, map and tools independent, honest and free to use.',
   'tos.html': 'Ossuary Atelier purchase terms \u2014 payment, shipping, returns policy, and condition disclosure for all orders.',
   'privacy.html': 'Ossuary Atelier privacy notice \u2014 what this site collects (comments, purchase enquiries, technical logs), our cookie-free policy, and your data rights.',
   'partnership.html': 'Ossuary Atelier creator partnership agreement \u2014 what we offer, what we ask, and how it works.',
-  'blog/index.html': "Ossuary Atelier's field journal \u2014 Phuket thrift guides, sourcing notes, and the study of found things.",
+  'blog/index.html': "The Osteology \u2014 Ossuary Atelier's journal of piece stories, Phuket thrift guides, shop reviews, sourcing notes, and the study of found things.",
   'blog/guide/index.html': 'Phuket thrift & secondhand guide \u2014 honest shop reviews, price ranges, and what to look for when thrifting in Phuket.',
   'blog/guide/waanwaal-phuket.html': '317 Saensook Soi 2, Phuket Town. Curated vintage and thrifted clothing with a strong women\u2019s selection.',
   'blog/guide/chatuchak-phuket-guide.html': "Phuket's actual Chatuchak market \u2014 a 25-year secondhand institution with five buildings, plus the Vintage Market Phuket 77 weekend layer next door.",
@@ -1357,6 +1497,7 @@ function runSeo(report) {
         '@id': `${SITE_BASE}/#website`,
         url: `${SITE_BASE}/`,
         name: 'Ossuary Atelier',
+        description: 'A Phuket guide to secondhand style, underground culture, art and the things worth keeping.',
         inLanguage: 'en',
       },
       {
@@ -1364,6 +1505,8 @@ function runSeo(report) {
         '@id': `${SITE_BASE}/#organization`,
         url: `${SITE_BASE}/`,
         name: 'Ossuary Atelier',
+        description: 'A Phuket-based secondhand and culture project: a curated thrift archive, a local thrift guide, an interactive map, free tools, and a record of the island\u2019s underground.',
+        slogan: 'We revive culture, and the happiness of participating in it.',
         logo: {
           '@type': 'ImageObject',
           '@id': `${SITE_BASE}/#logo`,
@@ -1371,6 +1514,21 @@ function runSeo(report) {
           width: 512,
           height: 512,
         },
+        foundingLocation: {
+          '@type': 'Place',
+          name: 'Phuket, Thailand',
+        },
+        areaServed: {
+          '@type': 'Place',
+          name: 'Phuket, Thailand',
+        },
+        knowsAbout: [
+          'Phuket secondhand clothing',
+          'Phuket thrift shops',
+          'Vintage fashion',
+          'Phuket underground culture',
+          'Thai slang',
+        ],
         sameAs: ['https://www.instagram.com/ossuary.atelier/'],
       },
     ],
@@ -1411,7 +1569,7 @@ function runSeo(report) {
     if (termMatch && glossaryById.has(termMatch[1])) {
       desc = glossaryDesc(glossaryById.get(termMatch[1]));
     }
-    if (!desc) desc = 'Ossuary Atelier \u2014 secondhand fashion with verified stories.';
+    if (!desc) desc = 'Ossuary Atelier \u2014 secondhand style, Phuket culture, and the things worth keeping.';
 
     const root = rootPrefix(rel);
     const preloads = fontPreloadsFor(rel, termMatch && glossaryById.get(termMatch[1]))
@@ -1441,7 +1599,7 @@ function runSeo(report) {
     html = html.replace(/<\/title>\s+/, '</title>\n  ');
 
     const noindex = SEO_NOINDEX.has(rel) ? '\n  <meta name="robots" content="noindex">' : '';
-    const seoBlock =
+    const rawSeoBlock =
       `<!-- @@SEO_SLOT@@ -->\n` +
       `  <link rel="canonical" href="${canonical}">\n` +
       `  <meta name="description" content="${esc(desc)}">\n` +
@@ -1452,7 +1610,7 @@ function runSeo(report) {
       `  <meta property="og:type" content="${ogType}">\n` +
       `  <meta property="og:url" content="${canonical}">\n` +
       `  <meta property="og:image" content="${SITE_BASE}/assets/og-image.png">\n` +
-      `  <meta property="og:image:alt" content="Ossuary Atelier \u2014 secondhand fashion with verified stories.">\n` +
+      `  <meta property="og:image:alt" content="Ossuary Atelier \u2014 a Phuket guide to secondhand style and underground culture.">\n` +
       `  <meta property="og:image:width" content="1200">\n` +
       `  <meta property="og:image:height" content="630">\n` +
       `  <meta name="twitter:card" content="summary_large_image">\n` +
@@ -1468,6 +1626,11 @@ function runSeo(report) {
       `${cssInline}` +
       `${noindex}\n` +
       `<!-- @@SEO_END@@ -->`;
+
+    // Fingerprint the asset URLs this block regenerates (font preloads, inlined
+    // @font-face, favicons) so the seo step is idempotent with the cache-bust
+    // pass, which would otherwise re-tag those same refs on every run.
+    const seoBlock = fingerprintAssetRefs(rawSeoBlock, dirname(abs)).html;
 
     html = html.replace('</title>', `</title>\n\n  ${seoBlock}`);
 
@@ -1754,9 +1917,45 @@ function runSitemap() {
   writeFileSync(join(ROOT, 'sitemap.xml'), sitemap, 'utf8');
   log(`[sitemap] sitemap.xml: ${files.length} urls`);
 
-  const robots = `User-agent: *\nAllow: /\n\nSitemap: ${SITE_BASE}/sitemap.xml\n`;
+  const robots = `User-agent: *\nAllow: /\n\n# llms.txt: ${SITE_BASE}/llms.txt\nSitemap: ${SITE_BASE}/sitemap.xml\n`;
   writeFileSync(join(ROOT, 'robots.txt'), robots, 'utf8');
   log('[sitemap] robots.txt written');
+
+  const llms = `# Ossuary Atelier
+
+> Ossuary Atelier is a Phuket-based secondhand and culture project. It began as a
+> curated thrift clothing archive and grew into a local guide: a directory of
+> Phuket secondhand shops, an interactive map, a Thai slang glossary, small
+> browser tools, and this record of the island's underground — art, skate, and
+> the things worth keeping. We are not against new technology; we are exploring
+> how to use it in healthy, creative, human ways. No tracking cookies, no
+> analytics, no cart — every sale is a conversation.
+
+## Core pages
+
+- [Home](${SITE_BASE}/): what Ossuary Atelier is and where to start.
+- [Phuket Thrift Guide](${SITE_BASE}/guide/): the live hub — shops, notes, map and tools.
+- [Thrift Directory](${SITE_BASE}/blog/guide/): honest reviews of Phuket secondhand shops.
+- [Shop](${SITE_BASE}/shop.html): current and archived pieces, each with a written story.
+- [The Osteology](${SITE_BASE}/blog/): the journal — piece stories, shop reviews and field notes.
+- [About](${SITE_BASE}/about.html): the story, philosophy and where it is going.
+- [How It Works](${SITE_BASE}/how-it-works.html): sourcing, research and documentation.
+- [Contact](${SITE_BASE}/contact.html): claim a piece or get in touch.
+
+## Tools
+
+- [Phuket Map](${SITE_BASE}/tools/phuket-map/): open, downloadable map of thrift spots and beaches.
+- [Thai Slang Glossary](${SITE_BASE}/tools/slang-glossary/): 50 everyday and deep-cut Thai terms.
+- [Fretboard Trainer](${SITE_BASE}/tools/fretboard-trainer/): a free multi-tuning guitar trainer.
+- [Guess the Beach](${SITE_BASE}/tools/guess-the-beach/): a daily Phuket beach-guessing game.
+
+## Optional
+
+- [Privacy](${SITE_BASE}/privacy.html): cookie-free policy.
+- [Terms](${SITE_BASE}/tos.html): purchase terms.
+`;
+  writeFileSync(join(ROOT, 'llms.txt'), llms, 'utf8');
+  log('[sitemap] llms.txt written');
 }
 
 /* ── cache-bust step ───────────────────────────────────────────
@@ -1765,56 +1964,38 @@ function runSitemap() {
    HTML. A content hash in the query string changes the URL exactly when the
    bytes change, which turns that ten-minute window into a hard bust.
 
-   Applies the glossary hashes to the pages that are edited in place rather
-   than generated (the browse UI page, mainly). Generated term pages already
-   carry the query from their template; this pass is a no-op for them, which is
-   what keeps it idempotent. Keyed by resolved path, not filename, because the
-   fretboard trainer ships its own style.css and script.js.
+   Every HTML file is rewritten in place: `href`/`src`/`poster` attributes and
+   inlined-CSS `url(...)` values that resolve to a hashed asset gain (or replace)
+   a `?v=<hash>`. Keyed by resolved absolute path, not filename, so the fretboard
+   trainer and the glossary can each ship a `style.css`/`script.js` without
+   colliding. Generic term pages carry the query from their template already;
+   re-running replaces the old hash with the same value, so the pass is idempotent.
 
-   Ordering: this must stay after any step that rewrites the hashed files. None
-   do today — they are hand-authored — so the hashes stay valid wherever it
-   runs. Adding one would mean reordering stepOrder, not just adding a step. */
+   Ordering: must stay after every step that injects assets or HTML (seo/fonts/js
+   add preload + script tags, partials inline the CSS). Steps that regenerate a
+   region carrying asset references must emit the query themselves — the seo step
+   does this via the shared fingerprintAssetRefs — so re-running is a no-op. */
 function runCacheBust(report) {
   gate('cachebust');
-  const byAbs = new Map();
-  for (const [name, hash] of glossaryAssetHashes()) {
-    byAbs.set(resolve(ROOT, 'tools', 'slang-glossary', name), hash);
-  }
+  const byAbs = assetHashes();
   if (!byAbs.size) {
-    log('[cachebust] no glossary assets found, nothing to bust');
+    log('[cachebust] no assets found, nothing to bust');
     return;
   }
-
-  // Matches any dir prefix, any existing query, any fragment, so index.html
-  // (`style.css`) and terms/*.html (`../style.css`) both hit and a re-run
-  // replaces the old ?v= instead of stacking another one.
-  const re = new RegExp(
-    `\\b(href|src)="((?:[^"?#]*\\/)?)(${GLOSSARY_ASSETS.join('|')})` +
-    `(?:\\?[^"#]*)?(#[^"]*)?"`,
-    'g'
-  );
 
   let changed = 0;
   let tagged = 0;
   for (const abs of walkHtml(ROOT)) {
     const rel = relOf(abs);
     const original = readFileSync(abs, 'utf8');
-    const baseDir = dirname(abs);
-    let hits = 0;
-    const html = original.replace(re, (m, attr, dir, name, frag) => {
-      const hash = byAbs.get(resolve(baseDir, dir + name));
-      if (!hash) return m;
-      hits++;
-      return `${attr}="${dir}${name}?v=${hash}${frag || ''}"`;
-    });
+    const { html, hits } = fingerprintAssetRefs(original, dirname(abs));
     if (!hits || html === original) continue;
     tagged += hits;
     changed++;
     if (report) log(`  [cachebust] ${rel} — would rewrite (${hits})`);
     else writeFileSync(abs, html, 'utf8');
   }
-  const summary = [...byAbs.values()].join(' ');
-  log(`[cachebust] ${summary} — ${changed} file(s) ` +
+  log(`[cachebust] ${byAbs.size} asset(s) hashed — ${changed} file(s) ` +
     `${report ? 'would be rewritten' : 'rewritten'}, ${tagged} reference(s)`);
 }
 

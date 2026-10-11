@@ -131,8 +131,8 @@
       "fits_note": "baggy cut",
       "measurements": {},
       "images": {
-        "hero": "assets/images/ITEM-013.jpg",
-        "model": "assets/images/ITEM-013 back.jpg"
+        "hero": "assets/images/ITEM-013.webp",
+        "model": "assets/images/ITEM-013 back.webp"
       },
       "video": null,
       "story_file": "items/ITEM-013.story.md",
@@ -162,7 +162,7 @@
       "fits_note": "relaxed cotton",
       "measurements": {},
       "images": {
-        "hero": "assets/images/ITEM-014.jpg"
+        "hero": "assets/images/ITEM-014.webp"
       },
       "video": null,
       "story_file": "items/ITEM-014.story.md",

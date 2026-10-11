@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+# llms.txt: https://ossuaryphuket.me/llms.txt
 Sitemap: https://ossuaryphuket.me/sitemap.xml
