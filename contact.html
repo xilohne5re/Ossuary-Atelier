@@ -142,6 +142,26 @@
 
     .btn-ig svg { flex-shrink: 0; }
 
+    .contact-alt {
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--violet-dim);
+      line-height: 1.9;
+      opacity: 0;
+      animation: fade-up 0.9s var(--ease-out) 1.1s forwards;
+    }
+
+    .contact-alt a {
+      color: var(--violet);
+      border-bottom: 1px solid var(--violet-faint);
+      transition: border-color 0.3s;
+    }
+
+    .contact-alt a:hover { border-color: var(--violet); }
+
     /* Process explainer */
     #how-to-buy {
       padding: 8vh 6vw;
@@ -262,7 +282,17 @@
       ],
       "sameAs": [
         "https://www.instagram.com/ossuary.atelier/"
-      ]
+      ],
+      "email": "mailto:6630612019psu@gmail.com",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "mailto:6630612019psu@gmail.com",
+        "availableLanguage": [
+          "English"
+        ],
+        "areaServed": "Worldwide"
+      }
     }
   ]
 }
@@ -367,8 +397,21 @@
           </svg>
           DM on Instagram
         </a>
+        <a href="mailto:6630612019psu@gmail.com" class="btn-ig">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="15" rx="2"/>
+            <path d="M3 6l9 7 9-7"/>
+          </svg>
+          Email us
+        </a>
         <a href="shop.html" class="btn-seal">Browse the shop</a>
       </div>
+
+      <p class="contact-alt">
+        Or write to <a href="mailto:6630612019psu@gmail.com">6630612019psu@gmail.com</a>
+        — based in Phuket, Thailand · replies within 24 hours
+      </p>
 
     </div>
   </section>
@@ -456,6 +499,14 @@
         <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
       </svg>
       @ossuaryatelier
+    </a>
+    <a href="mailto:6630612019psu@gmail.com" class="footer-ig" aria-label="Email">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <rect x="2" y="4" width="20" height="15" rx="2"/>
+        <path d="M3 6l9 7 9-7"/>
+      </svg>
+      6630612019psu@gmail.com
     </a>
   </div>
 </footer>
