@@ -296,6 +296,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const headline = document.getElementById('hero-headline');
     headline.style.display = 'flex';
 
+    const eyebrow = document.querySelector('.hero-eyebrow');
+    eyebrow && eyebrow.classList.add('visible');
+
     const words = document.querySelectorAll('.word-inner');
     const sub = document.getElementById('hero-sub');
 
