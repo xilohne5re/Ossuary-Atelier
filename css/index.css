@@ -153,6 +153,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  /* Top clears the fixed nav (the eyebrow is now a flow item pinned at the
+     top); bottom replaces the old `bottom: 4rem` pin on #hero-sub. */
+  padding: calc(var(--nav-height) + 1.5rem) 5vw 3rem;
   overflow: hidden;
   background: var(--void-deep);
 }
@@ -178,17 +181,21 @@
 }
 
 /* ── EYE CONTAINER ── */
+/* Pulled out of the flex flow and centred behind the text (the intro
+   timeline fades it out before the headline reveal, so nothing in the
+   final state depends on it occupying space). */
 #hero-eye {
-  position: relative;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.6);
   z-index: 2;
   opacity: 0;
-  transform: scale(0.6);
   transition: opacity 1.2s var(--ease-out), transform 1.2s var(--ease-out);
 }
 
 #hero-eye.animated {
   opacity: 1;
-  transform: scale(1);
+  transform: translate(-50%, -50%) scale(1);
 }
 
 #hero-eye svg {
@@ -223,14 +230,40 @@
   50%       { transform: scale(1.08); }
 }
 
+/* ── HERO EYEBROW ── */
+/* Flow item at the top of the hero column; revealed with the headline. */
+.hero-eyebrow {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--violet-dim);
+  text-align: center;
+  line-height: 1.6;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+
+.hero-eyebrow.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ── HERO HEADLINE ── */
+/* Flow item that absorbs the free space between the eyebrow and the sub
+   block, so the slogan centres itself and can never overlap either
+   neighbour — the same flex-column pattern the mobile rules use. */
 #hero-headline {
-  position: absolute;
-  top: 50%; left: 0; right: 0;
-  transform: translateY(-50%);
+  position: relative;
+  flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   z-index: 2;
   pointer-events: none;
 }
@@ -243,6 +276,8 @@
   text-transform: uppercase;
   color: var(--violet);
   line-height: 1;
+  text-align: center;
+  width: 100%;
   overflow: hidden;
 }
 
@@ -254,6 +289,8 @@
   color: var(--violet);
   letter-spacing: 0.05em;
   margin-top: 0.75rem;
+  text-align: center;
+  width: 100%;
   overflow: hidden;
 }
 
@@ -272,9 +309,11 @@
 }
 
 /* ── HERO SUB + CTA ── */
+/* Flow item at the bottom of the hero column (was position:absolute, which
+   let it collide with the centred headline on short viewports). */
 #hero-sub {
-  position: absolute;
-  bottom: 4rem; left: 0; right: 0;
+  position: relative;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -614,6 +653,10 @@
     min-height: 100vh;
     min-height: 100svh;
     gap: 2.5rem;
+    /* The eyebrow is now a top-of-column flow item, so it needs to clear
+       the fixed nav. !important + ID specificity beats the blanket
+       `section { padding: 4vh 5vw !important }` in mobile.css. */
+    padding-top: calc(var(--nav-height) + 2vh) !important;
   }
   #hero-eye {
     position: absolute;
