@@ -1,6 +1,10 @@
 # Build tooling
 node_modules/
 
+# Local secrets — never committed, never published
+.env
+.env.*
+
 # Backups
 backup-*.zip
 

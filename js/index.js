@@ -460,4 +460,51 @@ document.addEventListener('DOMContentLoaded', () => {
     marqueeInner.innerHTML += marqueeInner.innerHTML;
   }
 
+  /* ── GAME EYE CTA: populate from local game state ── */
+  (function initGameEyeCta() {
+    const cta = document.getElementById('gameEyeCta');
+    if (!cta) return;
+
+    const eye = cta.querySelector('.gec-eye');
+    if (eye && window.eyeSVG) eye.innerHTML = window.eyeSVG(46, 30, '#C9B8E8', 'transparent');
+
+    /* keep in sync with gameNumber() in tools/guess-the-beach/script.js */
+    const LAUNCH = Date.UTC(2026, 9, 8);
+    const now = new Date();
+    const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    let n = Math.floor((today - LAUNCH) / 86400000) + 1;
+    if (n < 1) n = 1;
+
+    const pad = x => String(x).padStart(2, '0');
+    const date = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+
+    let played = false, streak = 0;
+    try {
+      const g = JSON.parse(localStorage.getItem('oa_bg_game_' + date));
+      played = !!(g && Array.isArray(g.rounds) && g.rounds.length &&
+        g.rounds.every(r => r.guess));
+      const st = JSON.parse(localStorage.getItem('oa_bg_stats'));
+      streak = (st && st.streak) || 0;
+    } catch (_) { /* ignore */ }
+
+    const sub = document.getElementById('gecSub');
+    if (sub) {
+      sub.textContent = played
+        ? 'You played today' + (streak >= 2 ? ' · 🔥 ' + streak + '-day streak' : ' ✓')
+        : 'Guess the Phuket Beach #' + n + ' · Play →';
+    }
+    cta.hidden = false;
+  })();
+
+  /* reveal with the section (same trigger pattern as the marquee) */
+  const eyeCta = document.getElementById('gameEyeCta');
+  if (gsap && ScrollTrigger && eyeCta) {
+    ScrollTrigger.create({
+      trigger: '#reveal-section',
+      start: 'top 80%',
+      onEnter: () => eyeCta.classList.add('visible'),
+      onLeaveBack: () => eyeCta.classList.remove('visible')
+    });
+  }
+
 });

@@ -15,6 +15,11 @@
 
   var el = function (id) { return document.getElementById(id); };
 
+  /* anonymous event hook — injected analytics; silently no-ops without it */
+  function track(name, data) {
+    if (window.umami && typeof window.umami.track === 'function') window.umami.track(name, data);
+  }
+
   /* one fun fact per answer, revealed in two stages: the type/region line plus
      this fact first, then the starting letter after a second wrong guess — and
      never for answers whose initial is unique on the island. */
@@ -137,6 +142,62 @@
 
   var game = null;
   var skipTimer = null;
+
+  /* ── lifetime stats ──────────────────────────────────────
+     Separate from the per-day locks: survives restarts, tracks streak
+     and best scores across days. All local, same as everything else. */
+  var STATS_KEY = 'oa_bg_stats';
+
+  function shiftDate(iso, days) {
+    var p = iso.split('-');
+    var d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2]));
+    d.setUTCDate(d.getUTCDate() + days);
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate());
+  }
+
+  /* one-time migration from play history (dates + answers, but NOT scores —
+     past best/totalPts/perfects can't be recovered, so they start at 0 and
+     grow forward from the first day this key exists). */
+  function loadStats() {
+    var s = lsGet(STATS_KEY, null);
+    if (s && typeof s.plays === 'number') return s;
+    s = { firstPlayed: DATE, lastDate: '', plays: 0, best: 0, totalPts: 0, perfects: 0, streak: 0, bestStreak: 0 };
+    var hist = lsGet(HIST_KEY, []);
+    if (hist.length) {
+      var dates = hist.map(function (h) { return h.date; }).sort();
+      s.firstPlayed = dates[0];
+      s.plays = dates.length;
+      s.lastDate = dates[dates.length - 1];
+      /* streak: consecutive run ending at the last played day */
+      var cursor = dates[dates.length - 1];
+      for (var i = dates.length - 1; i >= 0 && dates[i] === cursor; i--) {
+        s.streak++;
+        cursor = shiftDate(cursor, -1);
+      }
+      s.bestStreak = s.streak;
+    }
+    lsSet(STATS_KEY, s);
+    return s;
+  }
+
+  /* called from renderResults (which also runs on revisit-boot), so it must
+     be a no-op once today's entry exists. */
+  function recordGameStats() {
+    var s = loadStats();
+    if (s.lastDate === DATE) return s;
+    s.streak = (s.lastDate === shiftDate(DATE, -1)) ? s.streak + 1 : 1;
+    if (s.streak > s.bestStreak) s.bestStreak = s.streak;
+    s.plays += 1;
+    s.totalPts += game.score;
+    if (game.score > s.best) s.best = game.score;
+    if (game.score >= 500) s.perfects += 1;
+    s.lastDate = DATE;
+    if (!s.firstPlayed) s.firstPlayed = DATE;
+    lsSet(STATS_KEY, s);
+    track('game_complete', { score: game.score });
+    return s;
+  }
 
   /* ── game construction ────────────────────────────────── */
   function recentAnswers() {
@@ -546,8 +607,10 @@ return picks.map(function (a) {
     var tokens = game.rounds.map(function (r) {
       return (r.correct ? '\uD83D\uDFE9' : '\u2B1C') + (r.hint ? '\uD83D\uDCA1' : '');
     }).join('');
+    var streak = loadStats().streak;
+    var streakPart = streak >= 2 ? ' \u00b7 \uD83D\uDD25 ' + streak + '-day streak' : '';
     return '\uD83C\uDF0A Guess the Phuket Beach #' + gameNumber() +
-      ' \u2014 ' + correct + '/5 \u00b7 ' + game.score + '/500\n' +
+      ' \u2014 ' + correct + '/5 \u00b7 ' + game.score + '/500' + streakPart + '\n' +
       tokens + '\n\n' +
       'Exact \u00b7 smart \uD83D\uDCA1 \u00b7 sunk \u2B1C\n' +
       hypeLine() + '\n' +
@@ -563,6 +626,13 @@ return picks.map(function (a) {
     el('resSub').textContent = game.score >= 500 ? 'A perfect day on the coast.' :
       game.score >= 300 ? 'You know your way around Phuket.' :
       game.score >= 150 ? 'A solid swim.' : 'The tide comes back tomorrow.';
+
+    var stats = recordGameStats();
+    el('rsStreak').textContent = stats.streak;
+    el('rsBest').textContent = stats.best;
+    el('rsPlays').textContent = stats.plays;
+    el('rsPerfects').textContent = stats.perfects;
+    el('resStats').hidden = false;
 
     var list = el('resList');
     list.innerHTML = '';
@@ -619,6 +689,7 @@ return picks.map(function (a) {
   /* ── share ────────────────────────────────────────────── */
   function doShare() {
     var text = shareText();
+    track('share_click', { mode: 'native' });
     if (navigator.share) {
       navigator.share({
         title: 'Guess the Phuket Beach',
@@ -629,6 +700,7 @@ return picks.map(function (a) {
   }
   function doCopy() {
     var text = shareText();
+    track('share_click', { mode: 'copy' });
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function () {
         el('shareCopy').textContent = 'Copied!';
@@ -642,6 +714,102 @@ return picks.map(function (a) {
     var ta = el('shareText');
     ta.select();
     try { document.execCommand('copy'); } catch (e) {}
+  }
+
+  /* ── score card: 1080x1080 text+emoji PNG ────────────────────
+     No photos drawn, so the canvas never taints and toBlob always
+     works. iOS: native share sheet where available, blob URL in a
+     new tab (long-press to save) as fallback; desktop: download. */
+  function makeCard() {
+    var stats = loadStats();
+    var correct = game.rounds.filter(function (r) { return r.correct; }).length;
+    var tokens = game.rounds.map(function (r) {
+      return (r.correct ? '\uD83D\uDFE9' : '\u2B1C') + (r.hint ? '\uD83D\uDCA1' : '');
+    }).join('  ');
+
+    var c = document.createElement('canvas');
+    c.width = 1080;
+    c.height = 1080;
+    var ctx = c.getContext('2d');
+
+    function draw() {
+      ctx.fillStyle = '#080810';
+      ctx.fillRect(0, 0, 1080, 1080);
+
+      ctx.strokeStyle = 'rgba(161,132,205,0.35)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(40, 40, 1000, 1000);
+
+      ctx.textAlign = 'center';
+
+      ctx.fillStyle = '#C9B8E8';
+      ctx.font = '600 34px Cinzel, Georgia, serif';
+      ctx.fillText('GUESS THE PHUKET BEACH #' + gameNumber(), 540, 150);
+
+      ctx.fillStyle = '#4a4a56';
+      ctx.font = '28px Georgia, serif';
+      ctx.fillText(DATE, 540, 200);
+
+      ctx.fillStyle = '#e6e2ef';
+      ctx.font = '700 140px Cinzel, Georgia, serif';
+      ctx.fillText(correct + '/5', 540, 400);
+
+      ctx.fillStyle = '#a184cd';
+      ctx.font = '600 56px Cinzel, Georgia, serif';
+      ctx.fillText(game.score + ' / 500', 540, 480);
+
+      ctx.font = '96px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
+      ctx.fillText(tokens, 540, 640);
+
+      ctx.fillStyle = '#c8c8d0';
+      ctx.font = 'italic 34px Georgia, serif';
+      ctx.fillText(hypeLine(), 540, 740);
+
+      if (stats.streak >= 1) {
+        ctx.fillStyle = '#a184cd';
+        ctx.font = '600 32px Cinzel, Georgia, serif';
+        ctx.fillText('\uD83D\uDD25 ' + stats.streak + '-day streak', 540, 820);
+      }
+
+      ctx.fillStyle = '#4a4a56';
+      ctx.font = '26px Georgia, serif';
+      ctx.fillText('ossuaryphuket.me/tools/guess-the-beach/', 540, 960);
+
+      c.toBlob(function (blob) {
+        if (!blob) return;
+        track('card_save');
+        var url = URL.createObjectURL(blob);
+        var name = 'guess-the-phuket-beach-' + gameNumber() + '.png';
+        var isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        if (isIOS && navigator.share && typeof File !== 'undefined' && navigator.canShare) {
+          var file = new File([blob], name, { type: 'image/png' });
+          if (navigator.canShare({ files: [file] })) {
+            navigator.share({ files: [file] }).catch(function () {});
+            setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+            return;
+          }
+        }
+        if (isIOS) { window.open(url, '_blank'); return; }
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      }, 'image/png');
+    }
+
+    if (document.fonts && document.fonts.load) {
+      Promise.all([
+        document.fonts.load('600 34px Cinzel'),
+        document.fonts.load('700 140px Cinzel'),
+        document.fonts.load('600 56px Cinzel')
+      ]).then(draw).catch(draw);
+    } else {
+      draw();
+    }
   }
 
   /* ── boot ─────────────────────────────────────────────── */
@@ -695,7 +863,13 @@ return picks.map(function (a) {
     el('btnReset').addEventListener('click', restartGame);
     el('shareNative').addEventListener('click', doShare);
     el('shareCopy').addEventListener('click', doCopy);
+    el('shareCard').addEventListener('click', makeCard);
+    Array.prototype.forEach.call(document.querySelectorAll('.res-cta a'), function (a) {
+      a.addEventListener('click', function () { track('today_cta_click', { loc: 'game_footer' }); });
+    });
     wireSuggest();
+
+    if (!game.rounds.some(function (r) { return r.attempts > 0; })) track('game_start');
 
     var finished = game.rounds.every(function (r) { return r.guess; });
     if (finished) renderResults();

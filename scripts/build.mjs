@@ -1764,7 +1764,7 @@ function runJs(report) {
    Injects a small, auto-closing privacy notice on every page,
    anchored by a stacked marker so rebuilds are idempotent. The
    site uses no cookies and collects no personal data (page views
-   are counted with cookie-free Cloudflare Web Analytics), so this
+   are counted with cookie-free analytics), so this
    is a transparency notice (not a consent wall). The notice shows
    once per browsing session (sessionStorage), auto-dismisses after
    4 seconds, can be closed manually, and honours
@@ -1834,6 +1834,44 @@ function runLegalNotice(report) {
     }
   }
   log(`[legal] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} \u2014 privacy notice injected`);
+}
+
+/* ── analytics step ───────────────────────────────────────────
+   Injects the cookie-free Umami analytics script on every page
+   except internal/template pages, anchored by a marker comment
+   so rebuilds stay idempotent. Counts anonymous page views and
+   (Phase 1) simple interaction events (game played, shared,
+   saved). No cookies and no personal data; privacy.html
+   describes this in vendor-neutral terms. */
+const ANALYTICS_MARKER = '<!-- OA_ANALYTICS -->';
+const UMAMI_WEBSITE_ID = '7b43cb5f-041f-4d3a-92bc-b18d98d0a934';
+const ANALYTICS_SKIP = /(?:internal-dm-scripts|item-template|googlecf[^/\\]*|tools\/guess-the-beach\/contact-sheet)\.html$/i;
+
+function analyticsSnippet() {
+  return `${ANALYTICS_MARKER}\n` +
+    `<script defer src="https://cloud.umami.is/script.js" data-website-id="${UMAMI_WEBSITE_ID}"></script>`;
+}
+
+function runAnalytics(report) {
+  gate('analytics');
+  const files = walkHtml(ROOT);
+  let changed = 0;
+
+  for (const abs of files) {
+    if (ANALYTICS_SKIP.test(abs)) continue;
+    const original = readFileSync(abs, 'utf8');
+    if (original.includes(ANALYTICS_MARKER) || original.includes('cloud.umami.is/script.js')) continue;
+    const html = original.replace(/<\/body>\s*<\/html>/i, `\n${analyticsSnippet()}\n</body>\n</html>`);
+    if (html !== original) {
+      changed++;
+      if (report) {
+        log(`  [analytics] ${relOf(abs)} — would rewrite`);
+      } else {
+        writeFileSync(abs, html, 'utf8');
+      }
+    }
+  }
+  log(`[analytics] ${changed} file(s) ${report ? 'would be rewritten (report only)' : 'rewritten'} — Umami script injected`);
 }
 
 /* ── preferred-sources cleanup step ──────────────────────────
@@ -2025,11 +2063,12 @@ const STEPS = {
   js: runJs,
   preferred: runPreferred,
   legal: runLegalNotice,
+  analytics: runAnalytics,
   cachebust: runCacheBust,
   sitemap: runSitemap,
 };
 
-const stepOrder = ['items', 'shops', 'map', 'posts', 'glossary', 'glossary-pages', 'beachgame', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'cachebust', 'links', 'sitemap'];
+const stepOrder = ['items', 'shops', 'map', 'posts', 'glossary', 'glossary-pages', 'beachgame', 'partials', 'seo', 'fonts', 'js', 'preferred', 'legal', 'analytics', 'cachebust', 'links', 'sitemap'];
 const toRun = opts.steps
   ? opts.steps
   : (opts.enableContent ? stepOrder : ['partials', 'links']);
