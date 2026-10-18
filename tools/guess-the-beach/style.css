@@ -375,6 +375,91 @@ button, input { font: inherit; }
 
 .res-tomorrow { text-align: center; color: var(--dim); margin-top: 20px; font-style: italic; }
 
+/* ── lifetime stats band ──────────────────────────────── */
+.res-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: -4px 0 22px;
+}
+.rs-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 8px;
+  text-align: center;
+  display: grid;
+  gap: 2px;
+}
+.rs-item b {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 1.15rem;
+  color: #e6e2ef;
+}
+.rs-item span {
+  color: var(--dim);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── post-game CTAs ───────────────────────────────────── */
+.res-cta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 18px;
+}
+.res-cta .share-btn { text-decoration: none; text-align: center; }
+
+/* ── about + FAQ ─────────────────────────────────────── */
+.gg-about { margin-top: 22px; }
+.about-h {
+  font-family: 'Cinzel', Georgia, serif;
+  color: #c9b8e8;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 22px 0 10px;
+}
+.gg-about .about-h:first-child { margin-top: 0; }
+.gg-about p { color: var(--text); }
+.about-tips {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.about-tips li {
+  color: var(--text);
+  padding-left: 1.1rem;
+  position: relative;
+}
+.about-tips li::before {
+  content: '·';
+  color: var(--accent);
+  font-weight: 700;
+  position: absolute;
+  left: 0.3rem;
+}
+.about-close {
+  color: #cfc5e6 !important;
+  font-style: italic;
+  margin-top: 14px;
+}
+.about-faq { margin: 0; }
+.about-faq dt {
+  color: #e6e2ef;
+  font-weight: 600;
+  margin-top: 12px;
+}
+.about-faq dd {
+  color: var(--dim);
+  margin: 2px 0 0;
+}
+.about-faq a { color: var(--accent); }
+.about-faq a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
 /* ── noscript ────────────────────────────────────── */
 .gg-noscript {
   border: 1px dashed var(--border);
@@ -392,4 +477,5 @@ button, input { font: inherit; }
   .card { padding: 18px; }
   .brand-mark { font-size: 1.4rem; }
   .photo-frame img { max-height: 56vh; }
+  .res-stats { grid-template-columns: repeat(2, 1fr); }
 }

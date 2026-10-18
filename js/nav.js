@@ -208,4 +208,14 @@ document.addEventListener('DOMContentLoaded', () => {
     window.__lenis = lenis;
   }
 
+  /* ── ANALYTICS: delegated [data-oa-event] clicks ── */
+  document.addEventListener('click', e => {
+    const t = e.target && e.target.closest && e.target.closest('[data-oa-event]');
+    if (!t || !window.umami || typeof window.umami.track !== 'function') return;
+    const payload = {};
+    const loc = t.getAttribute('data-oa-loc');
+    if (loc) payload.loc = loc;
+    window.umami.track(t.getAttribute('data-oa-event'), payload);
+  });
+
 });

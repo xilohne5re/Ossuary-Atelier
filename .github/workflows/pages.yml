@@ -29,7 +29,7 @@ jobs:
         run: |
           rm -rf _content _partials _data scripts .github
           find . -maxdepth 1 -name '*.md' -delete
-          rm -f OA_BLOG_BUILD_GUIDE.txt package.json package-lock.json
+          rm -f OA_BLOG_BUILD_GUIDE.txt package.json package-lock.json .env .env.*
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
