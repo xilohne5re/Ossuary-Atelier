@@ -4,7 +4,7 @@
 
    Run: node scripts/verify-glossary.mjs            (add --quiet for pass/fail) */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, relative } from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
@@ -160,7 +160,6 @@ for (const f of termFiles) {
 const sitemap = read(join(ROOT, 'sitemap.xml'));
 const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 const lastmods = [...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((m) => m[1]);
-ok(locs.length === 76, `sitemap: ${locs.length} urls, want 76`);
 ok(lastmods.length === locs.length, 'sitemap: every url needs a lastmod');
 ok(!/<changefreq>/.test(sitemap), 'sitemap: changefreq present (Google ignores it)');
 ok(!/<priority>/.test(sitemap), 'sitemap: priority present (Google ignores it)');
@@ -177,6 +176,90 @@ for (const f of termFiles) {
     `sitemap: missing terms/${f}`);
 }
 ok(locs.includes(setUrl), 'sitemap: missing the glossary index');
+
+/* ── published-set invariants: sitemap ⇄ canonical ⇄ deploy ──── */
+
+// Dev-only artifacts that must never reach the deploy artifact:
+// pages.yml prunes them (asserted below) and nothing may link to them.
+const NO_PUBLISH = [
+  'tools/guess-the-beach/contact-sheet.html',
+  'item-template.html',
+  'internal-dm-scripts.html',
+];
+
+const SKIP_DIRS = new Set(['.git', 'node_modules', 'GSC', '_content', '_partials', '_data', 'scripts', '.github']);
+const walkHtmlFiles = (dir, out = []) => {
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    if (e.isDirectory()) {
+      if (!SKIP_DIRS.has(e.name) && !e.name.startsWith('.')) walkHtmlFiles(join(dir, e.name), out);
+    } else if (e.name.endsWith('.html')) out.push(join(dir, e.name));
+  }
+  return out;
+};
+
+// The deploy workflow must prune every NO_PUBLISH file, or a future
+// workflow edit silently republishes a dev artifact.
+const yml = read(join(ROOT, '.github', 'workflows', 'pages.yml'));
+const pruneFrom = yml.indexOf('Prune internal files before publish');
+const pruneTo = pruneFrom === -1 ? -1 : yml.indexOf('- name:', pruneFrom + 1);
+const pruneBlock = pruneFrom === -1 ? '' : yml.slice(pruneFrom, pruneTo === -1 ? yml.length : pruneTo);
+ok(pruneFrom !== -1, 'pages.yml: prune step not found');
+for (const np of NO_PUBLISH) {
+  ok(pruneBlock.includes(np), `pages.yml: prune step does not remove ${np}`);
+}
+
+// Forward: every sitemap loc resolves to a real, indexable file whose
+// canonical and og:url are exactly the loc (the URL Google should index).
+const locToFile = (loc) => {
+  if (!loc.startsWith(`${SITE}/`)) return null;
+  const p = loc.slice(SITE.length + 1);
+  if (p === '') return 'index.html';
+  return p.endsWith('/') ? `${p}index.html` : p;
+};
+for (const loc of locs) {
+  ok(!loc.includes('Ossuary-Atelier'), `sitemap: retired prefix in ${loc}`);
+  const f = locToFile(loc);
+  const abs = f && join(ROOT, f);
+  if (!abs || !existsSync(abs)) {
+    fails.push(`sitemap: ${loc} has no file on disk (${f})`);
+    continue;
+  }
+  const html = read(abs);
+  ok(!/<meta name="robots" content="[^"]*noindex/i.test(html), `sitemap: ${loc} is noindex`);
+  const c = /<link rel="canonical" href="([^"]+)">/.exec(html)?.[1];
+  ok(c === loc, `${f}: canonical is ${c}, want ${loc}`);
+  const o = /<meta property="og:url" content="([^"]+)">/.exec(html)?.[1];
+  ok(o === loc, `${f}: og:url is ${o}, want ${loc}`);
+}
+
+// Reverse: every indexable page on disk is in the sitemap, every noindex
+// page is out of it, and no published HTML references a retired base or
+// an unpublished dev file. (Non-pages like the google site-verification
+// token carry no <html> element and are skipped.)
+const RETIRED = ['Ossuary-Atelier', 'xilohne5re.github.io'];
+for (const abs of walkHtmlFiles(ROOT)) {
+  const r = relative(ROOT, abs).split('\\').join('/');
+  if (NO_PUBLISH.includes(r)) continue;
+  const html = read(abs);
+  if (!/<html[\s>]/i.test(html)) continue;
+  const robots = /<meta name="robots" content="([^"]*)">/.exec(html)?.[1] || '';
+  const c = /<link rel="canonical" href="([^"]+)">/.exec(html)?.[1];
+  if (/noindex/i.test(robots)) {
+    ok(!c || !locs.includes(c), `${r}: noindex page canonical ${c} is in the sitemap`);
+  } else {
+    ok(!!c, `${r}: indexable page has no canonical`);
+    ok(!!c && locs.includes(c), `${r}: canonical ${c} missing from the sitemap`);
+  }
+  const bases = [c, ...[...html.matchAll(/<meta property="og:(?:url|image)" content="([^"]+)">/g)].map((m) => m[1])];
+  for (const v of bases) {
+    if (!v) continue;
+    for (const bad of RETIRED) ok(!v.includes(bad), `${r}: retired base "${bad}" in ${v}`);
+  }
+  for (const np of NO_PUBLISH) {
+    const base = np.split('/').pop();
+    ok(!html.includes(base), `${r}: references unpublished ${base}`);
+  }
+}
 
 /* ── report ──────────────────────────────────────────────────── */
 if (!quiet) {
