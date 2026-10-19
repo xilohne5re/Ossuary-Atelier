@@ -32,7 +32,7 @@ const RETIRED_BASES = [
   'https://xilohne5re.github.io/Ossuary-Atelier',
 ];
 
-const IGNORE_DIRS = new Set(['node_modules', '_partials', '_data', '_content', '.git']);
+const IGNORE_DIRS = new Set(['node_modules', '_partials', '_data', '_content', '.git', 'GSC']);
 
 /* ── args ─────────────────────────────────────────────────── */
 const args = process.argv.slice(2);
