@@ -17,6 +17,7 @@ Thumbs.db
 .vscode/
 
 # Private working docs — never committed
+GSC/
 DOMAIN-SWITCH.md
 README.md
 secret-thrift.md
