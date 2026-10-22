@@ -1,19 +1,6 @@
 #!/usr/bin/env node
 /* ═══════════════════════════════════════════════════════════
    ossuary-atelier — optimize-images.mjs
-   One-off: re-encode the referenced raster images in
-   assets/images/ as WebP and repoint every reference.
-
-   Target list (hand-maintained; the rest of the archive already
-   serves WebP):
-     assets/images/ITEM-013.jpg
-     assets/images/ITEM-013 back.jpg
-     assets/images/ITEM-014.jpg
-
-   Idempotent: a target whose .webp sibling already exists and is
-   not older than the source is skipped. References are rewritten
-   with exact string swaps; the cache-bust build step re-stamps
-   the ?v= hashes afterwards.
    ═══════════════════════════════════════════════════════════ */
 
 import { readFileSync, writeFileSync, existsSync, statSync, readdirSync } from 'node:fs';
@@ -24,10 +11,16 @@ import sharp from 'sharp';
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(SCRIPT_DIR, '..');
 
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const safety = JSON.parse(readFileSync(join(ROOT, 'assets/photos-safety.json'), 'utf8'));
+const safetyTargets = [...new Set(safety.map(r => 'assets/' + r.image))].filter(p => /\.(jpg|jpeg|png)$/i.test(p)).sort();
+
 const TARGETS = [
   'assets/images/ITEM-013.jpg',
   'assets/images/ITEM-013 back.jpg',
   'assets/images/ITEM-014.jpg',
+  ...safetyTargets,
 ];
 
 async function main() {

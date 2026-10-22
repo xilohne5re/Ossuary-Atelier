@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="320" viewBox="0 0 800 320" role="img" aria-labelledby="title desc">
+  <title id="title">Phuket beach flag system</title>
+  <desc id="desc">Standard warning flags with meanings</desc>
+  <rect width="800" height="320" fill="#07090d"/>
+  <g transform="translate(60,60)">
+    <rect x="0" y="0" width="80" height="120" rx="6" fill="#d62828"/>
+    <text x="40" y="150" fill="#e6e8ef" font-size="14" text-anchor="middle">Red</text>
+    <text x="40" y="170" fill="#9aa0b4" font-size="12" text-anchor="middle">No swim/high danger</text>
+  </g>
+  <g transform="translate(200,60)">
+    <rect x="0" y="0" width="80" height="120" rx="6" fill="#f77f50"/>
+    <rect x="0" y="40" width="80" height="40" fill="#ffffff"/>
+    <text x="40" y="150" fill="#e6e8ef" font-size="14" text-anchor="middle">Red/Yellow</text>
+    <text x="40" y="170" fill="#9aa0b4" font-size="12" text-anchor="middle">Caution</text>
+  </g>
+  <g transform="translate(340,60)">
+    <rect x="0" y="0" width="80" height="120" rx="6" fill="#fcbf49"/>
+    <text x="40" y="150" fill="#e6e8ef" font-size="14" text-anchor="middle">Yellow</text>
+    <text x="40" y="170" fill="#9aa0b4" font-size="12" text-anchor="middle">Caution/mod waves</text>
+  </g>
+  <g transform="translate(480,60)">
+    <rect x="0" y="0" width="80" height="120" rx="6" fill="#90e0ef"/>
+    <text x="40" y="150" fill="#e6e8ef" font-size="14" text-anchor="middle">Green</text>
+    <text x="40" y="170" fill="#9aa0b4" font-size="12" text-anchor="middle">Generally safe</text>
+  </g>
+  <g transform="translate(620,60)">
+    <rect x="0" y="0" width="80" height="120" rx="6" fill="#9d4edd"/>
+    <text x="40" y="150" fill="#e6e8ef" font-size="14" text-anchor="middle">Purple</text>
+    <text x="40" y="170" fill="#9aa0b4" font-size="12" text-anchor="middle">Marine pests</text>
+  </g>
+  <text x="400" y="260" fill="#9aa0b4" font-size="14" text-anchor="middle">Always follow posted flags and lifeguard instructions</text>
+</svg>

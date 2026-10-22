@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-labelledby="title desc">
+  <title id="title">First-aid quick decision matrix</title>
+  <desc id="desc">Quick reference for major hazards and first actions</desc>
+  <rect width="900" height="520" fill="#07090d"/>
+  <rect x="40" y="40" width="820" height="440" rx="10" fill="#0f131a" stroke="#57e0c8"/>
+  <text x="450" y="80" fill="#e6e8ef" font-size="26" text-anchor="middle">First-aid decision matrix (Harm-reduction)</text>
+  <g font-size="16">
+    <text x="80" y="120" fill="#7aa2ff">Hazard</text>
+    <text x="300" y="120" fill="#7aa2ff">Do</text>
+    <text x="620" y="120" fill="#7aa2ff">Do NOT</text>
+  </g>
+  <line x1="60" y1="130" x2="840" y2="130" stroke="#57e0c8"/>
+  <g font-size="14" fill="#e6e8ef">
+    <text x="80" y="160">Box jellyfish</text>
+    <text x="300" y="160">Vinegar (liberal) if available; call EMS</text>
+    <text x="620" y="160">Fresh water, urine, alcohol, rubbing</text>
+    <text x="80" y="200">Bluebottle/Physalia</text>
+    <text x="300" y="200">Hot water 45 °C 20-40 min (if hot-water safe)</text>
+    <text x="620" y="200">Vinegar (generally not for Physalia)</text>
+    <text x="80" y="240">Stonefish/ray/urchin</text>
+    <text x="300" y="240">Hot water 45 °C immersion 30-90 min; seek care</text>
+    <text x="620" y="240">Cut/incise wound to "suck" venom</text>
+    <text x="80" y="280">Elapid snake (cobra/krait)</text>
+    <text x="300" y="280">Pressure-immobilisation; keep still; EMS</text>
+    <text x="620" y="280">Tourniquet, cut, suck, electric shock</text>
+    <text x="80" y="320">Viper (pit viper)</text>
+    <text x="300" y="320">Immobilise limb at heart level; EMS</text>
+    <text x="620" y="320">Pressure bandage (elapid only)</text>
+    <text x="80" y="360">Mushroom ingestion</text>
+    <text x="300" y="360">&gt;5h to symptoms OR any suspect → hospital ASAP</text>
+    <text x="620" y="360">Wait-and-see/home remedies</text>
+    <text x="80" y="400">Marine puncture/wound</text>
+    <text x="300" y="400">Irrigate, tetanus consideration; seek care if severe</text>
+    <text x="620" y="400">Close dirty punctures without advice</text>
+  </g>
+  <text x="450" y="450" fill="#9aa0b4" font-size="12" text-anchor="middle">This is harm-reduction, not medical advice. Follow local EMS/protocols.</text>
+</svg>

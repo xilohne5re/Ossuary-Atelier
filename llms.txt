@@ -12,6 +12,11 @@
 
 - [Home](https://ossuaryphuket.me/): what Ossuary Atelier is and where to start.
 - [Phuket Thrift Guide](https://ossuaryphuket.me/guide/): the live hub — shops, notes, map and tools.
+- [Phuket Nature Safety Guide](https://ossuaryphuket.me/guide/safety/): a citation-backed field guide to the island's living hazards — jellyfish, snakes, poisons, rip currents, tsunami, heat and dengue.
+- [Specimen Atlas](https://ossuaryphuket.me/guide/safety/atlas.html): every hazard in the guide, photographed and licensed, with names, hazards and full image credits.
+- [Deep Dives](https://ossuaryphuket.me/guide/safety/deep-dives.html): the evidence behind the guide — Thai clinical data, case reviews and reef surveys, with every source named.
+- [Field Notes](https://ossuaryphuket.me/guide/safety/field-notes.html): incidents on Phuket's beaches and trails, rewritten and linked to the original reporting.
+- [Field Reference](https://ossuaryphuket.me/guide/safety/reference.html): emergency numbers, a first-aid matrix, beach flags, hospital and hyperbaric directories, a quiz and full sources.
 - [Thrift Directory](https://ossuaryphuket.me/blog/guide/): honest reviews of Phuket secondhand shops.
 - [Shop](https://ossuaryphuket.me/shop.html): current and archived pieces, each with a written story.
 - [The Osteology](https://ossuaryphuket.me/blog/): the journal — piece stories, shop reviews and field notes.
