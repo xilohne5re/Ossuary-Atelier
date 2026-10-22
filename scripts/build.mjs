@@ -32,7 +32,7 @@ const RETIRED_BASES = [
   'https://xilohne5re.github.io/Ossuary-Atelier',
 ];
 
-const IGNORE_DIRS = new Set(['node_modules', '_partials', '_data', '_content', '.git', 'GSC']);
+const IGNORE_DIRS = new Set(['node_modules', '_partials', '_data', '_content', '.git', 'GSC', '_dev']);
 
 /* ── args ─────────────────────────────────────────────────── */
 const args = process.argv.slice(2);
@@ -1331,6 +1331,11 @@ const SEO_NOINDEX = new Set(['internal-dm-scripts.html', 'item-template.html', '
 const SEO_DESC = {
   'index.html': "A Phuket thrift guide with real shop reviews, an interactive map, free tools, and reclaimed pieces with documented stories \u2014 find what's worth keeping.",
   'guide/index.html': "The Phuket Thrift Guide — a living directory of secondhand shops, sourcing notes, and recovery tips across Phuket, plus maps, tools, and the Ossuary Atelier archive.",
+  'guide/safety/index.html': "Phuket beach safety guide: box jellyfish first aid (vinegar vs hot water), rip currents at Kata, Karon and Patong, snake bites, dengue prevention, emergency number 1669 and beach flags.",
+  'guide/safety/atlas.html': "Every hazard in the guide, photographed and licensed — 30 specimens of Phuket's sea, jungle and island life with names, hazards and full image credits.",
+  'guide/safety/deep-dives.html': "The evidence behind the guide — Thai clinical data, boxed-jellyfish case reviews, snakebite cohorts, dengue surveillance and reef surveys, with every source named.",
+  'guide/safety/field-notes.html': "Incidents on Phuket's beaches and trails, rewritten and linked — drownings, jellyfish stings, elephant attacks, landslides and the warnings that followed each one.",
+  'guide/safety/reference.html': "The field notebook — emergency numbers, a first-aid do-and-don't matrix, beach flags, hospital and hyperbaric directories, a 15-question quiz and full sources.",
   'shop.html': 'Shop curated secondhand clothing from Phuket, sourced piece by piece from local thrift shops. Every item carries a written story of where it\u2019s been.',
   'about.html': 'The story of Ossuary Atelier \u2014 a Phuket secondhand and culture project that grew into a thrift guide, an interactive map, and a growing record of the island\u2019s underground.',
   'contact.html': 'Contact Ossuary Atelier \u2014 claim a piece, ask about a garment\u2019s origin, pitch a collaboration, or just say hello.',
@@ -1983,6 +1988,11 @@ function runSitemap() {
 
 - [Home](${SITE_BASE}/): what Ossuary Atelier is and where to start.
 - [Phuket Thrift Guide](${SITE_BASE}/guide/): the live hub — shops, notes, map and tools.
+- [Phuket Nature Safety Guide](${SITE_BASE}/guide/safety/): a citation-backed field guide to the island's living hazards — jellyfish, snakes, poisons, rip currents, tsunami, heat and dengue.
+- [Specimen Atlas](${SITE_BASE}/guide/safety/atlas.html): every hazard in the guide, photographed and licensed, with names, hazards and full image credits.
+- [Deep Dives](${SITE_BASE}/guide/safety/deep-dives.html): the evidence behind the guide — Thai clinical data, case reviews and reef surveys, with every source named.
+- [Field Notes](${SITE_BASE}/guide/safety/field-notes.html): incidents on Phuket's beaches and trails, rewritten and linked to the original reporting.
+- [Field Reference](${SITE_BASE}/guide/safety/reference.html): emergency numbers, a first-aid matrix, beach flags, hospital and hyperbaric directories, a quiz and full sources.
 - [Thrift Directory](${SITE_BASE}/blog/guide/): honest reviews of Phuket secondhand shops.
 - [Shop](${SITE_BASE}/shop.html): current and archived pieces, each with a written story.
 - [The Osteology](${SITE_BASE}/blog/): the journal — piece stories, shop reviews and field notes.

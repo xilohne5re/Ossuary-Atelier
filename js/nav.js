@@ -109,9 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── NAV SCROLL BEHAVIOUR ───────────────────── */
   const nav = document.getElementById('nav');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 40);
-  }, { passive: true });
+  if (nav) {
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+  }
 
   /* ── NAV ENTRANCE ───────────────────────────── */
   setTimeout(() => {

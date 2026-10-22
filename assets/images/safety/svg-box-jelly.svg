@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400" role="img" aria-labelledby="title desc">
+  <title id="title">Box jellyfish (Chironex) simplified illustration</title>
+  <desc id="desc">Simplified diagram showing bell and long trailing tentacles</desc>
+  <rect width="800" height="400" fill="#07090d"/>
+  <g stroke="#57e0c8" fill="none" stroke-width="4">
+    <path d="M400 120 C440 100, 520 110, 560 150 C580 190, 560 240, 520 260 C480 280, 420 280, 380 260 C340 240, 320 190, 340 150 C360 120, 380 110, 400 120 Z" opacity="0.9"/>
+    <path d="M400 130 C420 115, 470 120, 500 145 C520 175, 500 215, 470 235 C440 255, 400 255, 370 235 C340 215, 320 175, 340 145 C360 125, 380 120, 400 130 Z" fill="rgba(87,224,200,0.15)"/>
+  </g>
+  <g stroke="#7aa2ff" stroke-width="3" fill="none">
+    <path d="M380 270 Q340 340 300 370"/>
+    <path d="M400 280 Q380 360 360 390"/>
+    <path d="M420 270 Q460 340 500 370"/>
+    <path d="M390 275 Q350 350 320 385"/>
+    <path d="M410 275 Q450 350 480 385"/>
+  </g>
+  <text x="400" y="80" fill="#e6e8ef" font-family="system-ui, sans-serif" font-size="28" text-anchor="middle">Box jellyfish (Chironex)</text>
+  <text x="400" y="370" fill="#9aa0b4" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle">Long tentacles — avoid contact; vinegar on stings per protocol</text>
+</svg>

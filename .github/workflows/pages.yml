@@ -29,9 +29,9 @@ jobs:
         run: node scripts/verify-glossary.mjs
       - name: Prune internal files before publish
         run: |
-          rm -rf _content _partials _data scripts .github
+          rm -rf _content _partials _data _dev scripts .github
           find . -maxdepth 1 -name '*.md' -delete
-          rm -f OA_BLOG_BUILD_GUIDE.txt package.json package-lock.json .env .env.*
+          rm -f OA_BLOG_BUILD_GUIDE.txt package.json package-lock.json opencode.json .env .env.*
           rm -f tools/guess-the-beach/contact-sheet.html item-template.html internal-dm-scripts.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
