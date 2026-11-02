@@ -993,4 +993,46 @@
 
 @media (max-width: 768px) {
   .site-section { padding: 7vh 5vw; }
+  
+  /* Hero mobile centering — breaks out of main's 5vw padding from mobile.css */
+  #hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    gap: 2.5rem;
+    width: 100vw;
+    margin-left: -5vw;
+    margin-right: -5vw;
+    padding: calc(var(--nav-height) + 2vh) 5vw 3rem !important;
+  }
+  #hero-eye {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%) scale(.6);
+  }
+  #hero-eye.animated {
+    transform: translate(-50%,-50%) scale(1);
+  }
+  #hero-headline {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    transform: none;
+    width: 100%;
+    padding: 0 5vw;
+  }
+  .hero-line-1 {
+    letter-spacing: .08em;
+    padding-left: 2vw;
+    padding-right: 2vw;
+  }
+  .hero-line-2 {
+    font-size: clamp(1.15rem, 5vw, 1.6rem);
+  }
+  #hero-sub {
+    position: relative;
+    width: 100%;
+    padding: 0 5vw;
+  }
 }
