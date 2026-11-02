@@ -3,6 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      var lang = null;
+      try { lang = localStorage.getItem('oa-lang'); } catch (_) {}
+      if (lang !== 'th' && lang !== 'en') {
+        var languages = navigator.languages && navigator.languages.length
+          ? navigator.languages
+          : [navigator.language || ''];
+        lang = languages.some(function (value) {
+          return /^th($|-)/i.test(value);
+        }) ? 'th' : 'en';
+      }
+      document.documentElement.lang = lang;
+    })();
+  </script>
   <title>Shop — Ossuary Atelier | Phuket Secondhand Clothing</title>
 
   <!-- @@SEO_SLOT@@ -->
@@ -43,6 +58,9 @@
 
 <!-- @@SEO_END@@ -->
   <style>
+    /* Shop page: keep the interactive background, hide its toggle button. */
+    body .background-toggle { display: none !important; }
+
     /* ── DROPS HEADER ── */
     #drops-header {
       padding: calc(var(--nav-height) + 8vh) 6vw 6vh;
@@ -64,6 +82,13 @@
       line-height: 1;
     }
 
+    .drops-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      min-width: 0;
+    }
+
     .drops-count {
       font-family: var(--font-display);
       font-size: 3rem;
@@ -79,15 +104,59 @@
       color: var(--violet-dim);
     }
 
+    .lang-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      min-height: 44px;
+      margin-left: auto;
+      padding: 0.4rem 0.7rem;
+      border: 1px solid var(--faint);
+      color: var(--violet-dim);
+      font-family: var(--font-display);
+      font-size: 0.64rem;
+      letter-spacing: 0.18em;
+      transition: color 0.25s, border-color 0.25s, background 0.25s;
+    }
+    .lang-toggle:hover,
+    .lang-toggle[aria-pressed="true"] {
+      color: var(--violet);
+      border-color: rgba(201,184,232,0.35);
+      background: rgba(75,45,122,0.16);
+    }
+    .lang-current { color: var(--violet); }
+    .lang-divider { opacity: 0.45; }
+
     /* Responsive Header */
     @media (max-width: 768px) {
       #drops-header {
-        padding: calc(var(--nav-height) + 5vh) 5vw 4vh;
-        gap: 1rem;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+        padding: calc(var(--nav-height) + 1.5rem) 5vw 2.5rem;
+        gap: 0.75rem;
       }
-      .drops-title { font-size: clamp(1.75rem, 12vw, 3rem); }
-      .drops-count { font-size: 2rem; }
-      .drops-date { font-size: 0.9rem; }
+      .drops-title {
+        grid-column: 1;
+        grid-row: 1;
+        font-size: clamp(1.75rem, 10vw, 2.5rem);
+      }
+      .drops-meta {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.15rem;
+      }
+      .drops-count {
+        font-size: clamp(1.1rem, 4.5vw, 1.6rem);
+        letter-spacing: 0.12em;
+        line-height: 1.45;
+      }
+      .drops-date { font-size: 0.82rem; line-height: 1.4; text-align: left; }
+      .lang-toggle { grid-column: 2; grid-row: 1; justify-self: end; margin-left: 0; }
+      #filter-bar { padding: 0.9rem 5vw; }
+      .filter-pill { font-size: 0.66rem; padding: 0.55rem 1rem; }
     }
 
     /* ── FILTER BAR ── */
@@ -103,24 +172,11 @@
       backdrop-filter: blur(16px);
       z-index: 10;
       overflow-x: auto;
+      scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
     }
     #filter-bar::-webkit-scrollbar { display: none; }
     .filter-pill { flex-shrink: 0; }
-
-    /* ── FILTER BAR ── */
-    #filter-bar {
-      padding: 1.5rem 6vw;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      border-bottom: 1px solid var(--violet-faint);
-      position: sticky;
-      top: var(--nav-height);
-      background: rgba(8,8,16,0.92);
-      backdrop-filter: blur(16px);
-      z-index: 10;
-    }
 
     .filter-pill {
       font-family: var(--font-display);
@@ -409,141 +465,424 @@
       transform: scaleX(1.15);
     }
 
-    /* ── CLAIM MODAL ── */
-    #claim-modal {
+    /* ── FULLSCREEN GALLERY ── */
+    body.gallery-open { overflow: hidden; }
+    body.gallery-open #notice-privacy,
+    body.gallery-open .target-cursor-wrapper { display: none !important; }
+    body.gallery-open { cursor: auto !important; }
+    body.gallery-open button,
+    body.gallery-open a { cursor: pointer; }
+    body.gallery-open button:disabled { cursor: default; }
+
+    #gallery-overlay {
       position: fixed;
       inset: 0;
-      z-index: 8000;
+      z-index: 9500;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
+      padding: clamp(0.35rem, 1.5vw, 1.25rem);
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
+      transition: opacity 0.35s var(--ease-out), visibility 0s linear 0.35s;
+    }
+
+    #gallery-overlay.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
       transition: opacity 0.35s var(--ease-out);
     }
 
-    #claim-modal.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    #claim-modal-backdrop {
+    .gallery-backdrop {
       position: absolute;
       inset: 0;
-      /* Opaque, no backdrop-filter: a full-screen blur over the
-         animated background canvas repainted every frame and made
-         the modal opening janky on mobile. */
-      background: rgba(4,4,10,0.9);
+      background: rgba(4,4,10,0.97);
     }
 
-    #claim-modal-box {
+    .gallery-shell {
       position: relative;
       z-index: 1;
-      background: var(--midnight);
-      border: 1px solid rgba(201,184,232,0.15);
-      max-width: 720px;
-      width: 100%;
+      width: min(1400px, 100%);
+      height: 100%;
+      margin: 0 auto;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      transform: translateY(24px) scale(0.97);
-      transition: transform 0.4s var(--ease-out);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    #claim-modal.open #claim-modal-box {
-      transform: translateY(0) scale(1);
-      will-change: transform;
-      backface-visibility: hidden;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      #claim-modal,
-      #claim-modal-box { transition: none; }
-    }
-
-    .modal-photo {
-      aspect-ratio: 3/4;
+      grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.75fr);
+      background: var(--void-deep);
+      border: 1px solid rgba(201,184,232,0.18);
+      box-shadow: 0 20px 80px rgba(0,0,0,0.55);
       overflow: hidden;
+    }
+
+    .gallery-stage {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--void-deep);
+      border-right: 1px solid rgba(201,184,232,0.12);
+    }
+
+    .gallery-frame {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 3.75rem 5.25rem;
+    }
+
+    .gallery-frame img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .gallery-close {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      min-width: 44px;
+      min-height: 44px;
+      justify-content: center;
+      padding: 0.45rem 0.7rem;
+      border: 1px solid rgba(201,184,232,0.28);
+      background: rgba(8,8,16,0.82);
+      color: var(--violet);
+      font-family: var(--font-display);
+      font-size: 0.58rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      transition: background 0.25s, border-color 0.25s;
+    }
+    .gallery-close:hover { background: rgba(75,45,122,0.6); border-color: var(--violet); }
+
+    .gallery-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+      width: 48px;
+      height: 48px;
+      min-width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(201,184,232,0.28);
+      background: rgba(8,8,16,0.72);
+      color: var(--violet);
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: background 0.25s, border-color 0.25s, opacity 0.25s;
+    }
+    .gallery-nav:hover { background: rgba(75,45,122,0.6); border-color: var(--violet); }
+    .gallery-nav:disabled { opacity: 0.2; pointer-events: none; }
+    .gallery-prev { left: 0.75rem; }
+    .gallery-next { right: 0.75rem; }
+
+    .gallery-counter {
+      position: absolute;
+      top: 0.9rem;
+      left: 0.9rem;
+      z-index: 4;
+      padding: 0.3rem 0.65rem;
+      border: 1px solid rgba(201,184,232,0.2);
+      background: rgba(8,8,16,0.78);
+      color: var(--violet-dim);
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+    }
+
+    .gallery-thumbs {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 4;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1.5rem 0.75rem 0.75rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      background: linear-gradient(transparent, rgba(4,4,10,0.92));
+    }
+    .gallery-thumbs::-webkit-scrollbar { display: none; }
+    .gallery-thumb {
+      flex: 0 0 auto;
+      width: 46px;
+      height: 60px;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(201,184,232,0.2);
       background: var(--void);
+      opacity: 0.55;
+      transition: opacity 0.25s, border-color 0.25s;
     }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .gallery-thumb:hover { opacity: 0.85; }
+    .gallery-thumb[aria-current="true"] { opacity: 1; border-color: var(--violet); }
 
-    .modal-photo img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-    }
-
-    .modal-content {
-      padding: 2.5rem 2rem;
+    .gallery-info {
+      min-width: 0;
+      padding: clamp(1.25rem, 2.6vw, 2.5rem);
+      background: var(--midnight);
+      overflow-y: auto;
+      overscroll-behavior: contain;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.85rem;
     }
 
-    .modal-id {
+    .gallery-id {
       font-family: var(--font-display);
-      font-size: 0.5rem;
-      letter-spacing: 0.5em;
+      font-size: 0.52rem;
+      letter-spacing: 0.45em;
       color: var(--bruise-mid);
       text-transform: uppercase;
     }
 
-    .modal-name {
+    .gallery-name {
       font-family: var(--font-display);
       font-weight: 900;
-      font-size: 1.3rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--violet);
+      font-size: clamp(1.35rem, 2.2vw, 2rem);
+      letter-spacing: 0.07em;
       line-height: 1.2;
+      color: var(--violet);
+      text-transform: uppercase;
     }
 
-    .modal-desc {
+    .gallery-era {
       font-family: var(--font-body);
       font-style: italic;
-      font-size: 0.95rem;
+      font-size: 1rem;
       color: var(--violet-dim);
-      line-height: 1.7;
     }
 
-    .modal-measurements {
+    .gallery-desc {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 1.02rem;
+      line-height: 1.7;
+      color: var(--violet-dim);
+    }
+
+    .gallery-size {
       font-family: var(--font-display);
       font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      color: var(--violet-dim);
+      letter-spacing: 0.18em;
+      line-height: 1.9;
       text-transform: uppercase;
-      line-height: 2;
+      color: var(--violet-dim);
     }
 
-    .modal-price {
-      font-family: var(--font-display);
-      font-weight: 900;
-      font-size: 1.5rem;
-      color: var(--violet);
+    .gallery-footer {
       margin-top: auto;
-    }
-
-    .modal-actions {
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--violet-faint);
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.9rem;
     }
 
-    .modal-close {
-      position: absolute;
-      top: 1rem; right: 1rem;
+    .gallery-price {
       font-family: var(--font-display);
-      font-size: 0.6rem;
-      letter-spacing: 0.3em;
-      color: var(--violet-dim);
-      text-transform: uppercase;
-      transition: color 0.3s;
-      padding: 0.5rem;
-      cursor: pointer;
+      font-weight: 900;
+      font-size: 1.55rem;
+      color: var(--violet);
     }
-    .modal-close:hover { color: var(--violet); }
+
+    .gallery-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .gallery-actions .btn-seal { justify-content: center; }
+
+    #gallery-lightbox {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(3rem, 8vw, 5rem) clamp(2.75rem, 7vw, 5rem);
+      background: rgba(2,2,8,0.985);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.28s var(--ease-out), visibility 0s linear 0.28s;
+    }
+
+    #gallery-lightbox.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition: opacity 0.28s var(--ease-out);
+    }
+
+    #gallery-lightbox-img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .gallery-lightbox-close {
+      position: absolute;
+      top: max(0.75rem, env(safe-area-inset-top));
+      right: max(0.75rem, env(safe-area-inset-right));
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0.45rem 0.7rem;
+      border: 1px solid rgba(201,184,232,0.28);
+      background: rgba(8,8,16,0.82);
+      color: var(--violet);
+      font-family: var(--font-display);
+      font-size: 0.58rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      transition: background 0.25s, border-color 0.25s;
+    }
+    .gallery-lightbox-close:hover { background: rgba(75,45,122,0.6); border-color: var(--violet); }
+
+    .gallery-lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      width: 48px;
+      height: 48px;
+      min-width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(201,184,232,0.28);
+      background: rgba(8,8,16,0.72);
+      color: var(--violet);
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: background 0.25s, border-color 0.25s, opacity 0.25s;
+    }
+    .gallery-lightbox-nav:hover { background: rgba(75,45,122,0.6); border-color: var(--violet); }
+    .gallery-lightbox-nav:disabled { opacity: 0.2; pointer-events: none; }
+    .gallery-lightbox-prev { left: 0.75rem; }
+    .gallery-lightbox-next { right: 0.75rem; }
+
+    .gallery-lightbox-counter {
+      position: absolute;
+      top: max(0.9rem, env(safe-area-inset-top));
+      left: max(0.9rem, env(safe-area-inset-left));
+      z-index: 2;
+      padding: 0.3rem 0.65rem;
+      border: 1px solid rgba(201,184,232,0.2);
+      background: rgba(8,8,16,0.78);
+      color: var(--violet-dim);
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+    }
+
+    .gallery-close:focus-visible,
+    .gallery-nav:focus-visible,
+    .gallery-thumb:focus-visible,
+    .gallery-lightbox-close:focus-visible,
+    .gallery-lightbox-nav:focus-visible,
+    .gallery-actions a:focus-visible {
+      outline: 1px solid var(--violet);
+      outline-offset: 3px;
+    }
+
+    [lang="th"] .item-name,
+    [lang="th"] .item-id,
+    [lang="th"] .item-era,
+    [lang="th"] .item-price,
+    [lang="th"] .sold-label-inner,
+    [lang="th"] .drops-title,
+    [lang="th"] .drops-count,
+    [lang="th"] .drops-date,
+    [lang="th"] .lang-toggle,
+    [lang="th"] .gallery-name,
+    [lang="th"] .gallery-id,
+    [lang="th"] .gallery-price,
+    [lang="th"] .gallery-size,
+    [lang="th"] .gallery-era,
+    [lang="th"] .gallery-desc,
+    [lang="th"] .filter-pill {
+      font-family: var(--font-thai);
+      letter-spacing: 0.02em;
+      text-transform: none;
+    }
+    [lang="th"] .item-era,
+    [lang="th"] .gallery-era,
+    [lang="th"] .gallery-desc { font-style: normal; }
+    [lang="th"] .filter-pill[data-filter="relics"]::after { content: "ไอเท็มที่มาพร้อมเรื่องราว"; letter-spacing: 0.04em; }
+    [lang="th"] .item-relic-star::after { content: "ไอเท็มมีเรื่องราว"; letter-spacing: 0.04em; }
+
+    @media (max-width: 960px) {
+      .gallery-shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+      }
+      .gallery-stage { border-right: 0; border-bottom: 1px solid rgba(201,184,232,0.12); }
+      .gallery-info { max-height: 44dvh; padding: 1.25rem 1.5rem calc(1.25rem + env(safe-area-inset-bottom)); }
+      .gallery-name { font-size: 1.45rem; }
+    }
+
+    @media (max-width: 600px) {
+      #gallery-overlay { padding: 0; }
+      .gallery-shell { border: 0; }
+      .gallery-frame { padding: 3rem 0.25rem 4.75rem; }
+      .gallery-close { top: 0.4rem; right: 0.4rem; padding: 0.35rem 0.55rem; }
+      .gallery-close-label { display: none; }
+      .gallery-nav { width: 44px; height: 44px; font-size: 1rem; background: rgba(4,4,10,0.58); }
+      .gallery-prev { left: 0.25rem; }
+      .gallery-next { right: 0.25rem; }
+      .gallery-counter { top: 0.55rem; left: 0.55rem; font-size: 0.58rem; }
+      .gallery-thumbs { padding: 1rem 0.5rem calc(0.5rem + env(safe-area-inset-bottom)); gap: 0.35rem; }
+      .gallery-thumb { width: 38px; height: 48px; }
+      .gallery-info { max-height: 48dvh; padding: 1rem 1rem calc(1.1rem + env(safe-area-inset-bottom)); gap: 0.55rem; }
+      .gallery-name { font-size: 1.35rem; line-height: 1.3; }
+      .gallery-desc { font-size: 0.95rem; line-height: 1.6; }
+      .gallery-footer { padding-top: 0.8rem; gap: 0.65rem; }
+      .gallery-actions { flex-direction: row; flex-wrap: wrap; }
+      .gallery-actions .btn-seal { flex: 1 1 8rem; min-width: 0; font-size: 0.58rem; }
+      #gallery-lightbox {
+        padding: calc(3.5rem + env(safe-area-inset-top)) calc(0.35rem + env(safe-area-inset-right)) calc(3.5rem + env(safe-area-inset-bottom)) calc(0.35rem + env(safe-area-inset-left));
+      }
+      .gallery-lightbox-close {
+        top: calc(0.55rem + env(safe-area-inset-top));
+        right: calc(0.55rem + env(safe-area-inset-right));
+        padding: 0.35rem 0.55rem;
+      }
+      .gallery-lightbox-close-label { display: none; }
+      .gallery-lightbox-nav { width: 44px; height: 44px; font-size: 1rem; background: rgba(4,4,10,0.58); }
+      .gallery-lightbox-prev { left: calc(0.25rem + env(safe-area-inset-left)); }
+      .gallery-lightbox-next { right: calc(0.25rem + env(safe-area-inset-right)); }
+      .gallery-lightbox-counter { top: calc(0.55rem + env(safe-area-inset-top)); left: calc(0.55rem + env(safe-area-inset-left)); font-size: 0.58rem; }
+    }
 
     /* ── INTERACTIVE BACKGROUND ── */
     #background-canvas {
@@ -580,26 +919,26 @@
     @media (max-width: 768px) {
       #drops-grid { grid-template-columns: repeat(2, 1fr); }
       .item-name { font-size: 1.5rem; }
-      .drops-count { font-size: 2rem; }
       /* Disable tilt on mobile - hover doesn't exist */
       .item-card:nth-child(odd)  .item-photo-wrap,
       .item-card:nth-child(even) .item-photo-wrap { transform: none; }
     }
+    .item-card:focus-visible {
+      outline: 1px solid var(--violet);
+      outline-offset: 3px;
+    }
+
     @media (max-width: 600px) {
       #drops-grid { grid-template-columns: 1fr; gap: 1rem; }
-      .item-name { font-size: 1.35rem; }
-      .item-body { padding: 0.9rem 1rem 0.75rem; }
+      .item-name { font-size: 1.25rem; line-height: 1.35; }
+      .item-era { font-size: 0.92rem; line-height: 1.55; margin-bottom: 0.75rem; }
+      .item-body { padding: 0.85rem 0.9rem 0.75rem; }
       .item-price { font-size: 0.9rem; }
-      /* Modal */
-      #claim-modal { padding: 1rem; }
-      #claim-modal-box { grid-template-columns: 1fr; max-width: 100%; }
-      .modal-photo { aspect-ratio: 4/3; }
-      .modal-content { padding: 1.5rem 1.25rem; }
-      .modal-name { font-size: 1.1rem; }
-      .modal-price { font-size: 1.2rem; }
+      .item-id { font-size: 0.45rem; }
+      .sold-label-inner { font-size: 0.54rem; padding: 0.5rem 1rem; letter-spacing: 0.45em; }
       /* Filter Bar */
-      #filter-bar { padding: 1rem 5vw; gap: 0.5rem; }
-      .filter-pill { font-size: 0.65rem; padding: 0.5rem 1rem; }
+      #filter-bar { padding: 0.8rem 5vw; gap: 0.35rem; }
+      .filter-pill { font-size: 0.62rem; padding: 0.5rem 0.75rem; letter-spacing: 0.18em; }
       /* Mobile touch fixes */
       .item-card:active { transform: scale(0.985); }
       .item-relic-star { opacity: 0.8; }
@@ -712,28 +1051,33 @@
 
   <!-- ── HEADER ── -->
   <header id="drops-header">
-    <h1 class="drops-title">Shop</h1>
+    <h1 class="drops-title" data-i18n="shopTitle">Shop</h1>
     <div class="drops-meta">
-      <span class="drops-count" id="available-count">5 pieces available</span>
-      <span class="drops-date">Drop 001 · March 2026</span>
+      <span class="drops-count" id="available-count" data-count="6">6 pieces available</span>
+      <span class="drops-date" data-i18n="dropDate">Drop 001 · March 2026</span>
     </div>
+    <button class="lang-toggle" id="lang-toggle" aria-label="Switch to Thai" aria-pressed="false">
+      <span class="lang-current">EN</span>
+      <span class="lang-divider" aria-hidden="true">/</span>
+      <span class="lang-other">TH</span>
+    </button>
   </header>
 
   <!-- ── FILTER BAR ── -->
-  <div id="filter-bar" role="group" aria-label="Filter items">
-    <button class="filter-pill active" data-filter="all">All</button>
-    <button class="filter-pill" data-filter="available">Available</button>
-    <button class="filter-pill" data-filter="relics">Relics</button>
-    <button class="filter-pill" data-filter="sold">Claimed</button>
+  <div id="filter-bar" role="group" aria-label="Filter items" data-i18n-label="filterLabel">
+    <button class="filter-pill active" data-filter="all" data-i18n="filterAll" aria-pressed="true">All</button>
+    <button class="filter-pill" data-filter="available" data-i18n="filterAvailable" aria-pressed="false">Available</button>
+    <button class="filter-pill" data-filter="relics" data-i18n="filterRelics" aria-pressed="false">Relics</button>
+    <button class="filter-pill" data-filter="sold" data-i18n="filterSold" aria-pressed="false">Claimed</button>
   </div>
 
   <!-- ── GRID ── -->
   <main id="drops-grid" aria-label="Item grid">
     <!-- DROPS_CARDS_BEGIN -->
-<article class="item-card relic" data-id="ITEM-001" data-filter="available" data-desc="Found between a rack of fleece hoodies at O-WA Second Hand, Phuket. The label reads Made in Japan — the wool still stiff, barely worn. Jacquard knit catches the light in a way that made it impossible to put back." data-size="S / Chest 36 cm / Shoulder 38 cm / Length 88 cm / Sleeve 60 cm" data-story-url="ITEM-001.html" style="animation-delay: 0s">
+<article class="item-card relic" role="button" tabindex="0" aria-label="View Michiko Koshino Knit Dress" data-id="ITEM-001" data-filter="available" data-name="Michiko Koshino Knit Dress" data-name-th="เดรสไหมพรม Michiko Koshino" data-desc="Found between a rack of fleece hoodies at O-WA Second Hand, Phuket. The label reads Made in Japan — the wool still stiff, barely worn. Jacquard knit catches the light in a way that made it impossible to put back." data-desc-th="เจอในตะกร้าเสื้อฟลีซที่ O-WA Second Hand ภูเก็ต ป้าย Made in Japan ไหมพรมยังแข็ง แทบไม่เคยใส่ ลายแจ็คการ์ดรับแสงจนวางคืนไม่ได้" data-era="Late 1990s · Japan / UK — Michiko Koshino London · Wool-Acrylic Knit" data-price="฿650" data-size="S / Chest 36 cm / Shoulder 38 cm / Length 88 cm / Sleeve 60 cm" data-gallery="[&quot;assets/images/ITEM-001.webp?v=f8cdf0fb&quot;]" data-story-url="ITEM-001.html" style="animation-delay: 0.00s">
   <div class="item-relic-star">★</div>
   <div class="item-photo-wrap">
-    <img src="assets/images/ITEM-001.webp?v=f8cdf0fb" width="896" height="1195" alt="Michiko Koshino Knit Dress" loading="lazy" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
+    <img src="assets/images/ITEM-001.webp?v=f8cdf0fb" width="896" height="1195" alt="Michiko Koshino Knit Dress" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
     <div class="sold-label">
       <span class="sold-label-inner">CLAIMED</span>
     </div>
@@ -759,10 +1103,10 @@
     </div>
   </div>
 </article>
-<article class="item-card sold relic" data-id="ITEM-005" data-filter="sold" data-desc="Face-down in a bin. Pulled out because the fabric weight was wrong for everything around it. Purchased, researched, identified." data-size="M / Chest 52 cm / Shoulder 46 cm / Length 70 cm / Sleeve 62 cm" data-story-url="ITEM-005.html" style="animation-delay: 0.07s">
+<article class="item-card sold relic" role="button" tabindex="0" aria-label="View Spinash Graphic Polo" data-id="ITEM-005" data-filter="sold" data-name="Spinash Graphic Polo" data-name-th="เสื้อโปโลกราฟิก Spinash" data-desc="Face-down in a bin. Pulled out because the fabric weight was wrong for everything around it. Purchased, researched, identified." data-desc-th="คว่ำหน้าอยู่ในตะกร้า ดึงออกมาเพราะน้ำหนักผ้าต่างจากตัวอื่น ซื้อมา ค้นข้อมูล จนรู้ที่มา" data-era="Mid 1990s · Japan — domestic market · Cotton Piqué" data-price="฿1,500" data-size="M / Chest 52 cm / Shoulder 46 cm / Length 70 cm / Sleeve 62 cm" data-gallery="[&quot;assets/images/ITEM-005.webp?v=6e74ecfc&quot;]" data-story-url="ITEM-005.html" style="animation-delay: 0.07s">
   <div class="item-relic-star">★</div>
   <div class="item-photo-wrap">
-    <img src="assets/images/ITEM-005.webp?v=6e74ecfc" width="992" height="1085" alt="Spinash Graphic Polo" loading="lazy" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
+    <img src="assets/images/ITEM-005.webp?v=6e74ecfc" width="992" height="1085" alt="Spinash Graphic Polo" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
     <div class="sold-label">
       <span class="sold-label-inner">CLAIMED</span>
     </div>
@@ -788,10 +1132,10 @@
     </div>
   </div>
 </article>
-<article class="item-card sold relic" data-id="ITEM-006" data-filter="sold" data-desc="Laid face-down on a folding table in the covered passage between Sections 5 and 6 by a vendor mid-unpack. Identified on sight. Purchased before the stall was fully set up." data-size="M / Chest 50 cm / Shoulder 42 cm / Length 68 cm / Hood Depth 28 cm" data-story-url="ITEM-006.html" style="animation-delay: 0.14s">
+<article class="item-card sold relic" role="button" tabindex="0" aria-label="View Glad News Skull Hoodie Vest" data-id="ITEM-006" data-filter="sold" data-name="Glad News Skull Hoodie Vest" data-name-th="เสื้อฮู้ดกั๊กพิมพ์หัวกะโหลก Glad News" data-desc="Laid face-down on a folding table in the covered passage between Sections 5 and 6 by a vendor mid-unpack. Identified on sight. Purchased before the stall was fully set up." data-desc-th="วางคว่ำบนโต๊ะพับในทางเดินระหว่างโซน 5 กับ 6 ตอนคนขายกำลังแกะกระเป๋า เห็นปุ๊บรู้เลย ซื้อก่อนร้านจะจัดของเสร็จ" data-era="Early 2000s · Japan — Harajuku, Tokyo · Cotton Fleece" data-price="฿1,300" data-size="M / Chest 50 cm / Shoulder 42 cm / Length 68 cm / Hood Depth 28 cm" data-gallery="[&quot;assets/images/ITEM-006.webp?v=027bcf9b&quot;]" data-story-url="ITEM-006.html" style="animation-delay: 0.14s">
   <div class="item-relic-star">★</div>
   <div class="item-photo-wrap">
-    <img src="assets/images/ITEM-006.webp?v=027bcf9b" width="992" height="1085" alt="Glad News Skull Hoodie Vest" loading="lazy" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
+    <img src="assets/images/ITEM-006.webp?v=027bcf9b" width="992" height="1085" alt="Glad News Skull Hoodie Vest" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
     <div class="sold-label">
       <span class="sold-label-inner">CLAIMED</span>
     </div>
@@ -817,10 +1161,10 @@
     </div>
   </div>
 </article>
-<article class="item-card sold relic" data-id="ITEM-013" data-filter="sold" data-desc="Loud orange tee with a tattoo-style &quot;THE&quot; print across the chest. Found at Secret Thrift, Phuket — a Y2K baggy 2XL. Sold — see story." data-size="2XL" data-story-url="ITEM-013.html" style="animation-delay: 0.21000000000000002s">
+<article class="item-card sold relic" role="button" tabindex="0" aria-label="View Orange &quot;THE&quot; Tattoo Shirt" data-id="ITEM-013" data-filter="sold" data-name="Orange &quot;THE&quot; Tattoo Shirt" data-name-th="เสื้อยืด Orange “THE” ลายแทตทู" data-desc="Loud orange tee with a tattoo-style &quot;THE&quot; print across the chest. Found at Secret Thrift, Phuket — a Y2K baggy 2XL. Sold — see story." data-desc-th="เสื้อสีส้มสดพร้อมลาย “THE” สไตล์แทตทูบนอก เจอที่ Secret Thrift ภูเก็ต ทรง 2XL baggy ยุคคลื่น Y2K ขายแล้ว อ่านเรื่องราวได้ในสตอรี" data-era="Y2K · Unknown · Cotton" data-price="฿500" data-size="2XL" data-gallery="[&quot;assets/images/ITEM-013.webp?v=7e8c5c96&quot;]" data-story-url="ITEM-013.html" style="animation-delay: 0.21s">
   <div class="item-relic-star">★</div>
   <div class="item-photo-wrap">
-    <img src="assets/images/ITEM-013.webp?v=7e8c5c96" alt="Orange &quot;THE&quot; Tattoo Shirt" loading="lazy" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
+    <img src="assets/images/ITEM-013.webp?v=7e8c5c96" width="896" height="896" alt="Orange &quot;THE&quot; Tattoo Shirt" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
     <div class="sold-label">
       <span class="sold-label-inner">CLAIMED</span>
     </div>
@@ -846,10 +1190,10 @@
     </div>
   </div>
 </article>
-<article class="item-card relic" data-id="ITEM-014" data-filter="available" data-desc="Neon pink longsleeve with a small &quot;KILLSHOT&quot; print. Found at Chatuchak Market, Bangkok — relaxed cotton XL. ฿600." data-size="XL" data-story-url="ITEM-014.html" style="animation-delay: 0.28s">
+<article class="item-card relic" role="button" tabindex="0" aria-label="View Neon Pink Killshot Longsleeve" data-id="ITEM-014" data-filter="available" data-name="Neon Pink Killshot Longsleeve" data-name-th="เสื้อแขนยาว Killshot สีชมพูสะท้อนแสง" data-desc="Neon pink longsleeve with a small &quot;KILLSHOT&quot; print. Found at Chatuchak Market, Bangkok — relaxed cotton XL. ฿600." data-desc-th="เสื้อแขนยาวสีชมพูสะท้อนแสงพร้อมลาย “KILLSHOT” เล็ก ๆ เจอที่ตลาดจตุจักร กรุงเทพฯ ผ้าคอตตอนทรงหลวม XL ราคา ฿600" data-era="Y2K · Unknown · Cotton" data-price="฿600" data-size="XL" data-gallery="[&quot;assets/images/ITEM-014.webp?v=ab24e25a&quot;]" data-story-url="ITEM-014.html" style="animation-delay: 0.28s">
   <div class="item-relic-star">★</div>
   <div class="item-photo-wrap">
-    <img src="assets/images/ITEM-014.webp?v=ab24e25a" alt="Neon Pink Killshot Longsleeve" loading="lazy" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
+    <img src="assets/images/ITEM-014.webp?v=ab24e25a" width="896" height="1195" alt="Neon Pink Killshot Longsleeve" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
     <div class="sold-label">
       <span class="sold-label-inner">CLAIMED</span>
     </div>
@@ -875,9 +1219,9 @@
     </div>
   </div>
 </article>
-<article class="item-card" data-id="ITEM-002" data-filter="available" data-desc="A jeweled fringe long-sleeve with gold thread woven through black check. Heavy drape, structured shoulder." data-size="L / Chest 54 cm / Length 78 cm" data-story-url="" style="animation-delay: 0.35000000000000003s">
+<article class="item-card" role="button" tabindex="0" aria-label="View Pronti Checkered Fringe" data-id="ITEM-002" data-filter="available" data-name="Pronti Checkered Fringe" data-name-th="เสื้อแขนยาว Pronti ลายตาหมากรุกชายครุย" data-desc="A jeweled fringe long-sleeve with gold thread woven through black check. Heavy drape, structured shoulder." data-desc-th="เสื้อแขนยาวประดับคริสตัลพร้อมชายครุยและเส้นด้ายทองทอผ่านลายตาหมากรุกสีดำ ทรงหนัก ไหล่โครง" data-era="Early 2000s · Italy · Jacquard" data-price="฿850" data-size="L / Chest 54 cm / Length 78 cm" data-gallery="[&quot;assets/images/ITEM-002.webp?v=aa57981e&quot;]" data-story-url="" style="animation-delay: 0.35s">
   <div class="item-photo-wrap">
-    <img src="assets/images/ITEM-002.webp?v=aa57981e" width="992" height="1085" alt="Pronti Checkered Fringe" loading="lazy" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
+    <img src="assets/images/ITEM-002.webp?v=aa57981e" width="992" height="1085" alt="Pronti Checkered Fringe" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
     <div class="sold-label">
       <span class="sold-label-inner">CLAIMED</span>
     </div>
@@ -903,9 +1247,9 @@
     </div>
   </div>
 </article>
-<article class="item-card" data-id="ITEM-003" data-filter="available" data-desc="Classic five-pocket jeans with a clean wash. Minimal fading, original buttons intact." data-size="W34 / L32" data-story-url="" style="animation-delay: 0.42000000000000004s">
+<article class="item-card sold" role="button" tabindex="0" aria-label="View Gusendi Denim" data-id="ITEM-003" data-filter="sold" data-name="Gusendi Denim" data-name-th="กางเกงยีนส์ Gusendi" data-desc="Classic five-pocket jeans with a clean wash. Minimal fading, original buttons intact." data-desc-th="กางเกงยีนส์ห้ากระเป๋าทรงคลาสสิก ซักสะอาด สีซีดน้อย ปุ่มเดิมครบ" data-era="Mid 1990s · Japan · Denim" data-price="฿550" data-size="W34 / L32" data-gallery="[&quot;assets/images/ITEM-003.webp?v=5acdffd4&quot;]" data-story-url="" style="animation-delay: 0.42s">
   <div class="item-photo-wrap">
-    <img src="assets/images/ITEM-003.webp?v=5acdffd4" width="992" height="1085" alt="Gusendi Denim" loading="lazy" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
+    <img src="assets/images/ITEM-003.webp?v=5acdffd4" width="992" height="1085" alt="Gusendi Denim" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
     <div class="sold-label">
       <span class="sold-label-inner">CLAIMED</span>
     </div>
@@ -915,7 +1259,7 @@
     <div class="item-name">Gusendi Denim</div>
     <div class="item-era">Mid 1990s · Japan · Denim</div>
     <div class="item-footer">
-      <span class="item-price">฿550</span>
+      <span class="item-price">—</span>
       <div class="item-eye-btn" aria-hidden="true"><svg viewBox="-90 -58 180 116" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
         <path d="M -72 0 C -52 -48, 52 -48, 72 0 C 52 48, -52 48, -72 0 Z" fill="#C9B8E8"/>
         <ellipse cx="0" cy="0" rx="46" ry="36" fill="#1C1828"/>
@@ -931,9 +1275,9 @@
     </div>
   </div>
 </article>
-<article class="item-card" data-id="ITEM-004" data-filter="available" data-desc="Bright neon lime oversized shirt with ironic self-referential text across the back. Bold statement piece." data-size="XL / Chest 60 cm / Length 76 cm" data-story-url="" style="animation-delay: 0.49000000000000005s">
+<article class="item-card" role="button" tabindex="0" aria-label="View Neon Lime Text Shirt" data-id="ITEM-004" data-filter="available" data-name="Neon Lime Text Shirt" data-name-th="เสื้อเชิ้ตข้อความสีเขียวมะนาว" data-desc="Bright neon lime oversized shirt with ironic self-referential text across the back. Bold statement piece." data-desc-th="เสื้อเชิ้ตโอเวอร์ไซซ์สีเขียวมะนาวสด พร้อมข้อความล้อตัวเองเต็มหลัง ตัวเด่นที่ใส่แล้วไม่เหมือนใคร" data-era="Late 1980s · USA · Cotton" data-price="฿450" data-size="XL / Chest 60 cm / Length 76 cm" data-gallery="[&quot;assets/images/ITEM-004.webp?v=8b87153c&quot;]" data-story-url="" style="animation-delay: 0.49s">
   <div class="item-photo-wrap">
-    <img src="assets/images/ITEM-004.webp?v=8b87153c" width="896" height="1195" alt="Neon Lime Text Shirt" loading="lazy" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
+    <img src="assets/images/ITEM-004.webp?v=8b87153c" width="896" height="1195" alt="Neon Lime Text Shirt" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
     <div class="sold-label">
       <span class="sold-label-inner">CLAIMED</span>
     </div>
@@ -959,32 +1303,107 @@
     </div>
   </div>
 </article>
+<article class="item-card" role="button" tabindex="0" aria-label="View Y2K Vogue Style Baby Tee" data-id="ITEM-012" data-filter="available" data-name="Y2K Vogue Style Baby Tee" data-name-th="เสื้อเบบี้ที Y2K สไตล์ Vogue" data-desc="Super light and thin Baby Tee with lettering and bedazzle. Y2K vibes! Girl shirt." data-desc-th="เสื้อเบบี้ทีผ้าบางเบามาก พร้อมตัวอักษรและคริสตัลแต่ง ไวบ์ Y2K! เสื้อผู้หญิง" data-era="Y2K · Unknown · Cotton" data-price="฿150" data-size="S / Chest 38 cm / Length 58 cm" data-gallery="[&quot;assets/images/item-012.webp?v=93de35b8&quot;,&quot;assets/images/item-012-tag.webp?v=21383c12&quot;,&quot;assets/images/item-012-zoomed.webp?v=beae3555&quot;]" data-story-url="" style="animation-delay: 0.56s">
+  <div class="item-photo-wrap">
+    <img src="assets/images/item-012.webp?v=93de35b8" width="896" height="1195" alt="Y2K Vogue Style Baby Tee" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
+    <div class="sold-label">
+      <span class="sold-label-inner">CLAIMED</span>
+    </div>
+  </div>
+  <div class="item-body">
+    <div class="item-id">ITEM-012</div>
+    <div class="item-name">Y2K Vogue Style Baby Tee</div>
+    <div class="item-era">Y2K · Unknown · Cotton</div>
+    <div class="item-footer">
+      <span class="item-price">฿150</span>
+      <div class="item-eye-btn" aria-hidden="true"><svg viewBox="-90 -58 180 116" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+        <path d="M -72 0 C -52 -48, 52 -48, 72 0 C 52 48, -52 48, -72 0 Z" fill="#C9B8E8"/>
+        <ellipse cx="0" cy="0" rx="46" ry="36" fill="#1C1828"/>
+        <circle cx="0" cy="0" r="36" fill="none" stroke="#C9B8E8" stroke-width="2.2"/>
+        <circle cx="0" cy="0" r="18" fill="#C9B8E8"/>
+        <circle cx="0" cy="0" r="10" fill="#1C1828"/>
+        <circle cx="0" cy="0" r="5.5" fill="none" stroke="#C9B8E8" stroke-width="1.6"/>
+        <line x1="-72" y1="0" x2="-86" y2="0" stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="-86" y1="-7" x2="-86" y2="7" stroke="#C9B8E8" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="72"  y1="0" x2="86"  y2="0" stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="86"  y1="-7" x2="86"  y2="7" stroke="#C9B8E8" stroke-width="1.8" stroke-linecap="round"/>
+      </svg></div>
+    </div>
+  </div>
+</article>
+<article class="item-card" role="button" tabindex="0" aria-label="View Model GS115 DOHENY Jeans" data-id="ITEM-015" data-filter="available" data-name="Model GS115 DOHENY Jeans" data-name-th="กางเกงยีนส์ Model GS115 DOHENY" data-desc="Y2K Skater Denim with embroidered cross patches and metal studs. Slim fit, good condition." data-desc-th="กางเกงยีนส์สเก็ตเตอร์ Y2K ปักแพตช์ครอสและหมุดโลหะ ทรงสลิม สภาพดี" data-era="Y2K · Unknown · Denim" data-price="฿699" data-size="W36 / Waist 46 cm / Length 108 cm / Thigh 28 cm / Hem 20 cm" data-gallery="[&quot;assets/images/ITEM-015-front.webp?v=6db1bb43&quot;,&quot;assets/images/ITEM-015-back2.webp?v=5e645205&quot;,&quot;assets/images/ITEM-015-closeup.webp?v=6556a1cf&quot;,&quot;assets/images/ITEM-015-tag.webp?v=b00c9556&quot;]" data-story-url="" style="animation-delay: 0.63s">
+  <div class="item-photo-wrap">
+    <img src="assets/images/ITEM-015-front.webp?v=6db1bb43" width="896" height="1195" alt="Model GS115 DOHENY Jeans" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">
+    <div class="sold-label">
+      <span class="sold-label-inner">CLAIMED</span>
+    </div>
+  </div>
+  <div class="item-body">
+    <div class="item-id">ITEM-015</div>
+    <div class="item-name">Model GS115 DOHENY Jeans</div>
+    <div class="item-era">Y2K · Unknown · Denim</div>
+    <div class="item-footer">
+      <span class="item-price">฿699</span>
+      <div class="item-eye-btn" aria-hidden="true"><svg viewBox="-90 -58 180 116" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+        <path d="M -72 0 C -52 -48, 52 -48, 72 0 C 52 48, -52 48, -72 0 Z" fill="#C9B8E8"/>
+        <ellipse cx="0" cy="0" rx="46" ry="36" fill="#1C1828"/>
+        <circle cx="0" cy="0" r="36" fill="none" stroke="#C9B8E8" stroke-width="2.2"/>
+        <circle cx="0" cy="0" r="18" fill="#C9B8E8"/>
+        <circle cx="0" cy="0" r="10" fill="#1C1828"/>
+        <circle cx="0" cy="0" r="5.5" fill="none" stroke="#C9B8E8" stroke-width="1.6"/>
+        <line x1="-72" y1="0" x2="-86" y2="0" stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="-86" y1="-7" x2="-86" y2="7" stroke="#C9B8E8" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="72"  y1="0" x2="86"  y2="0" stroke="#C9B8E8" stroke-width="2.8" stroke-linecap="round"/>
+        <line x1="86"  y1="-7" x2="86"  y2="7" stroke="#C9B8E8" stroke-width="1.8" stroke-linecap="round"/>
+      </svg></div>
+    </div>
+  </div>
+</article>
 <!-- DROPS_CARDS_END -->
   </main>
 
-  <!-- ── CLAIM MODAL ── -->
-  <div id="claim-modal" role="dialog" aria-modal="true" aria-labelledby="modal-name-el">
-    <div id="claim-modal-backdrop"></div>
-    <div id="claim-modal-box">
-      <button class="modal-close" id="modal-close-btn">✕ Close</button>
-      <div class="modal-photo">
-        <img id="modal-img" src="" alt="" loading="lazy" decoding="async">
-      </div>
-      <div class="modal-content">
-        <span class="modal-id"  id="modal-id-el"></span>
-        <h2  class="modal-name" id="modal-name-el"></h2>
-        <p   class="modal-desc" id="modal-desc-el"></p>
-        <div class="modal-measurements" id="modal-meas-el"></div>
-        <div class="modal-price" id="modal-price-el"></div>
-        <div class="modal-actions">
-          <a id="modal-dm-btn" href="https://www.instagram.com/ossuary.atelier/" target="_blank" rel="noopener" class="btn-seal">
-            DM to Claim →
-          </a>
-          <a id="modal-story-btn" href="#" target="_blank"
-             class="btn-seal" style="opacity:0.6; font-size:0.58rem;">
-            Read the Story
-          </a>
+  <!-- ── FULLSCREEN GALLERY ── -->
+  <div id="gallery-overlay" role="dialog" aria-modal="true" aria-labelledby="gallery-name" aria-hidden="true">
+    <div class="gallery-backdrop" data-gallery-close></div>
+    <div class="gallery-shell">
+      <div class="gallery-stage">
+        <button type="button" class="gallery-close" data-gallery-close aria-label="Close gallery">
+          <span aria-hidden="true">✕</span><span class="gallery-close-label">Close</span>
+        </button>
+        <button type="button" class="gallery-nav gallery-prev" aria-label="Previous image">←</button>
+        <div class="gallery-frame">
+          <img id="gallery-img" src="" alt="" decoding="async">
         </div>
+        <button type="button" class="gallery-nav gallery-next" aria-label="Next image">→</button>
+        <div class="gallery-counter" aria-live="polite">
+          <span id="gallery-index">1</span><span aria-hidden="true"> / </span><span id="gallery-total">1</span>
+        </div>
+        <div class="gallery-thumbs" id="gallery-thumbs" aria-label="Gallery images"></div>
+      </div>
+      <aside class="gallery-info">
+        <span class="gallery-id" id="gallery-id"></span>
+        <h2 class="gallery-name" id="gallery-name"></h2>
+        <p class="gallery-era" id="gallery-era"></p>
+        <p class="gallery-desc" id="gallery-desc"></p>
+        <p class="gallery-size" id="gallery-size"></p>
+        <div class="gallery-footer">
+          <span class="gallery-price" id="gallery-price"></span>
+          <div class="gallery-actions">
+            <a id="gallery-dm" href="https://www.instagram.com/ossuary.atelier/" target="_blank" rel="noopener" class="btn-seal">DM to claim →</a>
+            <a id="gallery-story" href="#" class="btn-seal">Read the story →</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <div id="gallery-lightbox" role="group" aria-label="Fullscreen image" aria-hidden="true">
+      <button type="button" class="gallery-lightbox-close" data-lightbox-close aria-label="Close fullscreen image">
+        <span aria-hidden="true">✕</span><span class="gallery-lightbox-close-label">Close</span>
+      </button>
+      <button type="button" class="gallery-lightbox-nav gallery-lightbox-prev" data-lightbox-nav="-1" aria-label="Previous image">←</button>
+      <img id="gallery-lightbox-img" src="" alt="" decoding="async">
+      <button type="button" class="gallery-lightbox-nav gallery-lightbox-next" data-lightbox-nav="1" aria-label="Next image">→</button>
+      <div class="gallery-lightbox-counter" aria-live="polite">
+        <span id="gallery-lightbox-index">1</span><span aria-hidden="true"> / </span><span id="gallery-lightbox-total">1</span>
       </div>
     </div>
   </div>
@@ -1059,64 +1478,7 @@
   <script src="js/nav.js?v=94bb5d8b" defer></script>
   <script src="js/target-cursor.js?v=9b86ae46" defer></script>
   <script src="js/background.js?v=5d81aac0" defer></script>
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const pills = document.querySelectorAll('.filter-pill');
-    const cards = document.querySelectorAll('.item-card');
-
-    const applyFilter = (f) => {
-      pills.forEach(p => p.classList.remove('active'));
-      const active = Array.from(pills).find(p => p.dataset.filter === f);
-      if (active) active.classList.add('active');
-      cards.forEach(card => {
-        const match = f === 'all' ||
-          (f === 'available' && card.dataset.filter === 'available') ||
-          (f === 'relics' && card.classList.contains('relic')) ||
-          (f === 'sold' && card.classList.contains('sold'));
-        card.style.display = match ? '' : 'none';
-      });
-    };
-
-    pills.forEach(pill => {
-      pill.addEventListener('click', () => {
-        applyFilter(pill.dataset.filter);
-      });
-    });
-
-    const hashFilter = location.hash === '#claimed' ? 'sold' : null;
-    if (hashFilter) applyFilter(hashFilter);
-
-    function openModal(card) {
-      document.getElementById('modal-img').src = card.querySelector('.item-photo-wrap img')?.src || '';
-      document.getElementById('modal-img').alt = card.querySelector('.item-name')?.textContent || '';
-      document.getElementById('modal-id-el').textContent = card.dataset.id + ' \u00b7 ' + (card.querySelector('.item-era')?.textContent || '');
-      document.getElementById('modal-name-el').textContent = card.querySelector('.item-name')?.textContent || '';
-      document.getElementById('modal-desc-el').textContent = card.dataset.desc || '';
-      document.getElementById('modal-meas-el').textContent = card.dataset.size || '';
-      const isSold = card.classList.contains('sold');
-      document.getElementById('modal-price-el').textContent = isSold ? 'Claimed' : (card.querySelector('.item-price')?.textContent || '');
-      document.getElementById('modal-dm-btn').style.display = isSold ? 'none' : 'flex';
-      const url = card.dataset.storyUrl;
-      document.getElementById('modal-story-btn').href = url || '#';
-      document.getElementById('modal-story-btn').style.display = url ? 'flex' : 'none';
-      document.getElementById('claim-modal').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-      document.getElementById('claim-modal').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    cards.forEach(card => {
-      card.addEventListener('click', () => openModal(card));
-    });
-
-    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-    document.getElementById('claim-modal-backdrop').addEventListener('click', closeModal);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-  });
-  </script>
+  <script src="js/shop.js?v=4eaef912" defer></script>
 
 
 

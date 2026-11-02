@@ -89,13 +89,20 @@ const IMAGE_DIMS = {
   'assets/images/ITEM-005 MODEL.webp':   [848, 1264],
   'assets/images/ITEM-006.webp':         [992, 1085],
   'assets/images/ITEM-006 MODEL.webp':   [848, 1264],
-  'assets/images/ITEM-013.jpg':          [896, 896],
-  'assets/images/ITEM-013 back.jpg':     [896, 896],
-  'assets/images/ITEM-014.jpg':          [896, 1195],
+  'assets/images/ITEM-013.webp':         [896, 896],
+  'assets/images/ITEM-013 back.webp':    [896, 896],
+  'assets/images/ITEM-014.webp':         [896, 1195],
+  'assets/images/item-012.webp':         [896, 1195],
+  'assets/images/item-012-tag.webp':     [960, 1280],
+  'assets/images/item-012-zoomed.webp':  [960, 1280],
+  'assets/images/ITEM-015-front.webp':   [896, 1195],
+  'assets/images/ITEM-015-back2.webp':   [896, 1195],
+  'assets/images/ITEM-015-closeup.webp': [960, 1280],
+  'assets/images/ITEM-015-tag.webp':     [960, 1280],
 };
 
 function imgDims(path) {
-  const d = IMAGE_DIMS[path];
+  const d = IMAGE_DIMS[String(path || '').split('?')[0]];
   return d ? ` width="${d[0]}" height="${d[1]}"` : '';
 }
 
@@ -358,14 +365,22 @@ function runItems() {
     const price = isSold ? '\u2014' : item.price;
     const storyUrl = isRelic ? `${item.id}.html` : '';
     const hero = item.images?.hero || '';
+    const rawGallery = Array.isArray(item.images?.gallery) && item.images.gallery.length
+      ? item.images.gallery
+      : (hero ? [hero] : []);
+    const gallery = rawGallery.map((p) => fingerprintValue(p, ROOT) || p);
+    const heroSrc = gallery[0] || fingerprintValue(hero, ROOT) || hero;
     const meas = item.measurements || {};
     const sizeLine = [item.size_label, ...Object.entries(meas).map(([k, v]) => `${k.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} ${v.split('/')[0].trim()}`)].join(' / ');
+    const nameTh = item.name_th || item.name;
+    const descTh = item.desc_th || item.desc || '';
+    const delay = (idx * 0.07).toFixed(2);
 
     return [
-      `<article class="${cls}" data-id="${esc(item.id)}" data-filter="${esc(item.status)}" data-desc="${esc(item.desc || '')}" data-size="${esc(sizeLine)}" data-story-url="${esc(storyUrl)}" style="animation-delay: ${idx * 0.07}s">`,
+      `<article class="${cls}" role="button" tabindex="0" aria-label="View ${esc(item.name)}" data-id="${esc(item.id)}" data-filter="${esc(item.status)}" data-name="${esc(item.name)}" data-name-th="${esc(nameTh)}" data-desc="${esc(item.desc || '')}" data-desc-th="${esc(descTh)}" data-era="${esc(eraLine)}" data-price="${esc(item.price || '')}" data-size="${esc(sizeLine)}" data-gallery="${esc(JSON.stringify(gallery))}" data-story-url="${esc(storyUrl)}" style="animation-delay: ${delay}s">`,
       isRelic ? '  <div class="item-relic-star">\u2605</div>' : null,
       '  <div class="item-photo-wrap">',
-      `    <img src="${esc(hero)}"${imgDims(hero)} alt="${esc(item.name)}" loading="lazy" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">`,
+      `    <img src="${esc(heroSrc)}"${imgDims(heroSrc)} alt="${esc(item.name)}" loading="lazy" decoding="async" onerror="this.parentElement.style.background='#1C1828';this.style.display='none'">`,
       '    <div class="sold-label">',
       '      <span class="sold-label-inner">CLAIMED</span>',
       '    </div>',
@@ -398,70 +413,9 @@ function runItems() {
 
   const available = items.filter(i => i.status === 'available').length;
   shop = shop.replace(
-    /id="available-count">[^<]*/,
-    `id="available-count">${available} piece${available !== 1 ? 's' : ''} available`
+    /id="available-count"[^>]*>[^<]*/,
+    `id="available-count" data-count="${available}">${available} piece${available !== 1 ? 's' : ''} available`
   );
-
-  const newScript = `  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const pills = document.querySelectorAll('.filter-pill');
-    const cards = document.querySelectorAll('.item-card');
-
-    const applyFilter = (f) => {
-      pills.forEach(p => p.classList.remove('active'));
-      const active = Array.from(pills).find(p => p.dataset.filter === f);
-      if (active) active.classList.add('active');
-      cards.forEach(card => {
-        const match = f === 'all' ||
-          (f === 'available' && card.dataset.filter === 'available') ||
-          (f === 'relics' && card.classList.contains('relic')) ||
-          (f === 'sold' && card.classList.contains('sold'));
-        card.style.display = match ? '' : 'none';
-      });
-    };
-
-    pills.forEach(pill => {
-      pill.addEventListener('click', () => {
-        applyFilter(pill.dataset.filter);
-      });
-    });
-
-    const hashFilter = location.hash === '#claimed' ? 'sold' : null;
-    if (hashFilter) applyFilter(hashFilter);
-
-    function openModal(card) {
-      document.getElementById('modal-img').src = card.querySelector('.item-photo-wrap img')?.src || '';
-      document.getElementById('modal-img').alt = card.querySelector('.item-name')?.textContent || '';
-      document.getElementById('modal-id-el').textContent = card.dataset.id + ' \\u00b7 ' + (card.querySelector('.item-era')?.textContent || '');
-      document.getElementById('modal-name-el').textContent = card.querySelector('.item-name')?.textContent || '';
-      document.getElementById('modal-desc-el').textContent = card.dataset.desc || '';
-      document.getElementById('modal-meas-el').textContent = card.dataset.size || '';
-      const isSold = card.classList.contains('sold');
-      document.getElementById('modal-price-el').textContent = isSold ? 'Claimed' : (card.querySelector('.item-price')?.textContent || '');
-      document.getElementById('modal-dm-btn').style.display = isSold ? 'none' : 'flex';
-      const url = card.dataset.storyUrl;
-      document.getElementById('modal-story-btn').href = url || '#';
-      document.getElementById('modal-story-btn').style.display = url ? 'flex' : 'none';
-      document.getElementById('claim-modal').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-      document.getElementById('claim-modal').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    cards.forEach(card => {
-      card.addEventListener('click', () => openModal(card));
-    });
-
-    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-    document.getElementById('claim-modal-backdrop').addEventListener('click', closeModal);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-  });
-  </script>`;
-
-  shop = shop.replace(/  <script>\n  document\.addEventListener\('DOMContentLoaded'[\s\S]*?<\/script>/, newScript);
 
   writeFileSync(shopFile, shop, 'utf8');
   log(`[items] shop.html: ${items.length} item card(s) generated`);
