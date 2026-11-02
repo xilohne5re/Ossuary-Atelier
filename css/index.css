@@ -718,8 +718,11 @@
     gap: 2.5rem;
     /* The eyebrow is now a top-of-column flow item, so it needs to clear
        the fixed nav. !important + ID specificity beats the blanket
-       `section { padding: 4vh 5vw !important }` in mobile.css. */
+       `section { padding: 4vh 5vw !important }` in mobile.css.
+       Also override left/right padding to center content properly. */
     padding-top: calc(var(--nav-height) + 2vh) !important;
+    padding-left: 5vw !important;
+    padding-right: 5vw !important;
   }
   #hero-eye {
     position: absolute;

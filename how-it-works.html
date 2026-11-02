@@ -265,7 +265,14 @@
 #footer.footer-expanded .footer-col a{display:block;font-family:var(--font-display);font-size:0.68rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--violet-dim);padding:0.35rem 0;transition:color 0.3s;}
 #footer.footer-expanded .footer-col a:hover{color:var(--violet);}
 #footer.footer-expanded .footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-top:1px solid var(--violet-faint);margin:2.5rem auto 0;padding-top:1.5rem;max-width:1100px;}
-@media(max-width:768px){#footer.footer-expanded .footer-grid{grid-template-columns:1fr 1fr;gap:2rem;}#footer.footer-expanded .footer-brand{grid-column:1 / -1;}}
+@media(max-width:768px){
+  #footer.footer-expanded .footer-grid{grid-template-columns:1fr 1fr;gap:2rem;}
+  #footer.footer-expanded .footer-brand{grid-column:1 / -1;}
+  #footer.footer-expanded .footer-col-title{font-size:0.52rem;letter-spacing:0.25em;}
+}
+@media(max-width:480px){
+  #footer.footer-expanded .footer-col-title{font-size:0.48rem;letter-spacing:0.15em;}
+}
 </style>
 <footer id="footer" class="footer-expanded">
   <div class="footer-grid">
