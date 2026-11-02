@@ -80,11 +80,11 @@ html {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Background Toggle Button */
+/* Background Toggle Button - now inside #reveal-section */
 .background-toggle {
-  position: fixed;
-  top: calc(var(--nav-height, 60px) + 10px);
-  right: 10px;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   background: rgba(8,8,16,0.8);
   border: 1px solid var(--bruise);
   color: var(--violet);
@@ -92,7 +92,6 @@ html {
   font-size: 0.65rem;
   padding: 0.4rem 0.75rem;
   cursor: pointer;
-  z-index: 9999;
   letter-spacing: 0.1em;
   transition: background 0.2s, color 0.2s;
 }
@@ -103,7 +102,8 @@ html {
 
 @media (max-width: 768px) {
   .background-toggle {
-    top: 70px;
+    top: 0.75rem;
+    right: 0.75rem;
     font-size: 0.6rem;
     padding: 0.35rem 0.6rem;
   }

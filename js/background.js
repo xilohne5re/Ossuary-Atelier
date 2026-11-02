@@ -66,10 +66,16 @@ class InteractiveBackground {
     btn.onclick = () => {
       this.toggleAnimations();
     };
-    document.body.appendChild(btn);
-    this.toggleBtn = btn;
-    this.setupToggleVisibility();
-  }
+      // Append to reveal-section instead of body for better mobile UX
+      const revealSection = document.getElementById('reveal-section');
+      if (revealSection) {
+        revealSection.appendChild(btn);
+      } else {
+        document.body.appendChild(btn);
+      }
+      this.toggleBtn = btn;
+      this.setupToggleVisibility();
+    }
 
   setupToggleVisibility() {
     let lastScrollY = 0;

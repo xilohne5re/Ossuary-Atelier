@@ -22,6 +22,7 @@
 
   const cursorWrap = document.createElement('div');
   cursorWrap.className = 'target-cursor-wrapper';
+  cursorWrap.style.willChange = 'transform';
   cursorWrap.innerHTML = '<div class="target-cursor-dot"></div><div class="target-cursor-corner corner-tl"></div><div class="target-cursor-corner corner-tr"></div><div class="target-cursor-corner corner-br"></div><div class="target-cursor-corner corner-bl"></div>';
   document.body.appendChild(cursorWrap);
 
@@ -51,7 +52,7 @@
   createSpin();
 
   function moveCursor(x, y) {
-    gsap.to(cursor, { x, y, duration: 0.1, ease: 'power3.out' });
+    gsap.to(cursor, { x, y, duration: 0.03, ease: 'none' });
   }
 
   function ticker() {
